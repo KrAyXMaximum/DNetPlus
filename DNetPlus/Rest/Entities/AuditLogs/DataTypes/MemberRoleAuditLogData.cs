@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -19,14 +19,14 @@ namespace Discord.Rest
 
         internal static MemberRoleAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            List<MemberRoleEditInfo> roleInfos = changes.SelectMany(x => x.NewValue.ToObject<API.Role[]>(discord.ApiClient.Serializer),
+            List<MemberRoleEditInfo> roleInfos = changes.SelectMany(x => x.NewValue.ToObject<API.RoleJson[]>(discord.ApiClient.Serializer),
                 (model, role) => new { model.ChangedProperty, Role = role })
                 .Select(x => new MemberRoleEditInfo(x.Role.Name, x.Role.Id, x.ChangedProperty == "$add"))
                 .ToList();
 
-            API.User userInfo = log.Users.FirstOrDefault(x => x.Id == entry.TargetId);
+            API.UserJson userInfo = log.Users.FirstOrDefault(x => x.Id == entry.TargetId);
             RestUser user = RestUser.Create(discord, userInfo);
 
             return new MemberRoleAuditLogData(roleInfos.ToReadOnlyCollection(), user);

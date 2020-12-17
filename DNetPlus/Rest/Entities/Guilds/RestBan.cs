@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Model = Discord.API.Ban;
+using Model = Discord.API.BanJson;
 
 namespace Discord.Rest
 {

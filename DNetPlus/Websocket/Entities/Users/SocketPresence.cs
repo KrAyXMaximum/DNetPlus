@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Model = Discord.API.Presence;
+using Model = Discord.API.PresenceJson;
 
 namespace Discord.WebSocket
 {
@@ -62,17 +62,17 @@ namespace Discord.WebSocket
         ///     that a user has from the data supplied in the Presence update frame.
         /// </summary>
         /// <param name="activities">
-        ///     A list of <see cref="API.Game"/>.
+        ///     A list of <see cref="API.GameJson"/>.
         /// </param>
         /// <returns>
         ///     A list of all <see cref="IActivity"/> that this user currently has available.
         /// </returns>
-        private static IImmutableList<IActivity> ConvertActivitiesList(IList<API.Game> activities)
+        private static IImmutableList<IActivity> ConvertActivitiesList(IList<API.GameJson> activities)
         {
             if (activities == null || activities.Count == 0)
                 return ImmutableList<IActivity>.Empty;
             List<IActivity> list = new List<IActivity>();
-            foreach (API.Game activity in activities)
+            foreach (API.GameJson activity in activities)
                 list.Add(activity.ToEntity());
             return list.ToImmutableList();
         }

@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.GuildMember;
+using Model = Discord.API.GuildMemberJson;
 
 namespace Discord.Rest
 {

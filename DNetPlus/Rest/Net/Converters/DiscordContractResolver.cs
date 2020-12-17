@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Discord.Net.Converters
 {
-    internal class DiscordContractResolver : DefaultContractResolver
+    public class DiscordContractResolver : DefaultContractResolver
     {
         private static readonly TypeInfo _ienumerable = typeof(IEnumerable<ulong[]>).GetTypeInfo();
         private static readonly MethodInfo _shouldSerialize = typeof(DiscordContractResolver).GetTypeInfo().GetDeclaredMethod("ShouldSerialize");    

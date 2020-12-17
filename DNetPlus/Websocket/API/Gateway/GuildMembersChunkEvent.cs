@@ -8,6 +8,6 @@ namespace Discord.API.Gateway
         [JsonProperty("guild_id")]
         public ulong GuildId { get; set; }
         [JsonProperty("members")]
-        public GuildMember[] Members { get; set; }
+        public GuildMemberJson[] Members { get; set; }
     }
 }

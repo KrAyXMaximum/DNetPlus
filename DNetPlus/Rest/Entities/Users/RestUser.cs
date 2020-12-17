@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
-using Model = Discord.API.User;
+using Model = Discord.API.UserJson;
 
 namespace Discord.Rest
 {

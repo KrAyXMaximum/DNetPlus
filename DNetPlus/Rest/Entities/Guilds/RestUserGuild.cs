@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.UserGuild;
+using Model = Discord.API.UserGuildJson;
 
 namespace Discord.Rest
 {

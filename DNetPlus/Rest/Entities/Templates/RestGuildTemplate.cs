@@ -1,23 +1,31 @@
 ﻿using Discord.API;
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
-using Model = Discord.API.GuildTemplate;
+using Model = Discord.API.GuildTemplateJson;
 
 namespace Discord.Rest
 {
+    /// <inheritdoc />
     public class RestGuildTemplate : IGuildTemplate
     {
+        /// <inheritdoc />
         public string Code { get; private set; }
+        /// <inheritdoc />
         public string Name { get; private set; }
+        /// <inheritdoc />
         public string Description { get; private set; }
+        /// <inheritdoc />
         public int UsageCount { get; private set; }
+        /// <inheritdoc />
         public ulong CreatorId { get; private set; }
+        /// <inheritdoc />
         public IUser Creator { get; private set; }
+        /// <inheritdoc />
         public DateTimeOffset CreatedAt { get; private set; }
+        /// <inheritdoc />
         public DateTimeOffset UpdatedAt { get; private set; }
+        /// <inheritdoc />
         public ulong SourceGuildId { get; private set; }
+        /// <inheritdoc />
         public Optional<RestGuildSnapshot> Snapshot { get; private set; }
 
         internal static RestGuildTemplate Create(BaseDiscordClient discord, Model model, bool withSnapshot)
@@ -39,7 +47,7 @@ namespace Discord.Rest
             CreatedAt = model.CreatedAt;
             UpdatedAt = model.UpdatedAt;
             if (withSnapshot)
-                Snapshot = RestGuildSnapshot.Create(discord, (model as GuildTemplateSnapshot).Snapshot);
+                Snapshot = RestGuildSnapshot.Create(discord, (model as GuildTemplateSnapshotJson).Snapshot);
         }
     }
 }

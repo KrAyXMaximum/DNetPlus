@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Message;
+using Model = Discord.API.MessageJson;
 
 namespace Discord.WebSocket
 {
@@ -46,8 +45,8 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         public override IReadOnlyCollection<SocketUser> MentionedUsers => MessageHelper.FilterTagsByValue<SocketUser>(TagType.UserMention, _tags);
 
-        internal SocketUserMessage(DiscordSocketClient discord, ulong id, ISocketMessageChannel channel, SocketUser author, MessageSource source)
-            : base(discord, id, channel, author, source)
+        internal SocketUserMessage(DiscordSocketClient discord, ulong id, ISocketMessageChannel channel, SocketUser author, MessageSource source, string content = "")
+            : base(discord, id, channel, author, source, content)
         {
         }
         internal new static SocketUserMessage Create(DiscordSocketClient discord, ClientState state, SocketUser author, ISocketMessageChannel channel, Model model)
@@ -76,7 +75,7 @@ namespace Discord.WebSocket
 
             if (model.Attachments.IsSpecified)
             {
-                API.Attachment[] value = model.Attachments.Value;
+                API.AttachmentJson[] value = model.Attachments.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<Attachment>.Builder attachments = ImmutableArray.CreateBuilder<Attachment>(value.Length);
@@ -90,7 +89,7 @@ namespace Discord.WebSocket
 
             if (model.Embeds.IsSpecified)
             {
-                API.Embed[] value = model.Embeds.Value;
+                API.EmbedJson[] value = model.Embeds.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<Embed>.Builder embeds = ImmutableArray.CreateBuilder<Embed>(value.Length);
@@ -104,7 +103,7 @@ namespace Discord.WebSocket
 
             if (model.Stickers.IsSpecified)
             {
-                Sticker[] value = model.Stickers.Value;
+                StickerJson[] value = model.Stickers.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<MessageSticker>.Builder stickers = ImmutableArray.CreateBuilder<MessageSticker>(value.Length);
@@ -119,13 +118,13 @@ namespace Discord.WebSocket
             IReadOnlyCollection<IUser> mentions = ImmutableArray.Create<SocketUnknownUser>(); //Is passed to ParseTags to get real mention collection
             if (model.UserMentions.IsSpecified)
             {
-                EntityOrId<User>[] value = model.UserMentions.Value;
+                EntityOrId<UserJson>[] value = model.UserMentions.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<SocketUnknownUser>.Builder newMentions = ImmutableArray.CreateBuilder<SocketUnknownUser>(value.Length);
                     for (int i = 0; i < value.Length; i++)
                     {
-                        EntityOrId<User> val = value[i];
+                        EntityOrId<UserJson> val = value[i];
                         if (val.Object != null)
                             newMentions.Add(SocketUnknownUser.Create(Discord, state, val.Object));
                     }

@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -21,12 +21,12 @@ namespace Discord.Rest
 
         internal static WebhookDeleteAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
-            API.AuditLogChange typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
-            API.AuditLogChange nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
-            API.AuditLogChange avatarHashModel = changes.FirstOrDefault(x => x.ChangedProperty == "avatar_hash");
+            API.AuditLogChangeJson channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
+            API.AuditLogChangeJson typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
+            API.AuditLogChangeJson nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson avatarHashModel = changes.FirstOrDefault(x => x.ChangedProperty == "avatar_hash");
 
             ulong channelId = channelIdModel.OldValue.ToObject<ulong>(discord.ApiClient.Serializer);
             WebhookType type = typeModel.OldValue.ToObject<WebhookType>(discord.ApiClient.Serializer);

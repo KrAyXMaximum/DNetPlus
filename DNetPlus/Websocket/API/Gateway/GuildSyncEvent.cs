@@ -11,8 +11,8 @@ namespace Discord.API.Gateway
         public bool Large { get; set; }
 
         [JsonProperty("presences")]
-        public Presence[] Presences { get; set; }
+        public PresenceJson[] Presences { get; set; }
         [JsonProperty("members")]
-        public GuildMember[] Members { get; set; }
+        public GuildMemberJson[] Members { get; set; }
     }
 }

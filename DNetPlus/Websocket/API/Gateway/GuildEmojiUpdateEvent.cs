@@ -8,6 +8,6 @@ namespace Discord.API.Gateway
         [JsonProperty("guild_id")]
         public ulong GuildId { get; set; }
         [JsonProperty("emojis")]
-        public Emoji[] Emojis { get; set; }
+        public EmojiJson[] Emojis { get; set; }
     }
 }

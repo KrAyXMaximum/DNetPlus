@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Discord.WebSocket
+﻿namespace Discord.WebSocket
 {
     public class DiscordDebugConfig
     {

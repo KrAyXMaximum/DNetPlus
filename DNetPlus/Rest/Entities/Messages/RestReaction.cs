@@ -1,4 +1,4 @@
-using Model = Discord.API.Reaction;
+using Model = Discord.API.ReactionJson;
 
 namespace Discord.Rest
 {

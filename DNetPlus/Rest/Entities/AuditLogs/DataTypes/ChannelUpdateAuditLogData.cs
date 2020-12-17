@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -19,13 +19,13 @@ namespace Discord.Rest
 
         internal static ChannelUpdateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
-            API.AuditLogChange topicModel = changes.FirstOrDefault(x => x.ChangedProperty == "topic");
-            API.AuditLogChange rateLimitPerUserModel = changes.FirstOrDefault(x => x.ChangedProperty == "rate_limit_per_user");
-            API.AuditLogChange nsfwModel = changes.FirstOrDefault(x => x.ChangedProperty == "nsfw");
-            API.AuditLogChange bitrateModel = changes.FirstOrDefault(x => x.ChangedProperty == "bitrate");
+            API.AuditLogChangeJson nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson topicModel = changes.FirstOrDefault(x => x.ChangedProperty == "topic");
+            API.AuditLogChangeJson rateLimitPerUserModel = changes.FirstOrDefault(x => x.ChangedProperty == "rate_limit_per_user");
+            API.AuditLogChangeJson nsfwModel = changes.FirstOrDefault(x => x.ChangedProperty == "nsfw");
+            API.AuditLogChangeJson bitrateModel = changes.FirstOrDefault(x => x.ChangedProperty == "bitrate");
 
             string oldName = nameModel?.OldValue?.ToObject<string>(discord.ApiClient.Serializer),
                 newName = nameModel?.NewValue?.ToObject<string>(discord.ApiClient.Serializer);

@@ -2,7 +2,7 @@ using Discord.API.Rest;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Model = Discord.API.User;
+using Model = Discord.API.UserJson;
 using ImageModel = Discord.API.Image;
 using System.Linq;
 

@@ -1,9 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestBot
@@ -37,7 +34,6 @@ namespace TestBot
             if (!message.HasStringPrefix("tb/", ref argPos))
                 return;
             SocketCommandContext context = new SocketCommandContext(_client, message);
-
             _ = await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,

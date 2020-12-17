@@ -1,5 +1,4 @@
-﻿using Discord.Rest;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace Discord.Net.Queue
 {

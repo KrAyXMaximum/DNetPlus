@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -19,7 +19,7 @@ namespace Discord.Rest
 
         internal static MessagePinAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.User userInfo = log.Users.FirstOrDefault(x => x.Id == entry.TargetId);
+            API.UserJson userInfo = log.Users.FirstOrDefault(x => x.Id == entry.TargetId);
             return new MessagePinAuditLogData(entry.Options.MessageId.Value, entry.Options.ChannelId.Value, RestUser.Create(discord, userInfo));
         }
 

@@ -1,3 +1,4 @@
+using Discord.API.Rest;
 using Discord.Audio;
 using Discord.Rest;
 using System;
@@ -8,9 +9,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Channel;
-using UserModel = Discord.API.User;
-using VoiceStateModel = Discord.API.VoiceState;
+using Model = Discord.API.ChannelJson;
+using UserModel = Discord.API.UserJson;
+using VoiceStateModel = Discord.API.VoiceStateJson;
 
 namespace Discord.WebSocket
 {
@@ -31,7 +32,13 @@ namespace Discord.WebSocket
 
         /// <inheritdoc />
         public IReadOnlyCollection<SocketMessage> CachedMessages => _messages?.Messages ?? ImmutableArray.Create<SocketMessage>();
+        
+        /// <summary>
+        /// Get a list of all users in the group.
+        /// </summary>
         public new IReadOnlyCollection<SocketGroupUser> Users => _users.ToReadOnlyCollection();
+
+        /// <inheritdoc />
         public IReadOnlyCollection<SocketGroupUser> Recipients
             => _users.Select(x => x.Value).Where(x => x.Id != Discord.CurrentUser.Id).ToReadOnlyCollection(() => _users.Count - 1);
 
@@ -166,6 +173,9 @@ namespace Discord.WebSocket
         public Task<RestUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null)
             => ChannelHelper.SendMessageAsync(this, Discord, text, isTTS, embed, allowedMentions, reference, options);
 
+        public Task<bool> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
+            => ChannelHelper.SendInteractionMessageAsync(this, Discord, interaction, text, isTTS, embed, allowedMentions, reference, options, type, ghostMessage);
+
         /// <inheritdoc />
         public Task<RestUserMessage> SendFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null)
             => ChannelHelper.SendFileAsync(this, Discord, filePath, text, isTTS, embed, allowedMentions, options, isSpoiler);
@@ -293,14 +303,17 @@ namespace Discord.WebSocket
             => await GetPinnedMessagesAsync(options).ConfigureAwait(false);
 
         /// <inheritdoc />
-        async Task<IUserMessage> IMessageChannel.SendFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null)
+        async Task<IUserMessage> IMessageChannel.SendFileAsync(string filePath, string text, bool isTTS, Embed embed, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions)
             => await SendFileAsync(filePath, text, isTTS, embed, options, isSpoiler, allowedMentions).ConfigureAwait(false);
         /// <inheritdoc />
-        async Task<IUserMessage> IMessageChannel.SendFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null)
+        async Task<IUserMessage> IMessageChannel.SendFileAsync(Stream stream, string filename, string text, bool isTTS, Embed embed, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions)
             => await SendFileAsync(stream, filename, text, isTTS, embed, options, isSpoiler, allowedMentions).ConfigureAwait(false);
         /// <inheritdoc />
         async Task<IUserMessage> IMessageChannel.SendMessageAsync(string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference)
             => await SendMessageAsync(text, isTTS, embed, options, allowedMentions, reference).ConfigureAwait(false);
+
+        async Task<bool> IMessageChannel.SendInteractionMessageAsync(InteractionData interaction, string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage)
+        => await SendInteractionMessageAsync(interaction, text, isTTS, embed, options, allowedMentions, reference, type, ghostMessage).ConfigureAwait(false);
 
         //IAudioChannel
         /// <inheritdoc />

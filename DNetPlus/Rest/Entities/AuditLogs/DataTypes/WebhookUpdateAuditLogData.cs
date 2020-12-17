@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -19,11 +19,11 @@ namespace Discord.Rest
 
         internal static WebhookUpdateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
-            API.AuditLogChange channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
-            API.AuditLogChange avatarHashModel = changes.FirstOrDefault(x => x.ChangedProperty == "avatar_hash");
+            API.AuditLogChangeJson nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
+            API.AuditLogChangeJson avatarHashModel = changes.FirstOrDefault(x => x.ChangedProperty == "avatar_hash");
 
             string oldName = nameModel?.OldValue?.ToObject<string>(discord.ApiClient.Serializer);
             ulong? oldChannelId = channelIdModel?.OldValue?.ToObject<ulong>(discord.ApiClient.Serializer);
@@ -35,7 +35,7 @@ namespace Discord.Rest
             string newAvatar = avatarHashModel?.NewValue?.ToObject<string>(discord.ApiClient.Serializer);
             WebhookInfo after = new WebhookInfo(newName, newChannelId, newAvatar);
 
-            API.Webhook webhookInfo = log.Webhooks?.FirstOrDefault(x => x.Id == entry.TargetId);
+            API.WebhookJson webhookInfo = log.Webhooks?.FirstOrDefault(x => x.Id == entry.TargetId);
             RestWebhook webhook = webhookInfo != null ? RestWebhook.Create(discord, (IGuild)null, webhookInfo) : null;
 
             return new WebhookUpdateAuditLogData(webhook, before, after);

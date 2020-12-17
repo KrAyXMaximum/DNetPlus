@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -18,7 +18,7 @@ namespace Discord.Rest
 
         internal static EmoteCreateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange change = entry.Changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson change = entry.Changes.FirstOrDefault(x => x.ChangedProperty == "name");
 
             string emoteName = change.NewValue?.ToObject<string>(discord.ApiClient.Serializer);
             return new EmoteCreateAuditLogData(entry.TargetId.Value, emoteName);

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -24,16 +24,16 @@ namespace Discord.Rest
 
         internal static ChannelCreateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange overwritesModel = changes.FirstOrDefault(x => x.ChangedProperty == "permission_overwrites");
-            API.AuditLogChange typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
-            API.AuditLogChange nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
-            API.AuditLogChange rateLimitPerUserModel = changes.FirstOrDefault(x => x.ChangedProperty == "rate_limit_per_user");
-            API.AuditLogChange nsfwModel = changes.FirstOrDefault(x => x.ChangedProperty == "nsfw");
-            API.AuditLogChange bitrateModel = changes.FirstOrDefault(x => x.ChangedProperty == "bitrate");
+            API.AuditLogChangeJson overwritesModel = changes.FirstOrDefault(x => x.ChangedProperty == "permission_overwrites");
+            API.AuditLogChangeJson typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
+            API.AuditLogChangeJson nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson rateLimitPerUserModel = changes.FirstOrDefault(x => x.ChangedProperty == "rate_limit_per_user");
+            API.AuditLogChangeJson nsfwModel = changes.FirstOrDefault(x => x.ChangedProperty == "nsfw");
+            API.AuditLogChangeJson bitrateModel = changes.FirstOrDefault(x => x.ChangedProperty == "bitrate");
 
-            List<Overwrite> overwrites = overwritesModel.NewValue.ToObject<API.Overwrite[]>(discord.ApiClient.Serializer)
+            List<Overwrite> overwrites = overwritesModel.NewValue.ToObject<API.OverwriteJson[]>(discord.ApiClient.Serializer)
                 .Select(x => new Overwrite(x.TargetId, x.TargetType, new OverwritePermissions(x.Allow, x.Deny)))
                 .ToList();
             ChannelType type = typeModel.NewValue.ToObject<ChannelType>(discord.ApiClient.Serializer);

@@ -7,7 +7,7 @@ namespace Discord.WebSocket
 {
     internal static class EntityExtensions
     {
-        public static IActivity ToEntity(this API.Game model)
+        public static IActivity ToEntity(this API.GameJson model)
         {
             // Custom Status Game
             if (model.Id.IsSpecified && model.Id.Value == "custom")
@@ -84,7 +84,7 @@ namespace Discord.WebSocket
         }
 
         // (Small, Large)
-        public static GameAsset[] ToEntity(this API.GameAssets model, ulong? appId = null)
+        public static GameAsset[] ToEntity(this API.GameAssetsJson model, ulong? appId = null)
         {
             return new GameAsset[]
             {
@@ -103,7 +103,7 @@ namespace Discord.WebSocket
             };
         }
 
-        public static GameParty ToEntity(this API.GameParty model)
+        public static GameParty ToEntity(this API.GamePartyJson model)
         {
             // Discord will probably send bad data since they don't validate anything
             long current = 0, cap = 0;
@@ -120,12 +120,12 @@ namespace Discord.WebSocket
             };
         }
 
-        public static GameSecrets ToEntity(this API.GameSecrets model)
+        public static GameSecrets ToEntity(this API.GameSecretsJson model)
         {
             return new GameSecrets(model.Match, model.Join, model.Spectate);
         }
 
-        public static GameTimestamps ToEntity(this API.GameTimestamps model)
+        public static GameTimestamps ToEntity(this API.GameTimestampsJson model)
         {
             return new GameTimestamps(model.Start.ToNullable(), model.End.ToNullable());
         }

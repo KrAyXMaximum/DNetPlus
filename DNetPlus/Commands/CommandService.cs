@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.Commands.Builders;
 using Discord.Logging;
+using Discord.WebSocket;
 
 namespace Discord.Commands
 {
@@ -490,6 +491,13 @@ namespace Discord.Commands
         /// </returns>
         public Task<IResult> ExecuteAsync(ICommandContext context, int argPos, IServiceProvider services, MultiMatchHandling multiMatchHandling = MultiMatchHandling.Exception)
             => ExecuteAsync(context, context.Message.Content.Substring(argPos), argPos, services, multiMatchHandling);
+
+        internal static string ParseInteractionData(InteractionData data)
+        {
+            if (data.Choices == null || data.Choices.Count() != 0)
+                return $"{data.Name} {string.Join(" ", data.Choices.Select(x => x.Value))}";
+            return data.Name;
+        }
         /// <summary>
         ///     Executes the command.
         /// </summary>
@@ -504,14 +512,16 @@ namespace Discord.Commands
         internal async Task<IResult> ExecuteAsync(ICommandContext context, string input, int argPos, IServiceProvider services, MultiMatchHandling multiMatchHandling = MultiMatchHandling.Exception)
         {
             services = services ?? EmptyServiceProvider.Instance;
-            context.Prefix = context.Message.Content.Substring(0, argPos);
+            if (context.InteractionData == null)
+                context.Prefix = context.Message.Content.Substring(0, argPos);
+
             SearchResult searchResult = Search(input);
             if (!searchResult.IsSuccess)
             {
                 await _commandExecutedEvent.InvokeAsync(Optional.Create<CommandInfo>(), context, searchResult).ConfigureAwait(false);
                 return searchResult;
             }
-
+            
 
             IReadOnlyList<CommandMatch> commands = searchResult.Commands;
             Dictionary<CommandMatch, PreconditionResult> preconditionResults = new Dictionary<CommandMatch, PreconditionResult>();
@@ -535,6 +545,7 @@ namespace Discord.Commands
                 await _commandExecutedEvent.InvokeAsync(bestCandidate.Key.Command, context, bestCandidate.Value).ConfigureAwait(false);
                 return bestCandidate.Value;
             }
+
 
             //If we get this far, at least one precondition was successful.
 

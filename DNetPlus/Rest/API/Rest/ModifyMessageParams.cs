@@ -9,7 +9,7 @@ namespace Discord.API.Rest
         [JsonProperty("content")]
         public Optional<string> Content { get; set; }
         [JsonProperty("embed")]
-        public Optional<Embed> Embed { get; set; }
+        public Optional<EmbedJson> Embed { get; set; }
         [JsonProperty("allowed_mentions")]
         public Optional<AllowedMentions> AllowedMentions { get; set; }
     }

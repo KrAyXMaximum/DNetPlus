@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.Application;
+using Model = Discord.API.ApplicationJson;
 
 namespace Discord.Rest
 {
@@ -58,8 +58,8 @@ namespace Discord.Rest
                 Flags = model.Flags.Value; //TODO: Do we still need this?
             if (model.Owner.IsSpecified)
                 Owner = RestUser.Create(Discord, model.Owner.Value);
-            if (model.Team.IsSpecified && model.Team.Value != null)
-                Team = RestTeam.Create(Discord, model.Team.Value);
+            if (model.Team != null)
+                Team = RestTeam.Create(Discord, model.Team);
         }
 
         /// <exception cref="InvalidOperationException">Unable to update this object from a different application token.</exception>

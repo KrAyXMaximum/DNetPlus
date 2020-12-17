@@ -1,4 +1,5 @@
-using System.Windows.Input;
+
+using Discord.WebSocket;
 
 namespace Discord.Commands
 {
@@ -23,6 +24,8 @@ namespace Discord.Commands
         /// <summary> Indicates whether the channel that the command is executed in is a private channel. </summary>
         public bool IsPrivate => Channel is IPrivateChannel;
 
+        public InteractionData InteractionData { get; }
+
         /// <summary>
         ///     Initializes a new <see cref="CommandContext" /> class with the provided client and message.
         /// </summary>
@@ -35,6 +38,16 @@ namespace Discord.Commands
             Channel = msg.Channel;
             User = msg.Author;
             Message = msg;
+        }
+
+        public CommandContext(DiscordSocketClient client, Interaction interaction)
+        {
+            Client = client;
+            Guild = interaction.Guild;
+            Channel = interaction.Channel;
+            User = interaction.Author;
+            Message = new SocketUserMessage(client, 0, interaction.Channel as SocketTextChannel, interaction.Author as SocketUser, MessageSource.User);
+            InteractionData = interaction.Data;
         }
     }
 }

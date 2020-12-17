@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Model = Discord.API.Message;
+using Model = Discord.API.MessageJson;
 
 namespace Discord.Rest
 {
@@ -40,7 +40,7 @@ namespace Discord.Rest
             ModifyMessageParams apiArgs = new API.Rest.ModifyMessageParams
             {
                 Content = args.Content,
-                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel() : Optional.Create<API.Embed>()
+                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel() : Optional.Create<API.EmbedJson>()
             };
             if (allowedMentions != null)
                 apiArgs.AllowedMentions = allowedMentions.ToModel();
@@ -66,32 +66,31 @@ namespace Discord.Rest
             await client.ApiClient.SuppressEmbedAsync(msg.Channel.Id, msg.Id, apiArgs, options).ConfigureAwait(false);
         }
 
-        public static async Task AddReactionAsync(IMessage msg, IEmote emote, BaseDiscordClient client, RequestOptions options)
+        public static async Task AddReactionAsync(ulong channelId, ulong messageId, IEmote emote, BaseDiscordClient client, RequestOptions options)
         {
-            await client.ApiClient.AddReactionAsync(msg.Channel.Id, msg.Id, emote is Emote e ? $"{e.Name}:{e.Id}" : emote.Name, options).ConfigureAwait(false);
+            await client.ApiClient.AddReactionAsync(channelId, messageId, emote is Emote e ? $"{e.Name}:{e.Id}" : UrlEncode(emote.Name), options).ConfigureAwait(false);
         }
 
-        public static async Task RemoveReactionAsync(IMessage msg, ulong userId, IEmote emote, BaseDiscordClient client, RequestOptions options)
+        public static async Task RemoveReactionAsync(ulong channelId, ulong messageId, ulong userId, IEmote emote, BaseDiscordClient client, RequestOptions options)
         {
-            await client.ApiClient.RemoveReactionAsync(msg.Channel.Id, msg.Id, userId, emote is Emote e ? $"{e.Name}:{e.Id}" : emote.Name, options).ConfigureAwait(false);
+            await client.ApiClient.RemoveReactionAsync(channelId, messageId, userId, emote is Emote e ? $"{e.Name}:{e.Id}" : UrlEncode(emote.Name), options).ConfigureAwait(false);
         }
 
-        public static async Task RemoveAllReactionsAsync(IMessage msg, BaseDiscordClient client, RequestOptions options)
+        public static async Task RemoveAllReactionsAsync(ulong channelId, ulong messageId, BaseDiscordClient client, RequestOptions options)
         {
-            await client.ApiClient.RemoveAllReactionsAsync(msg.Channel.Id, msg.Id, options).ConfigureAwait(false);
+            await client.ApiClient.RemoveAllReactionsAsync(channelId, messageId, options).ConfigureAwait(false);
         }
 
-        public static async Task RemoveAllReactionsForEmoteAsync(IMessage msg, IEmote emote, BaseDiscordClient client, RequestOptions options)
+        public static async Task RemoveAllReactionsForEmoteAsync(ulong channelId, ulong messageId, IEmote emote, BaseDiscordClient client, RequestOptions options)
         {
-            await client.ApiClient.RemoveAllReactionsForEmoteAsync(msg.Channel.Id, msg.Id, emote is Emote e ? $"{e.Name}:{e.Id}" : emote.Name, options).ConfigureAwait(false);
+            await client.ApiClient.RemoveAllReactionsForEmoteAsync(channelId, messageId, emote is Emote e ? $"{e.Name}:{e.Id}" : UrlEncode(emote.Name), options).ConfigureAwait(false);
         }
 
         public static IAsyncEnumerable<IReadOnlyCollection<IUser>> GetReactionUsersAsync(IMessage msg, IEmote emote,
             int? limit, BaseDiscordClient client, RequestOptions options)
         {
             Preconditions.NotNull(emote, nameof(emote));
-            string emoji = (emote is Emote e ? $"{e.Name}:{e.Id}" : emote.Name);
-
+            string emoji = (emote is Emote e ? $"{e.Name}:{e.Id}" : UrlEncode(emote.Name));
             return new PagedAsyncEnumerable<IUser>(
                 DiscordConfig.MaxUserReactionsPerBatch,
                 async (info, ct) =>
@@ -104,7 +103,7 @@ namespace Discord.Rest
                     if (info.Position != null)
                         args.AfterUserId = info.Position.Value;
 
-                    IReadOnlyCollection<API.User> models = await client.ApiClient.GetReactionUsersAsync(msg.Channel.Id, msg.Id, emoji, args, options).ConfigureAwait(false);
+                    IReadOnlyCollection<API.UserJson> models = await client.ApiClient.GetReactionUsersAsync(msg.Channel.Id, msg.Id, emoji, args, options).ConfigureAwait(false);
                     return models.Select(x => RestUser.Create(client, x)).ToImmutableArray();
                 },
                 nextPage: (info, lastPage) =>
@@ -118,6 +117,11 @@ namespace Discord.Rest
                 count: limit
             );
 
+        }
+
+        private static string UrlEncode(string text)
+        {
+            return System.Web.HttpUtility.UrlEncode(text);
         }
 
         public static async Task PinAsync(IMessage msg, BaseDiscordClient client,

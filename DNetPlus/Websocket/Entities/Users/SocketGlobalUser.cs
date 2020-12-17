@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
-using Model = Discord.API.User;
-using PresenceModel = Discord.API.Presence;
+using Model = Discord.API.UserJson;
+using PresenceModel = Discord.API.PresenceJson;
 
 namespace Discord.WebSocket
 {

@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -22,7 +22,7 @@ namespace Discord.Rest
 
         internal static RestAuditLogEntry Create(BaseDiscordClient discord, Model fullLog, EntryModel model)
         {
-            API.User userInfo = fullLog.Users.FirstOrDefault(x => x.Id == model.UserId);
+            API.UserJson userInfo = fullLog.Users.FirstOrDefault(x => x.Id == model.UserId);
             IUser user = null;
             if (userInfo != null)
                 user = RestUser.Create(discord, userInfo);

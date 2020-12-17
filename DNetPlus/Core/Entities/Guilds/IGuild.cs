@@ -805,6 +805,7 @@ namespace Discord
         /// <param name="days">The number of days required for the users to be kicked.</param>
         /// <param name="simulate">Whether this prune action is a simulation.</param>
         /// <param name="options">The options to be used when sending the request.</param>
+        /// <param name="includeRoleIds">Optional list of included roles to use when pruning users.</param>
         /// <returns>
         ///     A task that represents the asynchronous prune operation. The task result contains the number of users to
         ///     be or has been removed from this guild.
@@ -977,5 +978,12 @@ namespace Discord
         /// <param name="options">The option to be used when sending the request.</param>
         /// <returns>The <see cref="RestGuildDiscovery"/>.</returns>
         Task<RestGuildDiscovery> GetDiscoveryMetadataAsync(RequestOptions options = null);
+
+        //Interactions
+        Task<RestInteraction> CreateCommandAsync(CreateInteraction interaction, RequestOptions options = null);
+
+        Task DeleteCommandAsync(ulong interactionId, RequestOptions options = null);
+
+        Task<IReadOnlyCollection<RestInteraction>> GetCommandsAsync(RequestOptions options = null);
     }
 }

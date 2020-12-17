@@ -46,12 +46,12 @@ namespace Discord.Rest
             _restLogger = LogManager.CreateLogger("Rest");
             _isFirstLogin = config.DisplayInitialLog;
 
-            ApiClient.RequestQueue.RateLimitTriggered += async (id, info) =>
+            ApiClient.RequestQueue.RateLimitTriggered += async (id, info, endpoint) =>
             {
                 if (info == null)
-                    await _restLogger.VerboseAsync($"Preemptive Rate limit triggered: {id?.ToString() ?? "null"}").ConfigureAwait(false);
+                await _restLogger.VerboseAsync($"Preemptive Rate limit triggered: {endpoint} {(id.IsHashBucket ? $"(Bucket: {id.BucketHash})" : "")}").ConfigureAwait(false);
                 else
-                    await _restLogger.WarningAsync($"Rate limit triggered: {id?.ToString() ?? "null"}").ConfigureAwait(false);
+                await _restLogger.WarningAsync($"Rate limit triggered: {endpoint} {(id.IsHashBucket ? $"(Bucket: {id.BucketHash})" : "")}").ConfigureAwait(false);
             };
             ApiClient.SentRequest += async (method, endpoint, millis) => await _restLogger.VerboseAsync($"{method} {endpoint}: {millis} ms").ConfigureAwait(false);
         }
@@ -238,7 +238,7 @@ namespace Discord.Rest
         Task IDiscordClient.StartAsync()
             => Task.Delay(0);
 
-        Task IDiscordClient.StartAsync(UserStatus status, string name = null, string streamUrl = null, ActivityType type = ActivityType.Playing)
+        Task IDiscordClient.StartAsync(UserStatus status, string name, string streamUrl, ActivityType type)
             => Task.Delay(0);
         /// <inheritdoc />
         Task IDiscordClient.StopAsync()

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Model = Discord.API.Connection;
+using Model = Discord.API.ConnectionJson;
 
 namespace Discord.Rest
 {

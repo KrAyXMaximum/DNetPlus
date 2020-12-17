@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Discord.API.Rest;
 using ImageModel = Discord.API.Image;
-using Model = Discord.API.Webhook;
+using Model = Discord.API.WebhookJson;
 
 namespace Discord.Rest
 {

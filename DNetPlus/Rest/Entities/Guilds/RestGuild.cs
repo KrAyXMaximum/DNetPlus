@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using WidgetModel = Discord.API.GuildWidget;
-using Model = Discord.API.Guild;
+using WidgetModel = Discord.API.GuildWidgetJson;
+using Model = Discord.API.GuildJson;
 
 namespace Discord.Rest
 {
@@ -257,8 +257,8 @@ namespace Discord.Rest
         /// <inheritdoc />
         public async Task ReorderRolesAsync(IEnumerable<ReorderRoleProperties> args, RequestOptions options = null)
         {
-            IReadOnlyCollection<API.Role> models = await GuildHelper.ReorderRolesAsync(this, Discord, args, options).ConfigureAwait(false);
-            foreach (API.Role model in models)
+            IReadOnlyCollection<API.RoleJson> models = await GuildHelper.ReorderRolesAsync(this, Discord, args, options).ConfigureAwait(false);
+            foreach (API.RoleJson model in models)
             {
                 RestRole role = GetRole(model.Id);
                 role?.Update(model);
@@ -724,6 +724,7 @@ namespace Discord.Rest
         /// <param name="days">The number of days required for the users to be kicked.</param>
         /// <param name="simulate">Whether this prune action is a simulation.</param>
         /// <param name="options">The options to be used when sending the request.</param>
+        /// <param name="includeRoleIds">Optional list of included roles to use when pruning users.</param>
         /// <returns>
         ///     A task that represents the asynchronous prune operation. The task result contains the number of users to
         ///     be or has been removed from this guild.
@@ -814,6 +815,16 @@ namespace Discord.Rest
 
         public Task<RestGuildDiscovery> GetDiscoveryMetadataAsync(RequestOptions options = null)
             => GuildHelper.GetDiscoveryMetadataAsync(this, Discord, options);
+
+        //Interactions
+        public Task<RestInteraction> CreateCommandAsync(CreateInteraction interaction, RequestOptions options = null)
+            => GuildHelper.CreateCommandAsync(this, Discord, interaction, options);
+
+        public Task DeleteCommandAsync(ulong interactionId, RequestOptions options = null)
+            => GuildHelper.DeleteCommandAsync(this, Discord, interactionId, options);
+
+        public Task<IReadOnlyCollection<RestInteraction>> GetCommandsAsync(RequestOptions options = null)
+            => GuildHelper.GetCommandsAsync(this, Discord, options);
 
         //IGuild
         /// <inheritdoc />
@@ -1066,10 +1077,10 @@ namespace Discord.Rest
         async Task<IGuildTemplate> IGuild.GetTemplateAsync(string code, bool withSnapshot, RequestOptions options)
        => await GetTemplateAsync(code, withSnapshot, options).ConfigureAwait(false);
 
-        async Task<IReadOnlyCollection<IGuildTemplate>> IGuild.GetTemplatesAsync(bool withSnapshot = false, RequestOptions options = null)
+        async Task<IReadOnlyCollection<IGuildTemplate>> IGuild.GetTemplatesAsync(bool withSnapshot, RequestOptions options)
             => await GetTemplatesAsync(withSnapshot, options).ConfigureAwait(false);
 
-        async Task<IGuildTemplate> IGuild.CreateTemplateAsync(string name = "", Optional<string> description = default(Optional<string>), bool withSnapshot = false, RequestOptions options = null)
+        async Task<IGuildTemplate> IGuild.CreateTemplateAsync(string name, Optional<string> description, bool withSnapshot, RequestOptions options)
         => await CreateTemplateAsync(name, description, withSnapshot, options).ConfigureAwait(false);
 
         async Task<IGuildTemplate> IGuild.SyncTemplateAsync(string code, bool withSnapshot, RequestOptions options)
@@ -1083,5 +1094,14 @@ namespace Discord.Rest
 
         async Task<RestGuildDiscovery> IGuild.GetDiscoveryMetadataAsync(RequestOptions options)
             => await GetDiscoveryMetadataAsync(options).ConfigureAwait(false);
+
+        async Task<RestInteraction> IGuild.CreateCommandAsync(CreateInteraction interaction, RequestOptions options)
+         => await CreateCommandAsync(interaction, options).ConfigureAwait(false);
+
+        async Task IGuild.DeleteCommandAsync(ulong interactionId, RequestOptions options)
+            => await DeleteCommandAsync(interactionId, options).ConfigureAwait(false);
+
+        async Task<IReadOnlyCollection<RestInteraction>> IGuild.GetCommandsAsync(RequestOptions options)
+            => await GetCommandsAsync(options).ConfigureAwait(false);
     }
 }

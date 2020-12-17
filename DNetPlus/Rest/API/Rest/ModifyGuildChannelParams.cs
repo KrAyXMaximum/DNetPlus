@@ -13,6 +13,6 @@ namespace Discord.API.Rest
         [JsonProperty("parent_id")]
         public Optional<ulong?> CategoryId { get; set; }
         [JsonProperty("permission_overwrites")]
-        public Optional<Overwrite[]> Overwrites { get; set; }
+        public Optional<OverwriteJson[]> Overwrites { get; set; }
     }
 }

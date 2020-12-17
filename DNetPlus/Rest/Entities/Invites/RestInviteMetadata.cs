@@ -1,5 +1,5 @@
 using System;
-using Model = Discord.API.InviteMetadata;
+using Model = Discord.API.InviteMetadataJson;
 
 namespace Discord.Rest
 {

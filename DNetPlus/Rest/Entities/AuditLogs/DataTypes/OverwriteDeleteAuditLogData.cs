@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -18,10 +18,10 @@ namespace Discord.Rest
 
         internal static OverwriteDeleteAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange denyModel = changes.FirstOrDefault(x => x.ChangedProperty == "deny");
-            API.AuditLogChange allowModel = changes.FirstOrDefault(x => x.ChangedProperty == "allow");
+            API.AuditLogChangeJson denyModel = changes.FirstOrDefault(x => x.ChangedProperty == "deny");
+            API.AuditLogChangeJson allowModel = changes.FirstOrDefault(x => x.ChangedProperty == "allow");
 
             ulong deny = denyModel.OldValue.ToObject<ulong>(discord.ApiClient.Serializer);
             ulong allow = allowModel.OldValue.ToObject<ulong>(discord.ApiClient.Serializer);

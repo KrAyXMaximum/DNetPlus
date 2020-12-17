@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Model = Discord.API.User;
+using Model = Discord.API.UserJson;
 
 namespace Discord.WebSocket
 {

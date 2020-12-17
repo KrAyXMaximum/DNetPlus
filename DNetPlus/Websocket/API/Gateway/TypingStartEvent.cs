@@ -12,7 +12,7 @@ namespace Discord.API.Gateway
         [JsonProperty("guild_id")]
         public ulong GuildId { get; set; }
         [JsonProperty("member")]
-        public GuildMember Member { get; set; }
+        public GuildMemberJson Member { get; set; }
         [JsonProperty("timestamp")]
         public int Timestamp { get; set; }
     }

@@ -88,7 +88,7 @@ namespace Discord.Net.Queue
 #endif
                                     UpdateRateLimit(id, request, info, true);
                                 }
-                                await _queue.RaiseRateLimitTriggered(Id, info).ConfigureAwait(false);
+                                await _queue.RaiseRateLimitTriggered(Id, info, $"{request.Method} {request.Endpoint}").ConfigureAwait(false);
                                 continue; //Retry
                             case HttpStatusCode.BadGateway: //502
 #if DEBUG_LIMITS
@@ -250,8 +250,32 @@ namespace Discord.Net.Queue
                 {
                     if (!isRateLimited)
                     {
+                        bool ignoreRatelimit = false;
                         isRateLimited = true;
-                        await _queue.RaiseRateLimitTriggered(Id, null).ConfigureAwait(false);
+                        switch (request)
+                        {
+                            case RestRequest restRequest:
+                                await _queue.RaiseRateLimitTriggered(Id, null, $"{restRequest.Method} {restRequest.Endpoint}").ConfigureAwait(false);
+                                break;
+                            case WebSocketRequest webSocketRequest:
+                                if (webSocketRequest.IgnoreLimit)
+                                {
+                                    ignoreRatelimit = true;
+                                    break;
+                                }
+                                await _queue.RaiseRateLimitTriggered(Id, null, Id.Endpoint).ConfigureAwait(false);
+                                break;
+                            default:
+                                throw new InvalidOperationException("Unknown request type");
+                        }
+                        if (ignoreRatelimit)
+                        {
+#if DEBUG_LIMITS
+                            Debug.WriteLine($"[{id}] Ignoring ratelimit");
+#endif
+                            break;
+                        }
+
                     }
 
                     ThrowRetryLimit(request);
@@ -436,8 +460,6 @@ namespace Discord.Net.Queue
 #if DEBUG_LIMITS
                         Debug.WriteLine($"[{id}] * Reset *");
 #endif
-                        if (request is WebSocketRequest webSocketRequest && webSocketRequest.Options.BucketId == GatewayBucket.Get(GatewayBucketType.Identify).Id)
-                            _queue.ReleaseIdentifySemaphore(id);
                         _semaphore = WindowCount;
                         _resetTick = null;
                         return;

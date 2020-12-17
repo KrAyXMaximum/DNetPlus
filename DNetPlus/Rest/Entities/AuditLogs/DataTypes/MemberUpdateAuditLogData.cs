@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -19,11 +19,11 @@ namespace Discord.Rest
 
         internal static MemberUpdateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange nickModel = changes.FirstOrDefault(x => x.ChangedProperty == "nick");
-            API.AuditLogChange deafModel = changes.FirstOrDefault(x => x.ChangedProperty == "deaf");
-            API.AuditLogChange muteModel = changes.FirstOrDefault(x => x.ChangedProperty == "mute");
+            API.AuditLogChangeJson nickModel = changes.FirstOrDefault(x => x.ChangedProperty == "nick");
+            API.AuditLogChangeJson deafModel = changes.FirstOrDefault(x => x.ChangedProperty == "deaf");
+            API.AuditLogChangeJson muteModel = changes.FirstOrDefault(x => x.ChangedProperty == "mute");
 
             string oldNick = nickModel?.OldValue?.ToObject<string>(discord.ApiClient.Serializer),
                 newNick = nickModel?.NewValue?.ToObject<string>(discord.ApiClient.Serializer);
@@ -32,7 +32,7 @@ namespace Discord.Rest
             bool? oldMute = muteModel?.OldValue?.ToObject<bool>(discord.ApiClient.Serializer),
                 newMute = muteModel?.NewValue?.ToObject<bool>(discord.ApiClient.Serializer);
 
-            API.User targetInfo = log.Users.FirstOrDefault(x => x.Id == entry.TargetId);
+            API.UserJson targetInfo = log.Users.FirstOrDefault(x => x.Id == entry.TargetId);
             RestUser user = RestUser.Create(discord, targetInfo);
 
             MemberInfo before = new MemberInfo(oldNick, oldDeaf, oldMute);

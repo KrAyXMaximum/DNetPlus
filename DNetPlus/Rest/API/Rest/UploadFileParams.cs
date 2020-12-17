@@ -18,7 +18,7 @@ namespace Discord.API.Rest
         public Optional<string> Content { get; set; }
         public Optional<string> Nonce { get; set; }
         public Optional<bool> IsTTS { get; set; }
-        public Optional<Embed> Embed { get; set; }
+        public Optional<EmbedJson> Embed { get; set; }
         public Optional<AllowedMentions> AllowedMentions { get; set; }
         public bool IsSpoiler { get; set; } = false;
 

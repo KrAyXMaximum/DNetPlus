@@ -38,11 +38,10 @@ namespace Discord.API
         public ConnectionState ConnectionState { get; private set; }
 
         public DiscordSocketApiClient(RestClientProvider restClientProvider, WebSocketProvider webSocketProvider, string userAgent,
-            SemaphoreSlim identifyMasterSemaphore, SemaphoreSlim identifySemaphore, int identifyMaxConcurrency,
             string url = null, RetryMode defaultRetryMode = RetryMode.AlwaysRetry, JsonSerializer serializer = null,
             RateLimitPrecision rateLimitPrecision = RateLimitPrecision.Second,
 			bool useSystemClock = true)
-            : base(restClientProvider, userAgent, new RequestQueue(identifyMasterSemaphore, identifySemaphore, identifyMaxConcurrency), defaultRetryMode, serializer, rateLimitPrecision, useSystemClock)
+            : base(restClientProvider, userAgent, new RequestQueue(), defaultRetryMode, serializer, rateLimitPrecision, useSystemClock)
         {
             _gatewayUrl = url;
             if (url != null)
@@ -133,6 +132,8 @@ namespace Discord.API
             if (WebSocketClient == null)
                 throw new NotSupportedException("This client is not configured with WebSocket support.");
 
+            RequestQueue.ClearGatewayBuckets();
+
             //Re-create streams to reset the zlib state
             _compressed?.Dispose();
             _decompressor?.Dispose();
@@ -209,7 +210,12 @@ namespace Discord.API
             options.IsGatewayBucket = true;
             if (options.BucketId == null)
                 options.BucketId = GatewayBucket.Get(GatewayBucketType.Unbucketed).Id;
-            await RequestQueue.SendAsync(new WebSocketRequest(WebSocketClient, bytes, true, options)).ConfigureAwait(false);
+
+            options.IsGatewayBucket = true;
+            if (options.BucketId == null)
+                options.BucketId = GatewayBucket.Get(GatewayBucketType.Unbucketed).Id;
+            await RequestQueue.SendAsync(new WebSocketRequest(WebSocketClient, bytes, true, opCode == GatewayOpCode.Heartbeat, options)).ConfigureAwait(false);
+
             await _sentGatewayMessageEvent.InvokeAsync(opCode).ConfigureAwait(false);
         }
 
@@ -255,7 +261,7 @@ namespace Discord.API
             options = RequestOptions.CreateOrClone(options);
             await SendGatewayAsync(GatewayOpCode.Heartbeat, lastSeq, options: options).ConfigureAwait(false);
         }
-        public async Task SendStatusUpdateAsync(UserStatus status, bool isAFK, long? since, Game game, RequestOptions options = null)
+        public async Task SendStatusUpdateAsync(UserStatus status, bool isAFK, long? since, GameJson game, RequestOptions options = null)
         {
             options = RequestOptions.CreateOrClone(options);
             StatusUpdateParams args = new StatusUpdateParams

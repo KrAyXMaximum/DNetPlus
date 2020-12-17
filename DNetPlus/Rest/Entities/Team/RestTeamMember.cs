@@ -1,5 +1,5 @@
 ﻿using System;
-using Model = Discord.API.TeamMember;
+using Model = Discord.API.TeamMemberJson;
 
 namespace Discord.Rest
 {

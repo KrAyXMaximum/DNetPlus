@@ -97,6 +97,14 @@ namespace Discord.WebSocket
             remove { _messageReceivedEvent.Remove(value); }
         }
         internal readonly AsyncEvent<Func<SocketMessage, Task>> _messageReceivedEvent = new AsyncEvent<Func<SocketMessage, Task>>();
+
+        public event Func<Interaction, Task> InteractionReceived
+        {
+            add { _interactionReceivedEvent.Add(value); }
+            remove { _interactionReceivedEvent.Remove(value); }
+        }
+
+        internal readonly AsyncEvent<Func<Interaction, Task>> _interactionReceivedEvent = new AsyncEvent<Func<Interaction, Task>>();
         /// <summary> Fired when a message is deleted. </summary>
         /// <remarks>
         ///     <para>

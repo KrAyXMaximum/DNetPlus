@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Discord.API.Rest;
 using Discord.Rest;
 using ImageModel = Discord.API.Image;
-using WebhookModel = Discord.API.Webhook;
+using WebhookModel = Discord.API.WebhookJson;
 
 namespace Discord.Webhook
 {
@@ -33,7 +33,7 @@ namespace Discord.Webhook
             if (allowedMentions != null)
                 args.AllowedMentions = allowedMentions.ToModel();
 
-            API.Message model = await client.ApiClient.CreateWebhookMessageAsync(client.Webhook.Id, args, options: options).ConfigureAwait(false);
+            API.MessageJson model = await client.ApiClient.CreateWebhookMessageAsync(client.Webhook.Id, args, options: options).ConfigureAwait(false);
             return model.Id;
         }
         public static async Task<ulong> SendFileAsync(DiscordWebhookClient client, string filePath, string text, bool isTTS, 
@@ -56,7 +56,7 @@ namespace Discord.Webhook
             if (allowedMentions != null)
                 args.AllowedMentions = allowedMentions.ToModel();
 
-            API.Message msg = await client.ApiClient.UploadWebhookFileAsync(client.Webhook.Id, args, options).ConfigureAwait(false);
+            API.MessageJson msg = await client.ApiClient.UploadWebhookFileAsync(client.Webhook.Id, args, options).ConfigureAwait(false);
             return msg.Id;
         }
 

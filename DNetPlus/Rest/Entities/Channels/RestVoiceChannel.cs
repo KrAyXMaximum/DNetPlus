@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Channel;
+using Model = Discord.API.ChannelJson;
 
 namespace Discord.Rest
 {

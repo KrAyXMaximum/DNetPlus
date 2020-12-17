@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Message;
+using Model = Discord.API.MessageJson;
 
 namespace Discord.Rest
 {
@@ -129,7 +129,7 @@ namespace Discord.Rest
 
             if (model.Reactions.IsSpecified)
             {
-                Reaction[] value = model.Reactions.Value;
+                ReactionJson[] value = model.Reactions.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<RestReaction>.Builder reactions = ImmutableArray.CreateBuilder<RestReaction>(value.Length);
@@ -179,19 +179,19 @@ namespace Discord.Rest
 
         /// <inheritdoc />
         public Task AddReactionAsync(IEmote emote, RequestOptions options = null)
-            => MessageHelper.AddReactionAsync(this, emote, Discord, options);
+            => MessageHelper.AddReactionAsync(this.Channel.Id, this.Id, emote, Discord, options);
         /// <inheritdoc />
         public Task RemoveReactionAsync(IEmote emote, IUser user, RequestOptions options = null)
-            => MessageHelper.RemoveReactionAsync(this, user.Id, emote, Discord, options);
+            => MessageHelper.RemoveReactionAsync(this.Channel.Id, this.Id, user.Id, emote, Discord, options);
         /// <inheritdoc />
         public Task RemoveReactionAsync(IEmote emote, ulong userId, RequestOptions options = null)
-            => MessageHelper.RemoveReactionAsync(this, userId, emote, Discord, options);
+            => MessageHelper.RemoveReactionAsync(this.Channel.Id, this.Id, userId, emote, Discord, options);
         /// <inheritdoc />
         public Task RemoveAllReactionsAsync(RequestOptions options = null)
-            => MessageHelper.RemoveAllReactionsAsync(this, Discord, options);
+            => MessageHelper.RemoveAllReactionsAsync(this.Channel.Id, this.Id, Discord, options);
         /// <inheritdoc />
         public Task RemoveAllReactionsForEmoteAsync(IEmote emote, RequestOptions options = null)
-            => MessageHelper.RemoveAllReactionsForEmoteAsync(this, emote, Discord, options);
+            => MessageHelper.RemoveAllReactionsForEmoteAsync(this.Channel.Id, this.Id, emote, Discord, options);
         /// <inheritdoc />
         public IAsyncEnumerable<IReadOnlyCollection<IUser>> GetReactionUsersAsync(IEmote emote, int limit, RequestOptions options = null)
             => MessageHelper.GetReactionUsersAsync(this, emote, limit, Discord, options);

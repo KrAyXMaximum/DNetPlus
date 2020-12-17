@@ -1,6 +1,5 @@
-using Discord.Rest;
 using System.Diagnostics;
-using Model = Discord.API.VoiceRegion;
+using Model = Discord.API.VoiceRegionJson;
 
 namespace Discord.Rest
 {

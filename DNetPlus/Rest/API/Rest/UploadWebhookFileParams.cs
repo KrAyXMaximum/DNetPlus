@@ -20,7 +20,7 @@ namespace Discord.API.Rest
         public Optional<bool> IsTTS { get; set; }
         public Optional<string> Username { get; set; }
         public Optional<string> AvatarUrl { get; set; }
-        public Optional<Embed[]> Embeds { get; set; }
+        public Optional<EmbedJson[]> Embeds { get; set; }
         public Optional<AllowedMentions> AllowedMentions { get; set; }
 
         public bool IsSpoiler { get; set; } = false;

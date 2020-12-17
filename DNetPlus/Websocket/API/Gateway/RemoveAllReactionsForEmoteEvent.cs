@@ -11,6 +11,6 @@ namespace Discord.API.Gateway
         [JsonProperty("message_id")]
         public ulong MessageId { get; set; }
         [JsonProperty("emoji")]
-        public Emoji Emoji { get; set; }
+        public EmojiJson Emoji { get; set; }
     }
 }

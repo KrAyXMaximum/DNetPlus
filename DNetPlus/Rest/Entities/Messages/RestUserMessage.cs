@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.Message;
+using Model = Discord.API.MessageJson;
 
 namespace Discord.Rest
 {
@@ -74,7 +74,7 @@ namespace Discord.Rest
 
             if (model.Attachments.IsSpecified)
             {
-                API.Attachment[] value = model.Attachments.Value;
+                API.AttachmentJson[] value = model.Attachments.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<Attachment>.Builder attachments = ImmutableArray.CreateBuilder<Attachment>(value.Length);
@@ -88,7 +88,7 @@ namespace Discord.Rest
 
             if (model.Embeds.IsSpecified)
             {
-                API.Embed[] value = model.Embeds.Value;
+                API.EmbedJson[] value = model.Embeds.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<Embed>.Builder embeds = ImmutableArray.CreateBuilder<Embed>(value.Length);
@@ -102,7 +102,7 @@ namespace Discord.Rest
 
             if (model.Stickers.IsSpecified)
             {
-                Sticker[] value = model.Stickers.Value;
+                StickerJson[] value = model.Stickers.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<MessageSticker>.Builder stickers = ImmutableArray.CreateBuilder<MessageSticker>(value.Length);
@@ -117,13 +117,13 @@ namespace Discord.Rest
             ImmutableArray<IUser> mentions = ImmutableArray.Create<IUser>();
             if (model.UserMentions.IsSpecified)
             {
-                EntityOrId<User>[] value = model.UserMentions.Value;
+                EntityOrId<UserJson>[] value = model.UserMentions.Value;
                 if (value.Length > 0)
                 {
                     ImmutableArray<IUser>.Builder newMentions = ImmutableArray.CreateBuilder<IUser>(value.Length);
                     for (int i = 0; i < value.Length; i++)
                     {
-                        EntityOrId<User> val = value[i];
+                        EntityOrId<UserJson> val = value[i];
                         if (val.Object != null)
                             newMentions.Add(RestUser.Create(Discord, val.Object));
                     }

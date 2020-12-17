@@ -53,7 +53,7 @@ namespace Discord.Rest
         /// <inheritdoc />
         internal override async Task OnLoginAsync(TokenType tokenType, string token)
         {
-            API.User user = await ApiClient.GetMyUserAsync(new RequestOptions { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
+            API.UserJson user = await ApiClient.GetMyUserAsync(new RequestOptions { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
             ApiClient.CurrentUserId = user.Id;
             base.CurrentUser = RestSelfUser.Create(this, user);
         }
@@ -112,6 +112,16 @@ namespace Discord.Rest
             => ClientHelper.GetVoiceRegionAsync(this, id, options);
         public Task<RestWebhook> GetWebhookAsync(ulong id, RequestOptions options = null)
             => ClientHelper.GetWebhookAsync(this, id, options);
+
+        // Reaction stuff
+        public Task RemoveReactionAsync(ulong channelId, ulong messageId, ulong userId, IEmote emote, RequestOptions options = null)
+           => MessageHelper.RemoveReactionAsync(channelId, messageId, userId, emote, this, options);
+
+        public Task RemoveAllReactionsAsync(ulong channelId, ulong messageId, RequestOptions options = null)
+            => MessageHelper.RemoveAllReactionsAsync(channelId, messageId, this, options);
+
+        public Task RemoveReactionsForEmoteAsync(ulong channelId, ulong messageId, IEmote emote, RequestOptions options = null)
+            => MessageHelper.RemoveAllReactionsForEmoteAsync(channelId, messageId, emote, this, options);
 
         //IDiscordClient
         /// <inheritdoc />

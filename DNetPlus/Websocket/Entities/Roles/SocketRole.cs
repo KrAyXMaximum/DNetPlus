@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Role;
+using Model = Discord.API.RoleJson;
 
 namespace Discord.WebSocket
 {

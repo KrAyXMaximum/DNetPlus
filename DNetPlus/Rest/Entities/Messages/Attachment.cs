@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Model = Discord.API.Attachment;
+using Model = Discord.API.AttachmentJson;
 
 namespace Discord
 {

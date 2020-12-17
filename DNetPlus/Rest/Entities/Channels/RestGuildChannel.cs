@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Channel;
+using Model = Discord.API.ChannelJson;
 
 namespace Discord.Rest
 {
@@ -51,7 +51,7 @@ namespace Discord.Rest
             Name = model.Name.Value;
             Position = model.Position.Value;
 
-            API.Overwrite[] overwrites = model.PermissionOverwrites.Value;
+            API.OverwriteJson[] overwrites = model.PermissionOverwrites.Value;
             ImmutableArray<Overwrite>.Builder newOverwrites = ImmutableArray.CreateBuilder<Overwrite>(overwrites.Length);
             for (int i = 0; i < overwrites.Length; i++)
                 newOverwrites.Add(overwrites[i].ToEntity());

@@ -12,7 +12,7 @@ namespace Discord.Net.Queue
 {
     internal class RequestQueue : IDisposable, IAsyncDisposable
     {
-        public event Func<BucketId, RateLimitInfo?, Task> RateLimitTriggered;
+        public event Func<BucketId, RateLimitInfo?, string, Task> RateLimitTriggered;
 
         private readonly ConcurrentDictionary<BucketId, object> _buckets;
         private readonly SemaphoreSlim _tokenLock;
@@ -22,9 +22,6 @@ namespace Discord.Net.Queue
         private CancellationTokenSource _requestCancelTokenSource;
         private CancellationToken _requestCancelToken; //Parent token + Clear token
         private DateTimeOffset _waitUntil;
-        private readonly SemaphoreSlim _masterIdentifySemaphore;
-        private readonly SemaphoreSlim _identifySemaphore;
-        private readonly int _identifySemaphoreMaxConcurrency;
 
         private Task _cleanupTask;
 
@@ -40,14 +37,6 @@ namespace Discord.Net.Queue
             _buckets = new ConcurrentDictionary<BucketId, object>();
 
             _cleanupTask = RunCleanup();
-        }
-
-        public RequestQueue(SemaphoreSlim masterIdentifySemaphore, SemaphoreSlim slaveIdentifySemaphore, int slaveIdentifySemaphoreMaxConcurrency)
-            : this()
-        {
-            _masterIdentifySemaphore = masterIdentifySemaphore;
-            _identifySemaphore = slaveIdentifySemaphore;
-            _identifySemaphoreMaxConcurrency = slaveIdentifySemaphoreMaxConcurrency;
         }
 
         public async Task SetCancelTokenAsync(CancellationToken cancelToken)
@@ -133,46 +122,13 @@ namespace Discord.Net.Queue
             if (requestBucket.Type == GatewayBucketType.Unbucketed)
                 return;
 
-            //Identify is per-account so we won't trigger global until we can actually go for it
-            if (requestBucket.Type == GatewayBucketType.Identify)
-            {
-                if (_masterIdentifySemaphore == null)
-                    throw new InvalidOperationException("Not a RequestQueue with WebSocket data.");
-
-                if (_identifySemaphore == null)
-                    await _masterIdentifySemaphore.WaitAsync(request.CancelToken);
-                else
-                {
-                    bool master;
-                    while (!(master = _masterIdentifySemaphore.Wait(0)) && !_identifySemaphore.Wait(0)) //To not block the thread
-                        await Task.Delay(100, request.CancelToken);
-                    if (master && _identifySemaphoreMaxConcurrency > 1)
-                        _identifySemaphore.Release(_identifySemaphoreMaxConcurrency - 1);
-                }
-#if DEBUG_LIMITS
-                Debug.WriteLine($"[{id}] Acquired identify ticket");
-#endif
-            }
-
             //It's not a global request, so need to remove one from global (per-session)
             GatewayBucket globalBucketType = GatewayBucket.Get(GatewayBucketType.Unbucketed);
             RequestOptions options = RequestOptions.CreateOrClone(request.Options);
             options.BucketId = globalBucketType.Id;
-            WebSocketRequest globalRequest = new WebSocketRequest(null, null, false, options);
+            WebSocketRequest globalRequest = new WebSocketRequest(null, null, false, false, options);
             RequestBucket globalBucket = GetOrCreateBucket(options, globalRequest);
             await globalBucket.TriggerAsync(id, globalRequest);
-        }
-        internal void ReleaseIdentifySemaphore(int id)
-        {
-            if (_masterIdentifySemaphore == null)
-                throw new InvalidOperationException("Not a RequestQueue with WebSocket data.");
-
-            while (_identifySemaphore?.Wait(0) == true) //exhaust all tickets before releasing master
-            { }
-            _masterIdentifySemaphore.Release();
-#if DEBUG_LIMITS
-            Debug.WriteLine($"[{id}] Released identify master semaphore");
-#endif
         }
 
 
@@ -195,9 +151,10 @@ namespace Discord.Net.Queue
             }
             return (RequestBucket)obj;
         }
-        internal async Task RaiseRateLimitTriggered(BucketId bucketId, RateLimitInfo? info)
+
+        internal async Task RaiseRateLimitTriggered(BucketId bucketId, RateLimitInfo? info, string endpoint)
         {
-            await RateLimitTriggered(bucketId, info).ConfigureAwait(false);
+            await RateLimitTriggered(bucketId, info, endpoint).ConfigureAwait(false);
         }
         internal (RequestBucket, BucketId) UpdateBucketHash(BucketId id, string discordHash)
         {
@@ -209,6 +166,12 @@ namespace Discord.Net.Queue
                 return (hashReqQueue, bucket);
             }
             return (null, null);
+        }
+
+        public void ClearGatewayBuckets()
+        {
+            foreach (GatewayBucketType gwBucket in (GatewayBucketType[])Enum.GetValues(typeof(GatewayBucketType)))
+                _buckets.TryRemove(GatewayBucket.Get(gwBucket).Id, out _);
         }
 
         private async Task RunCleanup()

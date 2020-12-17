@@ -1,5 +1,5 @@
 ﻿using System;
-using Model = Discord.API.GuildDiscovery;
+using Model = Discord.API.GuildDiscoveryJson;
 
 namespace Discord.Rest
 {

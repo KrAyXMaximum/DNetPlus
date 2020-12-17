@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Model = Discord.API.Message;
+using Model = Discord.API.MessageJson;
 
 namespace Discord.Rest
 {

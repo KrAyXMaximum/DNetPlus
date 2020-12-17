@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.Role;
+using Model = Discord.API.RoleJson;
 
 namespace Discord.Rest
 {

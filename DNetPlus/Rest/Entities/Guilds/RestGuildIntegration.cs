@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.Integration;
+using Model = Discord.API.IntegrationJson;
 
 namespace Discord.Rest
 {

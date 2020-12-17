@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.Invite;
+using Model = Discord.API.InviteJson;
 
 namespace Discord.Rest
 {
@@ -55,7 +55,7 @@ namespace Discord.Rest
         /// <inheritdoc />
         public async Task UpdateAsync(RequestOptions options = null)
         {
-            API.InviteMetadata model = await Discord.ApiClient.GetInviteAsync(Code, options).ConfigureAwait(false);
+            API.InviteMetadataJson model = await Discord.ApiClient.GetInviteAsync(Code, options).ConfigureAwait(false);
             Update(model);
         }
         /// <inheritdoc />

@@ -7,14 +7,14 @@ namespace Discord.Rest
 {
     internal static class EntityExtensions
     {
-        public static IEmote ToIEmote(this API.Emoji model)
+        public static IEmote ToIEmote(this API.EmojiJson model)
         {
             if (model.Id.HasValue)
                 return model.ToEntity();
             return new Emoji(model.Name);
         }
 
-        public static GuildEmote ToEntity(this API.Emoji model)
+        public static GuildEmote ToEntity(this API.EmojiJson model)
             => new GuildEmote(model.Id.Value,
                 model.Name,
                 model.Animated.GetValueOrDefault(),
@@ -24,7 +24,7 @@ namespace Discord.Rest
                 model.User.IsSpecified ? model.User.Value.Id : (ulong?)null);
 
 
-        public static Embed ToEntity(this API.Embed model)
+        public static Embed ToEntity(this API.EmbedJson model)
         {
             return new Embed(model.Type, model.Title, model.Description, model.Url, model.Timestamp,
                 model.Color.HasValue ? new Color(model.Color.Value) : (Color?)null,
@@ -36,10 +36,10 @@ namespace Discord.Rest
                 model.Thumbnail.IsSpecified ? model.Thumbnail.Value.ToEntity() : (EmbedThumbnail?)null,
                 model.Fields.IsSpecified ? model.Fields.Value.Select(x => x.ToEntity()).ToImmutableArray() : ImmutableArray.Create<EmbedField>());
         }
-        public static API.Embed ToModel(this Embed entity)
+        public static API.EmbedJson ToModel(this Embed entity)
         {
             if (entity == null) return null;
-            API.Embed model = new API.Embed
+            API.EmbedJson model = new API.EmbedJson
             {
                 Type = entity.Type,
                 Title = entity.Title,
@@ -64,7 +64,7 @@ namespace Discord.Rest
             return model;
         }
 
-        public static MessageSticker ToEntity(this Sticker model)
+        public static MessageSticker ToEntity(this StickerJson model)
         {
             return new MessageSticker
             {
@@ -106,67 +106,67 @@ namespace Discord.Rest
             if (mentionTypes.HasFlag(AllowedMentionTypes.Users))
                 yield return "users";
         }
-        public static EmbedAuthor ToEntity(this API.EmbedAuthor model)
+        public static EmbedAuthor ToEntity(this API.EmbedAuthorJson model)
         {
             return new EmbedAuthor(model.Name, model.Url, model.IconUrl, model.ProxyIconUrl);
         }
-        public static API.EmbedAuthor ToModel(this EmbedAuthor entity)
+        public static API.EmbedAuthorJson ToModel(this EmbedAuthor entity)
         {
-            return new API.EmbedAuthor { Name = entity.Name, Url = entity.Url, IconUrl = entity.IconUrl };
+            return new API.EmbedAuthorJson { Name = entity.Name, Url = entity.Url, IconUrl = entity.IconUrl };
         }
-        public static EmbedField ToEntity(this API.EmbedField model)
+        public static EmbedField ToEntity(this API.EmbedFieldJson model)
         {
             return new EmbedField(model.Name, model.Value, model.Inline);
         }
-        public static API.EmbedField ToModel(this EmbedField entity)
+        public static API.EmbedFieldJson ToModel(this EmbedField entity)
         {
-            return new API.EmbedField { Name = entity.Name, Value = entity.Value, Inline = entity.Inline };
+            return new API.EmbedFieldJson { Name = entity.Name, Value = entity.Value, Inline = entity.Inline };
         }
-        public static EmbedFooter ToEntity(this API.EmbedFooter model)
+        public static EmbedFooter ToEntity(this API.EmbedFooterJson model)
         {
             return new EmbedFooter(model.Text, model.IconUrl, model.ProxyIconUrl);
         }
-        public static API.EmbedFooter ToModel(this EmbedFooter entity)
+        public static API.EmbedFooterJson ToModel(this EmbedFooter entity)
         {
-            return new API.EmbedFooter { Text = entity.Text, IconUrl = entity.IconUrl };
+            return new API.EmbedFooterJson { Text = entity.Text, IconUrl = entity.IconUrl };
         }
-        public static EmbedImage ToEntity(this API.EmbedImage model)
+        public static EmbedImage ToEntity(this API.EmbedImageJson model)
         {
             return new EmbedImage(model.Url, model.ProxyUrl,
                   model.Height.IsSpecified ? model.Height.Value : (int?)null,
                   model.Width.IsSpecified ? model.Width.Value : (int?)null);
         }
-        public static API.EmbedImage ToModel(this EmbedImage entity)
+        public static API.EmbedImageJson ToModel(this EmbedImage entity)
         {
-            return new API.EmbedImage { Url = entity.Url };
+            return new API.EmbedImageJson { Url = entity.Url };
         }
-        public static EmbedProvider ToEntity(this API.EmbedProvider model)
+        public static EmbedProvider ToEntity(this API.EmbedProviderJson model)
         {
             return new EmbedProvider(model.Name, model.Url);
         }
-        public static API.EmbedProvider ToModel(this EmbedProvider entity)
+        public static API.EmbedProviderJson ToModel(this EmbedProvider entity)
         {
-            return new API.EmbedProvider { Name = entity.Name, Url = entity.Url };
+            return new API.EmbedProviderJson { Name = entity.Name, Url = entity.Url };
         }
-        public static EmbedThumbnail ToEntity(this API.EmbedThumbnail model)
+        public static EmbedThumbnail ToEntity(this API.EmbedThumbnailJson model)
         {
             return new EmbedThumbnail(model.Url, model.ProxyUrl,
                   model.Height.IsSpecified ? model.Height.Value : (int?)null,
                   model.Width.IsSpecified ? model.Width.Value : (int?)null);
         }
-        public static API.EmbedThumbnail ToModel(this EmbedThumbnail entity)
+        public static API.EmbedThumbnailJson ToModel(this EmbedThumbnail entity)
         {
-            return new API.EmbedThumbnail { Url = entity.Url };
+            return new API.EmbedThumbnailJson { Url = entity.Url };
         }
-        public static EmbedVideo ToEntity(this API.EmbedVideo model)
+        public static EmbedVideo ToEntity(this API.EmbedVideoJson model)
         {
             return new EmbedVideo(model.Url,
                   model.Height.IsSpecified ? model.Height.Value : (int?)null,
                   model.Width.IsSpecified ? model.Width.Value : (int?)null);
         }
-        public static API.EmbedVideo ToModel(this EmbedVideo entity)
+        public static API.EmbedVideoJson ToModel(this EmbedVideo entity)
         {
-            return new API.EmbedVideo { Url = entity.Url };
+            return new API.EmbedVideoJson { Url = entity.Url };
         }
 
         public static API.Image ToModel(this Image entity)
@@ -174,7 +174,7 @@ namespace Discord.Rest
             return new API.Image(entity.Stream);
         }
 
-        public static Overwrite ToEntity(this API.Overwrite model)
+        public static Overwrite ToEntity(this API.OverwriteJson model)
         {
             return new Overwrite(model.TargetId, model.TargetType, new OverwritePermissions(model.Allow, model.Deny));
         }

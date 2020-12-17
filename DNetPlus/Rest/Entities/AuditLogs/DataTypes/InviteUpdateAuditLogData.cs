@@ -1,7 +1,7 @@
 using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -18,13 +18,13 @@ namespace Discord.Rest
 
         internal static InviteUpdateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange maxAgeModel = changes.FirstOrDefault(x => x.ChangedProperty == "max_age");
-            API.AuditLogChange codeModel = changes.FirstOrDefault(x => x.ChangedProperty == "code");
-            API.AuditLogChange temporaryModel = changes.FirstOrDefault(x => x.ChangedProperty == "temporary");
-            API.AuditLogChange channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
-            API.AuditLogChange maxUsesModel = changes.FirstOrDefault(x => x.ChangedProperty == "max_uses");
+            API.AuditLogChangeJson maxAgeModel = changes.FirstOrDefault(x => x.ChangedProperty == "max_age");
+            API.AuditLogChangeJson codeModel = changes.FirstOrDefault(x => x.ChangedProperty == "code");
+            API.AuditLogChangeJson temporaryModel = changes.FirstOrDefault(x => x.ChangedProperty == "temporary");
+            API.AuditLogChangeJson channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
+            API.AuditLogChangeJson maxUsesModel = changes.FirstOrDefault(x => x.ChangedProperty == "max_uses");
 
             int? oldMaxAge = maxAgeModel?.OldValue?.ToObject<int>(discord.ApiClient.Serializer),
                 newMaxAge = maxAgeModel?.NewValue?.ToObject<int>(discord.ApiClient.Serializer);

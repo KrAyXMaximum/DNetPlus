@@ -18,7 +18,7 @@ namespace Discord.API.Gateway
         [JsonProperty("v")]
         public int Version { get; set; }
         [JsonProperty("user")]
-        public User User { get; set; }
+        public UserJson User { get; set; }
         [JsonProperty("session_id")]
         public string SessionId { get; set; }
         [JsonProperty("read_state")]
@@ -26,9 +26,9 @@ namespace Discord.API.Gateway
         [JsonProperty("guilds")]
         public ExtendedGuild[] Guilds { get; set; }
         [JsonProperty("private_channels")]
-        public Channel[] PrivateChannels { get; set; }
+        public ChannelJson[] PrivateChannels { get; set; }
         [JsonProperty("relationships")]
-        public Relationship[] Relationships { get; set; }
+        public RelationshipJson[] Relationships { get; set; }
 
         //Ignored
         /*[JsonProperty("user_settings")]

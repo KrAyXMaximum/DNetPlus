@@ -4,7 +4,7 @@ using System;
 
 namespace Discord.API.Gateway
 {
-    internal class ExtendedGuild : Guild
+    internal class ExtendedGuild : GuildJson
     {
         [JsonProperty("unavailable")]
         public bool? Unavailable { get; set; }
@@ -14,11 +14,11 @@ namespace Discord.API.Gateway
         public bool Large { get; set; }
 
         [JsonProperty("presences")]
-        public Presence[] Presences { get; set; }
+        public PresenceJson[] Presences { get; set; }
         [JsonProperty("members")]
-        public GuildMember[] Members { get; set; }
+        public GuildMemberJson[] Members { get; set; }
         [JsonProperty("channels")]
-        public Channel[] Channels { get; set; }
+        public ChannelJson[] Channels { get; set; }
         [JsonProperty("joined_at")]
         public DateTimeOffset JoinedAt { get; set; }
     }

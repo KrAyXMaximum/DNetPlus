@@ -1,8 +1,7 @@
 ﻿using Discord;
-using Discord.API;
 using Discord.Commands;
-using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,15 +9,36 @@ namespace TestBot
 {
     public class CmdTest : ModuleBase<SocketCommandContext>
     {
-        [Command("discovery")]
-        public async Task Discovery()
+        [Command("sadd")]
+        public async Task SAdd()
         {
-           
+            await Context.Guild.CreateCommandAsync(new CreateInteraction
+            {
+                Name = "test",
+                Description = "Hello"
+            });
+            await ReplyAsync("Added");
         }
 
+        [Command("sdel")]
+        public async Task Sdel(ulong id)
+        {
+            await Context.Guild.DeleteCommandAsync(id);
+            await ReplyAsync("Deleted");
+        }
+
+        [Command("slist")]
+        public async Task SList()
+        {
+            IReadOnlyCollection<RestInteraction> List = await Context.Guild.GetCommandsAsync();
+            await Context.Channel.SendMessageAsync("", false, new EmbedBuilder
+            {
+                Description = string.Join("\n", List.Select(x => $"{x.Name} | `{x.Id}`"))
+            }.Build());
+        }
 
         [Command("tget")]
-        public async Task Test()
+        public async Task Testget()
         {
             try
             {
@@ -95,7 +115,14 @@ namespace TestBot
         public async Task Replyto(ulong id)
         {
             Console.WriteLine("Testing");
-            await Context.Channel.SendMessageAsync("Test", reference: new MessageReferenceParams { ChannelId = Context.Channel.Id, MessageId = id, GuildId = Context.Guild.Id });
+            try
+            {
+                await Context.Channel.SendMessageAsync("Test", reference: new MessageReferenceParams { ChannelId = Context.Channel.Id, MessageId = id });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         [Command("embedimage")]
@@ -111,6 +138,15 @@ namespace TestBot
         public async Task TestOwner()
         {
             await ReplyAsync("Test owner");
+        }
+
+        [Command("ahh")]
+        public async Task Ahh(string ani = "")
+        {
+            if (ani == "")
+            await ReplyInteractionAsync("Hello slash command");
+            else
+                await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, "Hello slash command, you chose " + ani);
         }
     }
 }

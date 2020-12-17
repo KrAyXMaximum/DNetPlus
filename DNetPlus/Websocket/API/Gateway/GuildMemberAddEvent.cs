@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Discord.API.Gateway
 {
-    internal class GuildMemberAddEvent : GuildMember
+    internal class GuildMemberAddEvent : GuildMemberJson
     {
         [JsonProperty("guild_id")]
         public ulong GuildId { get; set; }

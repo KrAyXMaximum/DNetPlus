@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Model = Discord.API.VoiceState;
+using Model = Discord.API.VoiceStateJson;
 
 namespace Discord.WebSocket
 {

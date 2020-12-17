@@ -1,3 +1,4 @@
+using Discord.API.Rest;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -5,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Model = Discord.API.Channel;
+using Model = Discord.API.ChannelJson;
 
 namespace Discord.Rest
 {
@@ -95,6 +96,9 @@ namespace Discord.Rest
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public Task<RestUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null)
             => ChannelHelper.SendMessageAsync(this, Discord, text, isTTS, embed, allowedMentions, reference, options);
+
+        public Task<bool> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
+            => ChannelHelper.SendInteractionMessageAsync(this, Discord, interaction, text, isTTS, embed, allowedMentions, reference, options, type, ghostMessage);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException">
@@ -200,14 +204,17 @@ namespace Discord.Rest
         async Task<IReadOnlyCollection<IMessage>> IMessageChannel.GetPinnedMessagesAsync(RequestOptions options)
             => await GetPinnedMessagesAsync(options).ConfigureAwait(false);
         /// <inheritdoc />
-        async Task<IUserMessage> IMessageChannel.SendFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null)
+        async Task<IUserMessage> IMessageChannel.SendFileAsync(string filePath, string text, bool isTTS, Embed embed, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions)
             => await SendFileAsync(filePath, text, isTTS, embed, options, isSpoiler, allowedMentions).ConfigureAwait(false);
         /// <inheritdoc />
-        async Task<IUserMessage> IMessageChannel.SendFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null)
+        async Task<IUserMessage> IMessageChannel.SendFileAsync(Stream stream, string filename, string text, bool isTTS, Embed embed, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions)
             => await SendFileAsync(stream, filename, text, isTTS, embed, options, isSpoiler, allowedMentions).ConfigureAwait(false);
         /// <inheritdoc />
         async Task<IUserMessage> IMessageChannel.SendMessageAsync(string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference)
             => await SendMessageAsync(text, isTTS, embed, options, allowedMentions, reference).ConfigureAwait(false);
+
+        async Task<bool> IMessageChannel.SendInteractionMessageAsync(InteractionData interaction, string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage = false)
+        => await SendInteractionMessageAsync(interaction, text, isTTS, embed, options, allowedMentions, reference, type, ghostMessage).ConfigureAwait(false);
 
         //IChannel
         /// <inheritdoc />

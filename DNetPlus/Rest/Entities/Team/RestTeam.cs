@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Model = Discord.API.Team;
+using Model = Discord.API.TeamJson;
 
 namespace Discord.Rest
 {

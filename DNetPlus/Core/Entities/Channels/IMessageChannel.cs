@@ -1,3 +1,5 @@
+using Discord.API.Rest;
+using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +37,9 @@ namespace Discord
         ///     contains the sent message.
         /// </returns>
         Task<IUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null);
+
+        Task<bool> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false);
+
         /// <summary>
         ///     Sends a file to this message channel with an optional caption.
         /// </summary>

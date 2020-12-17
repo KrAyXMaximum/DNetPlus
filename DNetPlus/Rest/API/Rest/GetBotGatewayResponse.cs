@@ -10,6 +10,6 @@ namespace Discord.API.Rest
         [JsonProperty("shards")]
         public int Shards { get; set; }
         [JsonProperty("session_start_limit")]
-        public SessionStartLimit SessionStartLimit { get; set; }
+        public SessionStartLimitJson SessionStartLimit { get; set; }
     }
 }

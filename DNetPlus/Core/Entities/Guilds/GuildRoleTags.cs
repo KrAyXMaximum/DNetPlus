@@ -1,13 +1,10 @@
 ﻿using Discord.API;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Discord
 {
     public class GuildRoleTags
     {
-        public GuildRoleTags(RoleTags tags)
+        public GuildRoleTags(RoleTagsJson tags)
         {
             if (tags != null)
             {

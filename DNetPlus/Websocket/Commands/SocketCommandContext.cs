@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using System;
 
 namespace Discord.Commands
 {
@@ -37,6 +38,8 @@ namespace Discord.Commands
 
         public string Prefix { get; set; }
 
+        public InteractionData InteractionData { get; }
+
         /// <summary>
         ///     Initializes a new <see cref="SocketCommandContext" /> class with the provided client and message.
         /// </summary>
@@ -51,6 +54,16 @@ namespace Discord.Commands
             Message = msg;
         }
 
+        public SocketCommandContext(DiscordSocketClient client, Interaction interaction)
+        {
+            Client = client;
+            Guild = interaction.Guild as SocketGuild;
+            Channel = interaction.Channel as SocketTextChannel;
+            User = interaction.Author as SocketUser;
+            Message = new SocketUserMessage(client, 0, Channel, interaction.Author as SocketUser, MessageSource.User, CommandService.ParseInteractionData(interaction.Data));
+            InteractionData = interaction.Data;
+        }
+
         //ICommandContext
         /// <inheritdoc/>
         IDiscordClient ICommandContext.Client => Client;
@@ -62,5 +75,7 @@ namespace Discord.Commands
         IUser ICommandContext.User => User;
         /// <inheritdoc/>
         IUserMessage ICommandContext.Message => Message;
+
+        InteractionData ICommandContext.InteractionData => InteractionData;
     }
 }

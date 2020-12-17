@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -21,17 +21,17 @@ namespace Discord.Rest
 
         internal static WebhookCreateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
-            API.AuditLogChange typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
-            API.AuditLogChange nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson channelIdModel = changes.FirstOrDefault(x => x.ChangedProperty == "channel_id");
+            API.AuditLogChangeJson typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
+            API.AuditLogChangeJson nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
 
             ulong channelId = channelIdModel.NewValue.ToObject<ulong>(discord.ApiClient.Serializer);
             WebhookType type = typeModel.NewValue.ToObject<WebhookType>(discord.ApiClient.Serializer);
             string name = nameModel.NewValue.ToObject<string>(discord.ApiClient.Serializer);
 
-            API.Webhook webhookInfo = log.Webhooks?.FirstOrDefault(x => x.Id == entry.TargetId);
+            API.WebhookJson webhookInfo = log.Webhooks?.FirstOrDefault(x => x.Id == entry.TargetId);
             RestWebhook webhook = webhookInfo == null ? null : RestWebhook.Create(discord, (IGuild)null, webhookInfo);
 
             return new WebhookCreateAuditLogData(webhook, entry.TargetId.Value, type, name, channelId);

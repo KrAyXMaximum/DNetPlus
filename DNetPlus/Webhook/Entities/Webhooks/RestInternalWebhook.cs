@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Model = Discord.API.Webhook;
+using Model = Discord.API.WebhookJson;
 
 namespace Discord.Webhook
 {

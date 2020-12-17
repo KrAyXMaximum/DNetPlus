@@ -14,13 +14,13 @@ namespace Discord.API.Gateway
         [JsonProperty("guild_id")]
         public Optional<ulong> GuildId { get; set; }
         [JsonProperty("inviter")]
-        public Optional<User> Inviter { get; set; }
+        public Optional<UserJson> Inviter { get; set; }
         [JsonProperty("max_age")]
         public int MaxAge { get; set; }
         [JsonProperty("max_uses")]
         public int MaxUses { get; set; }
         [JsonProperty("target_user")]
-        public Optional<User> TargetUser { get; set; }
+        public Optional<UserJson> TargetUser { get; set; }
         [JsonProperty("target_user_type")]
         public Optional<TargetUserType> TargetUserType { get; set; }
         [JsonProperty("temporary")]

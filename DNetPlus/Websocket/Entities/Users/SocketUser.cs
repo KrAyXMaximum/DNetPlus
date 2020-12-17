@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.Rest;
-using Model = Discord.API.User;
+using Model = Discord.API.UserJson;
 
 namespace Discord.WebSocket
 {

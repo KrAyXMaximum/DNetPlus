@@ -15,7 +15,7 @@ namespace Discord.API.Rest
         [JsonProperty("position")]
         public Optional<int> Position { get; set; }
         [JsonProperty("permission_overwrites")]
-        public Optional<Overwrite[]> Overwrites { get; set; }
+        public Optional<OverwriteJson[]> Overwrites { get; set; }
 
         //Text channels
         [JsonProperty("topic")]

@@ -1,3 +1,4 @@
+using Discord.API;
 using Discord.Audio;
 using Discord.Rest;
 using System;
@@ -9,16 +10,16 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ChannelModel = Discord.API.Channel;
+using ChannelModel = Discord.API.ChannelJson;
 using EmojiUpdateModel = Discord.API.Gateway.GuildEmojiUpdateEvent;
 using ExtendedModel = Discord.API.Gateway.ExtendedGuild;
 using GuildSyncModel = Discord.API.Gateway.GuildSyncEvent;
-using MemberModel = Discord.API.GuildMember;
-using Model = Discord.API.Guild;
-using PresenceModel = Discord.API.Presence;
-using RoleModel = Discord.API.Role;
-using UserModel = Discord.API.User;
-using VoiceStateModel = Discord.API.VoiceState;
+using MemberModel = Discord.API.GuildMemberJson;
+using Model = Discord.API.GuildJson;
+using PresenceModel = Discord.API.PresenceJson;
+using RoleModel = Discord.API.RoleJson;
+using UserModel = Discord.API.UserJson;
+using VoiceStateModel = Discord.API.VoiceStateJson;
 
 namespace Discord.WebSocket
 {
@@ -94,7 +95,7 @@ namespace Discord.WebSocket
         public string VoiceRegionId { get; private set; }
         /// <inheritdoc />
         public string IconId { get; private set; }
-
+        /// <inheritdoc />
         public bool IsIconAnimated
         {
             get
@@ -108,6 +109,7 @@ namespace Discord.WebSocket
         }
         /// <inheritdoc />
         public string SplashId { get; private set; }
+        /// <inheritdoc />
         public string DiscoverySplashId { get; private set; }
         /// <inheritdoc />
         public PremiumTier PremiumTier { get; private set; }
@@ -144,10 +146,14 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         public string BannerUrl => CDN.GetGuildBannerUrl(Id, BannerId);
         /// <summary> Indicates whether the client has all the members downloaded to the local guild cache. </summary>
-        public bool HasAllMembers => MemberCount == DownloadedMemberCount;// _downloaderPromise.Task.IsCompleted;
+        public bool HasAllMembers => MemberCount <= DownloadedMemberCount;// _downloaderPromise.Task.IsCompleted;
         /// <summary> Indicates whether the guild cache is synced to this guild. </summary>
         public bool IsSynced => _syncPromise.Task.IsCompleted;
+
+        /// <summary> Gets the task for the guild sync event?? </summary>
         public Task SyncPromise => _syncPromise.Task;
+
+        /// <summary> Gets the task for when guild members are downloading?? </summary>
         public Task DownloaderPromise => _downloaderPromise.Task;
         /// <summary>
         ///     Gets the <see cref="IAudioClient" /> associated with this guild.
@@ -986,21 +992,27 @@ namespace Discord.WebSocket
             => GuildHelper.GetWebhooksAsync(this, Discord, options);
 
         //Templates
+        /// <inheritdoc />
         public Task<RestGuildTemplate> GetTemplateAsync(string code, bool withSnapshot = false, RequestOptions options = null)
             => ClientHelper.GetTemplateAsync(Discord, code, withSnapshot, options);
 
+        /// <inheritdoc />
         public Task<IReadOnlyCollection<RestGuildTemplate>> GetTemplatesAsync(bool withSnapshot = false, RequestOptions options = null)
             => GuildHelper.GetTemplatesAsync(this, Discord, withSnapshot, options);
 
+        /// <inheritdoc />
         public Task<RestGuildTemplate> CreateTemplateAsync(string name = "", Optional<string> description = default(Optional<string>), bool withSnapshot = false, RequestOptions options = null)
             => GuildHelper.CreateTemplateAsync(this, Discord, name, description, withSnapshot, options);
 
+        /// <inheritdoc />
         public Task<RestGuildTemplate> SyncTemplateAsync(string code, bool withSnapshot = false, RequestOptions options = null)
             => GuildHelper.SyncTemplateAsync(this, Discord, code, withSnapshot, options);
 
+        /// <inheritdoc />
         public Task<RestGuildTemplate> ModifyTemplateAsync(string code, Action<TemplateProperties> func, bool withSnapshot = false, RequestOptions options = null)
             => GuildHelper.ModifyTemplateAsync(this, Discord, code, func, withSnapshot, options);
 
+        /// <inheritdoc />
         public Task<RestGuildTemplate> DeleteTemplateAsync(string code, bool withSnapshot = false, RequestOptions options = null)
             => GuildHelper.DeleteTemplateAsync(this, Discord, code, withSnapshot, options);
 
@@ -1022,6 +1034,16 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         public Task<RestGuildDiscovery> GetDiscoveryMetadataAsync(RequestOptions options = null)
            => GuildHelper.GetDiscoveryMetadataAsync(this, Discord, options);
+
+        //Interactions
+        public Task<RestInteraction> CreateCommandAsync(CreateInteraction interaction, RequestOptions options = null)
+            => GuildHelper.CreateCommandAsync(this, Discord, interaction, options);
+
+        public Task DeleteCommandAsync(ulong interactionId, RequestOptions options = null)
+            => GuildHelper.DeleteCommandAsync(this, Discord, interactionId, options);
+
+        public Task<IReadOnlyCollection<RestInteraction>> GetCommandsAsync(RequestOptions options = null)
+            => GuildHelper.GetCommandsAsync(this, Discord, options);
 
         //Voice States
         internal async Task<SocketVoiceState> AddOrUpdateVoiceStateAsync(ClientState state, VoiceStateModel model)
@@ -1386,8 +1408,6 @@ namespace Discord.WebSocket
         async Task<IReadOnlyCollection<IGuildTemplate>> IGuild.GetTemplatesAsync(bool withSnapshot, RequestOptions options)
             => await GetTemplatesAsync(withSnapshot, options).ConfigureAwait(false);
 
-        
-
 
         void IDisposable.Dispose()
         {
@@ -1399,7 +1419,7 @@ namespace Discord.WebSocket
         async Task<IGuildTemplate> IGuild.GetTemplateAsync(string code, bool withSnapshot, RequestOptions options)
         => await GetTemplateAsync(code, withSnapshot, options).ConfigureAwait(false);
 
-        async Task<IGuildTemplate> IGuild.CreateTemplateAsync(string name = "", Optional<string> description = default(Optional<string>), bool withSnapshot = false, RequestOptions options = null)
+        async Task<IGuildTemplate> IGuild.CreateTemplateAsync(string name, Optional<string> description, bool withSnapshot, RequestOptions options)
         => await CreateTemplateAsync(name, description, withSnapshot, options).ConfigureAwait(false);
 
         async Task<IGuildTemplate> IGuild.SyncTemplateAsync(string code, bool withSnapshot, RequestOptions options)
@@ -1413,5 +1433,14 @@ namespace Discord.WebSocket
 
         async Task<RestGuildDiscovery> IGuild.GetDiscoveryMetadataAsync(RequestOptions options)
             => await GetDiscoveryMetadataAsync(options).ConfigureAwait(false);
+
+        async Task<RestInteraction> IGuild.CreateCommandAsync(CreateInteraction interaction, RequestOptions options)
+          => await CreateCommandAsync(interaction, options).ConfigureAwait(false);
+
+        async Task IGuild.DeleteCommandAsync(ulong interactionId, RequestOptions options)
+            => await DeleteCommandAsync(interactionId, options).ConfigureAwait(false);
+
+        async Task<IReadOnlyCollection<RestInteraction>> IGuild.GetCommandsAsync(RequestOptions options)
+            => await GetCommandsAsync(options).ConfigureAwait(false);
     }
 }

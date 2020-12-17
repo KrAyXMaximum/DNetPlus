@@ -1,4 +1,4 @@
-using System.Windows.Input;
+using Discord.WebSocket;
 
 namespace Discord.Commands
 {
@@ -31,5 +31,7 @@ namespace Discord.Commands
         CommandInfo Command { get; set; }
 
         string Prefix { get; set; }
+
+        InteractionData InteractionData { get; }
     }
 }

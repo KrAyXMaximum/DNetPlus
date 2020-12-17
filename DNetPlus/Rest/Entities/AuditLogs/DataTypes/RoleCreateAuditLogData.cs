@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 
-using Model = Discord.API.AuditLog;
-using EntryModel = Discord.API.AuditLogEntry;
+using Model = Discord.API.AuditLogJson;
+using EntryModel = Discord.API.AuditLogEntryJson;
 
 namespace Discord.Rest
 {
@@ -18,13 +18,13 @@ namespace Discord.Rest
 
         internal static RoleCreateAuditLogData Create(BaseDiscordClient discord, Model log, EntryModel entry)
         {
-            API.AuditLogChange[] changes = entry.Changes;
+            API.AuditLogChangeJson[] changes = entry.Changes;
 
-            API.AuditLogChange colorModel = changes.FirstOrDefault(x => x.ChangedProperty == "color");
-            API.AuditLogChange mentionableModel = changes.FirstOrDefault(x => x.ChangedProperty == "mentionable");
-            API.AuditLogChange hoistModel = changes.FirstOrDefault(x => x.ChangedProperty == "hoist");
-            API.AuditLogChange nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
-            API.AuditLogChange permissionsModel = changes.FirstOrDefault(x => x.ChangedProperty == "permissions");
+            API.AuditLogChangeJson colorModel = changes.FirstOrDefault(x => x.ChangedProperty == "color");
+            API.AuditLogChangeJson mentionableModel = changes.FirstOrDefault(x => x.ChangedProperty == "mentionable");
+            API.AuditLogChangeJson hoistModel = changes.FirstOrDefault(x => x.ChangedProperty == "hoist");
+            API.AuditLogChangeJson nameModel = changes.FirstOrDefault(x => x.ChangedProperty == "name");
+            API.AuditLogChangeJson permissionsModel = changes.FirstOrDefault(x => x.ChangedProperty == "permissions");
 
             uint? colorRaw = colorModel?.NewValue?.ToObject<uint>(discord.ApiClient.Serializer);
             bool? mentionable = mentionableModel?.NewValue?.ToObject<bool>(discord.ApiClient.Serializer);
