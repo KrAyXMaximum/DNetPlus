@@ -7,10 +7,10 @@ namespace TestBot
 {
     public class CommandHandler
     {
-        private readonly DiscordSocketClient _client;
+        private readonly DiscordShardedClient _client;
         private readonly CommandService _commands;
 
-        public CommandHandler(DiscordSocketClient client, CommandService commands)
+        public CommandHandler(DiscordShardedClient client, CommandService commands)
         {
             _commands = commands;
             _client = client;
@@ -33,7 +33,7 @@ namespace TestBot
             int argPos = 0;
             if (!message.HasStringPrefix("tb/", ref argPos))
                 return;
-            SocketCommandContext context = new SocketCommandContext(_client, message);
+            SocketCommandContext context = new ShardedCommandContext(_client, message);
             _ = await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,

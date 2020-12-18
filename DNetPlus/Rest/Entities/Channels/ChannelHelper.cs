@@ -226,7 +226,6 @@ namespace Discord.Rest
             CreateMessageParams args = new CreateMessageParams(text) { IsTTS = isTTS, Embed = embed?.ToModel(), AllowedMentions = allowedMentions?.ToModel(), 
                 MessageReference = reference?.ToModel() 
             };
-
             API.MessageJson model = await client.ApiClient.CreateMessageAsync(channel.Id, args, options).ConfigureAwait(false);
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
@@ -256,14 +255,15 @@ namespace Discord.Rest
             CreateInteractionMessageParams args = new CreateInteractionMessageParams()
             {
                 Type = type,
-                Data = new CreateMessageParams(text)
+                Data = new CreateWebhookMessageParams(text)
                 {
                     IsTTS = isTTS,
-                    Embed = embed?.ToModel(),
-                    AllowedMentions = allowedMentions?.ToModel(),
-                    MessageReference = reference?.ToModel()
+                    AllowedMentions = allowedMentions?.ToModel()
                 }
             };
+            if (embed != null)
+                args.Data.Embeds = new API.EmbedJson[] { embed.ToModel() };
+
             if (ghostMessage)
                 args.Data.Flags = 64;
             return await client.ApiClient.CreateInteractionMessageAsync(channel.Id, interaction, args, options).ConfigureAwait(false);

@@ -525,7 +525,7 @@ namespace Discord.API
         public async Task<bool> CreateInteractionMessageAsync(ulong channelId, InteractionData interaction, CreateInteractionMessageParams args, RequestOptions options = null)
         {
             Preconditions.NotEqual(channelId, 0, nameof(channelId));
-            if (!args.Data.Embed.IsSpecified || args.Data.Embed.Value == null)
+            if (!args.Data.Embeds.IsSpecified)
                 Preconditions.NotNullOrEmpty(args.Data.Content, nameof(args.Data.Content));
 
             if (args.Data.Content?.Length > DiscordConfig.MaxMessageSize)

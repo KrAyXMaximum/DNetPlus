@@ -1853,7 +1853,6 @@ namespace Discord.WebSocket
                             case "INTERACTION_CREATE":
                                 {
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
-                                    Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
                                     if (State.GetChannel(data.ChannelId) is SocketGuildChannel channel)
                                     {
                                         SocketGuild guild = channel.Guild;

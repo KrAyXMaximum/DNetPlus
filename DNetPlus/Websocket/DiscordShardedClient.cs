@@ -64,13 +64,14 @@ namespace Discord.WebSocket
             if (ids != null && config.TotalShards == null)
                 throw new ArgumentException($"Custom ids are not supported when {nameof(config.TotalShards)} is not specified.");
 
-            _shardIdsToIndex = new Dictionary<int, int>();
-            config.DisplayInitialLog = false;
             if (config.Debug == null)
                 config.Debug = new DiscordDebugConfig();
             if (config.Debug.Events == null)
                 config.Debug.Events = new DiscordDebugEvents();
 
+            _semaphoreResetLock = new object();
+            _shardIdsToIndex = new Dictionary<int, int>();
+            config.DisplayInitialLog = false;
             _baseConfig = config;
 
             if (config.TotalShards == null)
@@ -86,7 +87,7 @@ namespace Discord.WebSocket
                 for (int i = 0; i < _shardIds.Length; i++)
                 {
                     _shardIdsToIndex.Add(_shardIds[i], i);
-                    DiscordSocketConfig newConfig = config.Clone();
+                    var newConfig = config.Clone();
                     newConfig.ShardId = _shardIds[i];
                     _shards[i] = new DiscordSocketClient(newConfig, this, i != 0 ? _shards[0] : null);
                     RegisterEvents(_shards[i], i == 0);
@@ -406,6 +407,7 @@ namespace Discord.WebSocket
             client.RecipientRemoved += (user) => _recipientRemovedEvent.InvokeAsync(user);
             client.InviteCreated += (invite) => _inviteCreatedEvent.InvokeAsync(invite);
             client.InviteDeleted += (channel, invite) => _inviteDeletedEvent.InvokeAsync(channel, invite);
+            client.InteractionReceived += (interaction) => _interactionReceivedEvent.InvokeAsync(interaction);
         }
 
         //IDiscordClient

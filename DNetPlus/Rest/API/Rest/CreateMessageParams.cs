@@ -21,9 +21,6 @@ namespace Discord.API.Rest
         [JsonProperty("message_reference")]
         public Optional<MessageReferenceParams> MessageReference { get; set; }
 
-        [JsonProperty("flags")]
-        public int Flags { get; set; }
-
         public CreateMessageParams(string content)
         {
             Content = content;

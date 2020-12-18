@@ -8,7 +8,7 @@ namespace Discord.API.Rest
         [JsonProperty("type")]
         public InteractionMessageType Type { get; set; }
         [JsonProperty("data")]
-        public CreateMessageParams Data { get; set; }
+        public CreateWebhookMessageParams Data { get; set; }
     }
     public enum InteractionMessageType
     {

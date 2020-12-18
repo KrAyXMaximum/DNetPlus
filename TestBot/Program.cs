@@ -9,7 +9,7 @@ namespace TestBot
 {
     public class Program
     {
-        public static DiscordSocketClient Client;
+        public static DiscordShardedClient Client;
         public static CommandService Commands;
         public static CommandHandler Handler;
         public static void Main(string[] args)
@@ -18,7 +18,7 @@ namespace TestBot
         }
         public static async Task Start()
         {
-            Client = new DiscordSocketClient(new DiscordSocketConfig
+            Client = new DiscordShardedClient(new DiscordSocketConfig
             {
                 OwnerIds = new ulong[] { 190590364871032834 },
                 GatewayIntents = Discord.GatewayIntents.Guilds | Discord.GatewayIntents.GuildMessages | Discord.GatewayIntents.GuildMembers,
@@ -38,11 +38,8 @@ namespace TestBot
 
         private static async Task Client_InteractionReceived(Interaction arg)
         {
-            SocketCommandContext context = new SocketCommandContext(Client, arg);
-            _ = await Commands.ExecuteAsync(
-                context: context,
-                argPos: 0,
-                services: null);
+            ShardedCommandContext context = new ShardedCommandContext(Client, arg);
+            _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: null);
         }
 
         private static async Task Client_Log(Discord.LogMessage arg)

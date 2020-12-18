@@ -140,13 +140,10 @@ namespace TestBot
             await ReplyAsync("Test owner");
         }
 
-        [Command("ahh")]
+        [Command("test")]
         public async Task Ahh(string ani = "")
         {
-            if (ani == "")
             await ReplyInteractionAsync("Hello slash command");
-            else
-                await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, "Hello slash command, you chose " + ani);
         }
     }
 }
