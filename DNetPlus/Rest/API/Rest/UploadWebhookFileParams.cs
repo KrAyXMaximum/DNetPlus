@@ -22,8 +22,10 @@ namespace Discord.API.Rest
         public Optional<string> AvatarUrl { get; set; }
         public Optional<EmbedJson[]> Embeds { get; set; }
         public Optional<AllowedMentions> AllowedMentions { get; set; }
-
         public bool IsSpoiler { get; set; } = false;
+
+        [JsonProperty("flags")]
+        public Optional<int> Flags { get; set; }
 
         public UploadWebhookFileParams(Stream file)
         {

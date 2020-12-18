@@ -230,9 +230,12 @@ namespace Discord.Rest
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
 
-        public static async Task<bool> SendInteractionMessageAsync(IMessageChannel channel, BaseDiscordClient client,
+        public static async Task<RestUserMessage> SendInteractionMessageAsync(IMessageChannel channel, BaseDiscordClient client,
             InteractionData interaction, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, MessageReferenceParams reference, RequestOptions options, InteractionMessageType type, bool ghostMessage)
         {
+            if (interaction == null)
+                return await SendMessageAsync(channel, client, text, isTTS, embed, allowedMentions, reference, options).ConfigureAwait(false);
+
             Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
             Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");
 
@@ -254,19 +257,73 @@ namespace Discord.Rest
 
             CreateInteractionMessageParams args = new CreateInteractionMessageParams()
             {
-                Type = type,
-                Data = new CreateWebhookMessageParams(text)
+                Type = type
+            };
+            switch (type)
+            {
+                case InteractionMessageType.ChannelMessage:
+                case InteractionMessageType.ChannelMessageWithSource:
+                    args.Data = new CreateWebhookMessageParams(text)
+                    {
+                        IsTTS = isTTS,
+                        AllowedMentions = allowedMentions?.ToModel()
+                    };
+                    break;
+            }
+
+            if (embed != null)
+                args.Data.Embeds = new API.EmbedJson[] { embed.ToModel() };
+
+            if (ghostMessage)
+                args.Data.Flags = 64;
+            API.MessageJson model = await client.ApiClient.CreateInteractionMessageAsync(channel.Id, interaction, args, options).ConfigureAwait(false);
+            if (model == null)
+                return null;
+            return RestUserMessage.Create(client, channel, client.CurrentUser, model);
+        }
+
+        public static async Task<RestUserMessage> SendInteractionFileAsync(IMessageChannel channel, BaseDiscordClient client,
+           InteractionData interaction, string filePath, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage)
+        {
+            string filename = Path.GetFileName(filePath);
+            using (FileStream file = File.OpenRead(filePath))
+                return await SendInteractionFileAsync(channel, client, interaction, file, filename, text, isTTS, embed, allowedMentions, options, isSpoiler, reference, type, ghostMessage).ConfigureAwait(false);
+        }
+
+        public static async Task<RestUserMessage> SendInteractionFileAsync(IMessageChannel channel, BaseDiscordClient client,
+            InteractionData interaction, Stream stream, string filename, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage)
+        {
+            Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
+            Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");
+
+            // check that user flag and user Id list are exclusive, same with role flag and role Id list
+            if (allowedMentions != null && allowedMentions.AllowedTypes.HasValue)
+            {
+                if (allowedMentions.AllowedTypes.Value.HasFlag(AllowedMentionTypes.Users) &&
+                    allowedMentions.UserIds != null && allowedMentions.UserIds.Count > 0)
                 {
-                    IsTTS = isTTS,
-                    AllowedMentions = allowedMentions?.ToModel()
+                    throw new ArgumentException("The Users flag is mutually exclusive with the list of User Ids.", nameof(allowedMentions));
                 }
+
+                if (allowedMentions.AllowedTypes.Value.HasFlag(AllowedMentionTypes.Roles) &&
+                    allowedMentions.RoleIds != null && allowedMentions.RoleIds.Count > 0)
+                {
+                    throw new ArgumentException("The Roles flag is mutually exclusive with the list of Role Ids.", nameof(allowedMentions));
+                }
+            }
+            UploadInteractionFileParams args = new UploadInteractionFileParams
+            {
+                Type = type,
+                Data = new UploadWebhookFileParams(stream) { Filename = filename, Content = text, IsTTS = isTTS, AllowedMentions = allowedMentions?.ToModel() ?? Optional<API.AllowedMentions>.Unspecified, IsSpoiler = isSpoiler }
             };
             if (embed != null)
                 args.Data.Embeds = new API.EmbedJson[] { embed.ToModel() };
 
             if (ghostMessage)
                 args.Data.Flags = 64;
-            return await client.ApiClient.CreateInteractionMessageAsync(channel.Id, interaction, args, options).ConfigureAwait(false);
+
+            API.MessageJson model = await client.ApiClient.UploadInteractionFileAsync(channel.Id, interaction, args, options).ConfigureAwait(false);
+            return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
 
         /// <exception cref="ArgumentException">
@@ -294,16 +351,16 @@ namespace Discord.Rest
         /// <exception cref="IOException">An I/O error occurred while opening the file.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public static async Task<RestUserMessage> SendFileAsync(IMessageChannel channel, BaseDiscordClient client,
-            string filePath, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler)
+            string filePath, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference)
         {
             string filename = Path.GetFileName(filePath);
             using (FileStream file = File.OpenRead(filePath))
-                return await SendFileAsync(channel, client, file, filename, text, isTTS, embed, allowedMentions, options, isSpoiler).ConfigureAwait(false);
+                return await SendFileAsync(channel, client, file, filename, text, isTTS, embed, allowedMentions, options, isSpoiler, reference).ConfigureAwait(false);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public static async Task<RestUserMessage> SendFileAsync(IMessageChannel channel, BaseDiscordClient client,
-            Stream stream, string filename, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler)
+            Stream stream, string filename, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference)
         {
             Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
             Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");

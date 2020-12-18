@@ -1853,7 +1853,7 @@ namespace Discord.WebSocket
                             case "INTERACTION_CREATE":
                                 {
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
-                                    if (State.GetChannel(data.ChannelId) is SocketGuildChannel channel)
+                                    if (data.Type == InteractionType.ApplicationCommand && State.GetChannel(data.ChannelId) is SocketGuildChannel channel)
                                     {
                                         SocketGuild guild = channel.Guild;
                                         if (!guild.IsSynced)

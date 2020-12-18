@@ -41,7 +41,7 @@ namespace Discord.Commands
             return await Context.Channel.SendMessageAsync(message, isTTS, embed, options, allowedMentions, reference).ConfigureAwait(false);
         }
 
-        protected virtual async Task<bool> ReplyInteractionAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
+        protected virtual async Task<IUserMessage> ReplyInteractionAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
         {
             return await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, message, isTTS, embed, options, allowedMentions, reference, type, ghostMessage).ConfigureAwait(false);
         }

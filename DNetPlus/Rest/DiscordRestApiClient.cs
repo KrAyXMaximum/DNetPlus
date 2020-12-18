@@ -522,23 +522,40 @@ namespace Discord.API
             return await SendJsonAsync<MessageJson>("POST", () => $"channels/{channelId}/messages", args, ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
         }
 
-        public async Task<bool> CreateInteractionMessageAsync(ulong channelId, InteractionData interaction, CreateInteractionMessageParams args, RequestOptions options = null)
+        public async Task<MessageJson> CreateInteractionMessageAsync(ulong channelId, InteractionData interaction, CreateInteractionMessageParams args, RequestOptions options = null)
         {
             Preconditions.NotEqual(channelId, 0, nameof(channelId));
-            if (!args.Data.Embeds.IsSpecified)
-                Preconditions.NotNullOrEmpty(args.Data.Content, nameof(args.Data.Content));
+            if (args.Data != null)
+            {
+                if (!args.Data.Embeds.IsSpecified)
+                    Preconditions.NotNullOrEmpty(args.Data.Content, nameof(args.Data.Content));
 
-            if (args.Data.Content?.Length > DiscordConfig.MaxMessageSize)
-                throw new ArgumentException(message: $"Message content is too long, length must be less or equal to {DiscordConfig.MaxMessageSize}.", paramName: nameof(args.Data.Content));
+                if (args.Data.Content?.Length > DiscordConfig.MaxMessageSize)
+                    throw new ArgumentException(message: $"Message content is too long, length must be less or equal to {DiscordConfig.MaxMessageSize}.", paramName: nameof(args.Data.Content));
+            }
             options = RequestOptions.CreateOrClone(options);
             BucketIds ids = new BucketIds();
-            try
+            return await SendJsonAsync<dynamic>("POST", () => $"interactions/{interaction.Id}/{interaction.Token}/callback?wait=true", args, ids, options: options).ConfigureAwait(false);
+        }
+
+        public async Task<MessageJson> UploadInteractionFileAsync(ulong channelId, InteractionData interaction, UploadInteractionFileParams args, RequestOptions options = null)
+        {
+            Preconditions.NotNull(args, nameof(args));
+            Preconditions.NotEqual(channelId, 0, nameof(channelId));
+            options = RequestOptions.CreateOrClone(options);
+
+            if (args.Data.Content.GetValueOrDefault(null) == null)
+                args.Data.Content = "";
+            else if (args.Data.Content.IsSpecified)
             {
-                JToken DATA = await SendJsonAsync<JToken>("POST", () => $"interactions/{interaction.Id}/{interaction.Token}/callback", args, ids, options: options).ConfigureAwait(false);
-                return true;
+                if (args.Data.Content.Value == null)
+                    args.Data.Content = "";
+                if (args.Data.Content.Value?.Length > DiscordConfig.MaxMessageSize)
+                    throw new ArgumentOutOfRangeException($"Message content is too long, length must be less or equal to {DiscordConfig.MaxMessageSize}.", nameof(args.Data.Content));
             }
-            catch { }
-            return false;
+
+            BucketIds ids = new BucketIds();
+            return await SendMultipartAsync<MessageJson>("POST", () => $"interactions/{interaction.Id}/{interaction.Token}/callback?wait=true", args.ToDictionary(), ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
@@ -560,6 +577,7 @@ namespace Discord.API
             BucketIds ids = new BucketIds(webhookId: webhookId);
             return await SendJsonAsync<MessageJson>("POST", () => $"webhooks/{webhookId}/{AuthToken}?wait=true", args, ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
         }
+
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public async Task<MessageJson> UploadFileAsync(ulong channelId, UploadFileParams args, RequestOptions options = null)
         {
@@ -600,6 +618,7 @@ namespace Discord.API
             BucketIds ids = new BucketIds(webhookId: webhookId);
             return await SendMultipartAsync<MessageJson>("POST", () => $"webhooks/{webhookId}/{AuthToken}?wait=true", args.ToDictionary(), ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
         }
+
         public async Task DeleteMessageAsync(ulong channelId, ulong messageId, RequestOptions options = null)
         {
             Preconditions.NotEqual(channelId, 0, nameof(channelId));

@@ -143,7 +143,13 @@ namespace TestBot
         [Command("test")]
         public async Task Ahh(string ani = "")
         {
-            await ReplyInteractionAsync("Hello slash command");
+            var Msg = await ReplyInteractionAsync("Hello");
+
+            return;
+            if (Context.InteractionData != null)
+                _ = await ReplyInteractionAsync("", type: Discord.API.Rest.InteractionMessageType.AcknowledgeWithSource);
+            await Context.Channel.SendFileAsync("C:/Global/Misc/bobross.png");
+
         }
     }
 }
