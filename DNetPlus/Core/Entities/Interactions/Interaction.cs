@@ -25,8 +25,16 @@ namespace Discord
                 Id = model.Id,
                 Name = model.Data.Name,
                 Token = model.Token,
-                Choices = model.Data.Options == null ? new InteractionChoice[0] : model.Data.Options.Select(x => new InteractionChoice { Name = x.Name, Value = x.Value }).ToArray()
+                Choices = model.Data.Options == null ? new InteractionChoice[0] : model.Data.Options.Select(x => new InteractionChoice { Name = x.Name, Value = x.Value, Choices = GetChoices(x) }).ToArray()
             };
+        }
+
+        internal InteractionChoice[] GetChoices(API.Gateway.InteractionOptionJson option)
+        {
+
+            if (option.Options != null && option.Options.Any())
+                return option.Options.Select(x => new InteractionChoice { Name = x.Name, Value = x.Value, Choices = GetChoices(x) }).ToArray();
+          return new InteractionChoice[0];
         }
     }
     public enum InteractionType

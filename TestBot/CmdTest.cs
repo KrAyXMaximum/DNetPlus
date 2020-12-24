@@ -9,6 +9,15 @@ namespace TestBot
 {
     public class CmdTest : ModuleBase<SocketCommandContext>
     {
+        [Command("rrole")]
+        public async Task RRole(string option = "", string role = "")
+        {
+            await ReplyInteractionAsync("", embed: new EmbedBuilder
+            {
+                Description = $"{option} | {role}"
+            }.Build());
+        }
+
         [Command("sadd")]
         public async Task SAdd()
         {

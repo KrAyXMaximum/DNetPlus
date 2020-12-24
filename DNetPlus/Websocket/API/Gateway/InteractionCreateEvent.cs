@@ -30,6 +30,8 @@ namespace Discord.API.Gateway
     }
     internal class InteractionOptionJson
     {
+        [JsonProperty("options")]
+        public InteractionOptionJson[] Options { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
 

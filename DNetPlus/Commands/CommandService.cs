@@ -494,10 +494,21 @@ namespace Discord.Commands
 
         internal static string ParseInteractionData(InteractionData data)
         {
-            if (data.Choices == null || data.Choices.Count() != 0)
-                return $"{data.Name} {string.Join(" ", data.Choices.Select(x => x.Value))}";
+            if (data.Choices != null && data.Choices.Any())
+                return $"{data.Name} {GetInteractionOptions(data.Choices[0])}";
             return data.Name;
         }
+        internal static string GetInteractionOptions(InteractionChoice option)
+        {
+            if (option.Choices != null && option.Choices.Any())
+            {
+                return $"{option.Name} {GetInteractionOptions(option.Choices[0])}";
+            }
+            if (string.IsNullOrEmpty(option.Value))
+                return option.Name;
+            return option.Value;
+        }
+
         /// <summary>
         ///     Executes the command.
         /// </summary>
