@@ -25,6 +25,10 @@ namespace Discord.Commands
         /// </summary>
         public SocketUser User { get; }
         /// <summary>
+        ///     Gets the <see cref="SocketGuildUser" /> who executed the command.
+        /// </summary>
+        public SocketGuildUser GuildUser { get; }
+        /// <summary>
         ///     Gets the <see cref="SocketUserMessage" /> that the command is interpreted from.
         /// </summary>
         public SocketUserMessage Message { get; }
@@ -51,6 +55,8 @@ namespace Discord.Commands
             Guild = (msg.Channel as SocketGuildChannel)?.Guild;
             Channel = msg.Channel;
             User = msg.Author;
+            if (Guild != null)
+                GuildUser = msg.Author as SocketGuildUser;
             Message = msg;
         }
 
@@ -60,6 +66,8 @@ namespace Discord.Commands
             Guild = interaction.Guild as SocketGuild;
             Channel = interaction.Channel as SocketTextChannel;
             User = interaction.Member as SocketUser ?? interaction.User as SocketUser;
+            if (Guild != null)
+                GuildUser = interaction.Member as SocketGuildUser;
             Message = new SocketUserMessage(client, 0, Channel, User, MessageSource.User, CommandService.ParseInteractionData(interaction.Data));
             InteractionData = interaction.Data;
         }
@@ -75,5 +83,7 @@ namespace Discord.Commands
         IUser ICommandContext.User => User;
         /// <inheritdoc/>
         IUserMessage ICommandContext.Message => Message;
+
+        IGuildUser ICommandContext.GuildUser => GuildUser;
     }
 }
