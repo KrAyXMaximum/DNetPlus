@@ -160,5 +160,12 @@ namespace TestBot
             await Context.Channel.SendFileAsync("C:/Global/Misc/bobross.png");
 
         }
+
+        [Command("usertags")]
+        public async Task UserTags()
+        {
+            Console.Write(Context.User.PublicFlags.Value);
+            await ReplyAsync("Done");
+        }
     }
 }

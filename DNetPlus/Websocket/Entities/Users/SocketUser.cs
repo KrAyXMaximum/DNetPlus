@@ -24,6 +24,10 @@ namespace Discord.WebSocket
         public abstract ushort DiscriminatorValue { get; internal set; }
         /// <inheritdoc />
         public abstract string AvatarId { get; internal set; }
+
+        /// <inheritdoc />
+        public UserProperties? PublicFlags { get; private set; }
+
         /// <inheritdoc />
         public bool IsAvatarAnimated
         {
@@ -93,6 +97,11 @@ namespace Discord.WebSocket
             if (model.Username.IsSpecified && model.Username.Value != Username)
             {
                 Username = model.Username.Value;
+                hasChanges = true;
+            }
+            if (model.PublicFlags.IsSpecified && model.PublicFlags.Value != PublicFlags)
+            {
+                PublicFlags = model.PublicFlags.Value;
                 hasChanges = true;
             }
             return hasChanges;

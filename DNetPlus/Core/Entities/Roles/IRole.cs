@@ -66,7 +66,13 @@ namespace Discord
         /// </returns>
         int Position { get; }
 
-        GuildRoleTags Tags { get; }
+        /// <summary>
+        ///     Gets the tags related to this role.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="RoleTags"/> object containing all tags related to this role.
+        /// </returns>
+        RoleTags Tags { get; }
 
         /// <summary>
         ///     Modifies this role.

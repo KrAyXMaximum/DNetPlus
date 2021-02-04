@@ -24,6 +24,14 @@ namespace Discord.Rest
                 model.User.IsSpecified ? model.User.Value.Id : (ulong?)null);
 
 
+        public static RoleTags ToEntity(this API.RoleTagsJson model)
+        {
+            return new RoleTags(
+                model.BotId.IsSpecified ? model.BotId.Value : 0,
+                model.IntegrationId.IsSpecified ? model.IntegrationId.Value : 0,
+                model.IsPremiumSubscriber.IsSpecified ? true : false);
+        }
+
         public static Embed ToEntity(this API.EmbedJson model)
         {
             return new Embed(model.Type, model.Title, model.Description, model.Url, model.Timestamp,
