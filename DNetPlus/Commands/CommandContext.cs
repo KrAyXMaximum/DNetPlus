@@ -15,6 +15,8 @@ namespace Discord.Commands
         /// <inheritdoc/>
         public IUser User { get; }
         /// <inheritdoc/>
+        public IGuildUser GuildUser { get; }
+        /// <inheritdoc/>
         public IUserMessage Message { get; }
 
         public CommandInfo Command { get; set; }
@@ -37,6 +39,8 @@ namespace Discord.Commands
             Guild = (msg.Channel as IGuildChannel)?.Guild;
             Channel = msg.Channel;
             User = msg.Author;
+            if (Guild != null)
+                GuildUser = msg.Author as IGuildUser;
             Message = msg;
         }
 
@@ -46,6 +50,8 @@ namespace Discord.Commands
             Guild = interaction.Guild;
             Channel = interaction.Channel as IMessageChannel;
             User = interaction.Member ?? interaction.User;
+            if (Guild != null)
+                GuildUser = interaction.Member;
             Message = new SocketUserMessage(client, 0, interaction.Channel as SocketTextChannel, User as SocketUser, MessageSource.User);
             InteractionData = interaction.Data;
         }
