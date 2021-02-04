@@ -1860,17 +1860,22 @@ namespace Discord.WebSocket
                             case "INTERACTION_CREATE":
                                 {
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
-                                  
-                                    if (data.Type == InteractionType.ApplicationCommand && State.GetChannel(data.ChannelId) is SocketGuildChannel channel)
+
+                                    if (data.Type == InteractionType.ApplicationCommand && State.GetChannel(data.ChannelId) is SocketChannel channel)
                                     {
-                                        SocketGuild guild = channel.Guild;
-                                        if (!guild.IsSynced)
+                                        SocketGuild guild = null;
+                                        if (data.GuildId.IsSpecified)
                                         {
-                                            await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
-                                            return;
+                                            guild = (channel as SocketGuildChannel).Guild;
+                                            if (!guild.IsSynced)
+                                            {
+                                                await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
+                                                return;
+                                            }
                                         }
                                         Interaction Interaction = new Interaction();
-                                        Interaction.Update(guild, data);
+                                        Interaction.Update(State, guild, data);
+
                                         await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
                                     }
                                 }

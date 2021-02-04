@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Discord.Rest;
+using Discord.WebSocket;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using InteractionCreateModel = Discord.API.Gateway.InteractionCreateJson;
 
 namespace Discord
@@ -7,19 +11,30 @@ namespace Discord
     public class Interaction
     {
         public InteractionType Type { get; private set; }
-        public IGuildUser Author { get; private set; }
+        public IGuildUser? Member { get; private set; }
+        public IUser? User { get; private set; }
         public ulong Id { get; private set; }
-        public IGuild Guild { get; private set; }
-        public ITextChannel Channel { get; private set; }
+        public IGuild? Guild { get; private set; }
+        public IChannel Channel { get; private set; }
         public InteractionData Data { get; private set;  }
 
-        internal void Update(WebSocket.SocketGuild guild, InteractionCreateModel model)
+        internal void Update(ClientState state, WebSocket.SocketGuild guild, InteractionCreateModel model)
         {
             Type = model.Type;
-            Author = guild.GetUser(model.Author.User.Id) ?? guild.AddOrUpdateUser(model.Author.User);
             Id = model.Id;
-            Guild = guild;
-            Channel = guild.GetTextChannel(model.ChannelId);
+            if (guild != null)
+            {
+                Guild = guild;
+                Member = guild.GetUser(model.Member.Value.User.Id) ?? guild.AddOrUpdateUser(model.Member.Value.User);
+                User = state.GetUser(model.Member.Value.User.Id);
+                Channel = guild.GetTextChannel(model.ChannelId);
+            }
+            else
+            {
+                Channel = state.GetChannel(model.ChannelId);
+                User = state.GetUser(model.User.Value.Id);
+            }
+            
             Data = new InteractionData
             {
                 Id = model.Id,

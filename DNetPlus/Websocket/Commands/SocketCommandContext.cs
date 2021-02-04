@@ -59,8 +59,8 @@ namespace Discord.Commands
             Client = client;
             Guild = interaction.Guild as SocketGuild;
             Channel = interaction.Channel as SocketTextChannel;
-            User = interaction.Author as SocketUser;
-            Message = new SocketUserMessage(client, 0, Channel, interaction.Author as SocketUser, MessageSource.User, CommandService.ParseInteractionData(interaction.Data));
+            User = interaction.Member as SocketUser ?? interaction.User as SocketUser;
+            Message = new SocketUserMessage(client, 0, Channel, User, MessageSource.User, CommandService.ParseInteractionData(interaction.Data));
             InteractionData = interaction.Data;
         }
 

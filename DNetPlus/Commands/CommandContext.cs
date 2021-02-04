@@ -44,9 +44,9 @@ namespace Discord.Commands
         {
             Client = client;
             Guild = interaction.Guild;
-            Channel = interaction.Channel;
-            User = interaction.Author;
-            Message = new SocketUserMessage(client, 0, interaction.Channel as SocketTextChannel, interaction.Author as SocketUser, MessageSource.User);
+            Channel = interaction.Channel as IMessageChannel;
+            User = interaction.Member ?? interaction.User;
+            Message = new SocketUserMessage(client, 0, interaction.Channel as SocketTextChannel, User as SocketUser, MessageSource.User);
             InteractionData = interaction.Data;
         }
     }

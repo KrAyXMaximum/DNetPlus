@@ -9,11 +9,14 @@ namespace Discord.API.Gateway
         [JsonProperty("type")]
         public InteractionType Type { get; set; }
         [JsonProperty("member")]
-        public GuildMemberJson Author { get; set; }
+        public Optional<GuildMemberJson> Member { get; set; }
+        [JsonProperty("user")]
+        public Optional<UserJson> User { get; set; }
+
         [JsonProperty("id")]
         public ulong Id { get; set; }
         [JsonProperty("guild_id")]
-        public ulong GuildId { get; set; }
+        public Optional<ulong> GuildId { get; set; }
         [JsonProperty("channel_id")]
         public ulong ChannelId { get; set; }
         [JsonProperty("data")]
