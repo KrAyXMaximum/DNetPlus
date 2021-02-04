@@ -32,6 +32,6 @@ namespace Discord.Commands
 
         string Prefix { get; set; }
 
-        InteractionData InteractionData { get; }
+        InteractionData InteractionData { get; set; }
     }
 }

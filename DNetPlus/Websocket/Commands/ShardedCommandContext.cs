@@ -8,7 +8,7 @@ namespace Discord.Commands
         /// <summary> Gets the <see cref="DiscordShardedClient"/> that the command is executed with. </summary>
         public new DiscordShardedClient Client { get; }
 
-        public InteractionData InteractionData { get; }
+        public InteractionData InteractionData { get; set; }
 
         public ShardedCommandContext(DiscordShardedClient client, SocketUserMessage msg)
             : base(client.GetShardIndex(GetShardId(client, (msg.Channel as SocketGuildChannel)?.Guild)), msg)
@@ -30,7 +30,5 @@ namespace Discord.Commands
         //ICommandContext
         /// <inheritdoc />
         IDiscordClient ICommandContext.Client => Client;
-
-        InteractionData ICommandContext.InteractionData => InteractionData;
     }
 }

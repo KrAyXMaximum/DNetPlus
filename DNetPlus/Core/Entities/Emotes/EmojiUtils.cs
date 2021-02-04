@@ -1614,6 +1614,7 @@ namespace Discord
             [":knife:"] = "\U0001f52a",
             [":koala:"] = "\U0001f428",
             [":koko:"] = "\U0001f201",
+            [":knot:"] = "\U0001faa2",
             [":lab_coat:"] = "\U0001f97c",
             [":label:"] = "\U0001f3f7\U0000fe0f",
             [":lacrosse:"] = "\U0001f94d",

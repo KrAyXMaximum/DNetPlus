@@ -20,6 +20,8 @@ namespace Discord.Rest
         public override bool IsWebhook => true;
         /// <inheritdoc />
         public ulong GuildId => Guild.Id;
+        /// <inheritdoc />
+        bool? IGuildUser.IsPending => null;
 
         internal RestWebhookUser(BaseDiscordClient discord, IGuild guild, ulong id, ulong webhookId)
             : base(discord, id)

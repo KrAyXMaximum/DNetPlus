@@ -24,7 +24,7 @@ namespace Discord.Commands
         /// <summary> Indicates whether the channel that the command is executed in is a private channel. </summary>
         public bool IsPrivate => Channel is IPrivateChannel;
 
-        public InteractionData InteractionData { get; }
+        public InteractionData InteractionData { get; set; }
 
         /// <summary>
         ///     Initializes a new <see cref="CommandContext" /> class with the provided client and message.

@@ -26,6 +26,8 @@ namespace Discord.Rest
         /// <inheritdoc />
         public bool IsMuted { get; private set; }
         /// <inheritdoc />
+        public bool? IsPending { get; private set; }
+        /// <inheritdoc />
         public DateTimeOffset? PremiumSince => DateTimeUtils.FromTicks(_premiumSinceTicks);
         /// <inheritdoc />
         public ulong GuildId => Guild.Id;
@@ -69,6 +71,8 @@ namespace Discord.Rest
                 IsDeafened = model.Deaf.Value;
             if (model.Mute.IsSpecified)
                 IsMuted = model.Mute.Value;
+            if (model.Pending.IsSpecified)
+                IsPending = model.Pending.Value;
             if (model.Roles.IsSpecified)
                 UpdateRoles(model.Roles.Value);
             if (model.PremiumSince.IsSpecified)

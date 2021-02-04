@@ -1856,7 +1856,6 @@ namespace Discord.WebSocket
                                   
                                     if (data.Type == InteractionType.ApplicationCommand && State.GetChannel(data.ChannelId) is SocketGuildChannel channel)
                                     {
-                                        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(payload, Formatting.Indented));
                                         SocketGuild guild = channel.Guild;
                                         if (!guild.IsSynced)
                                         {

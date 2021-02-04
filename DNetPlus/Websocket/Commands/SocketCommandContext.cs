@@ -38,7 +38,7 @@ namespace Discord.Commands
 
         public string Prefix { get; set; }
 
-        public InteractionData InteractionData { get; }
+        public InteractionData InteractionData { get; set; }
 
         /// <summary>
         ///     Initializes a new <see cref="SocketCommandContext" /> class with the provided client and message.
@@ -75,7 +75,5 @@ namespace Discord.Commands
         IUser ICommandContext.User => User;
         /// <inheritdoc/>
         IUserMessage ICommandContext.Message => Message;
-
-        InteractionData ICommandContext.InteractionData => InteractionData;
     }
 }
