@@ -291,18 +291,15 @@ namespace Discord.WebSocket
                         }).ConfigureAwait(false);
                     }
                 }
-
-                //Wait for READY
-                await _connection.WaitAsync().ConfigureAwait(false);
-
-                await _gatewayLogger.DebugAsync("Sending Status").ConfigureAwait(false);
-                await SendStatusAsync().ConfigureAwait(false);
             }
             finally
             {
                 if (locked)
                     _shardedClient.ReleaseIdentifyLock();
             }
+            //Wait for READY
+            await _connection.WaitAsync().ConfigureAwait(false);
+            await SendStatusAsync().ConfigureAwait(false);
         }
 
 

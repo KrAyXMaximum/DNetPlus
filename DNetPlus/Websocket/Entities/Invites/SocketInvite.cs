@@ -48,8 +48,7 @@ namespace Discord.WebSocket
         int? IInvite.PresenceCount => throw new NotImplementedException();
         /// <inheritdoc />
         int? IInvite.MemberCount => throw new NotImplementedException();
-        /// <inheritdoc />
-        bool IInviteMetadata.IsRevoked => throw new NotImplementedException();
+        
         /// <inheritdoc />
         public bool IsTemporary { get; private set; }
         /// <inheritdoc />
@@ -138,6 +137,8 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         IChannel IInvite.Channel => Channel;
         /// <inheritdoc />
-        IUser IInviteMetadata.Inviter => Inviter;
+        IUser IInvite.Inviter => Inviter;
+        /// <inheritdoc />
+        IUser IInvite.TargetUser => TargetUser;
     }
 }

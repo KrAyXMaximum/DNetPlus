@@ -48,6 +48,8 @@ namespace Discord.API.Rest
                 payload["allowed_mentions"] = AllowedMentions.Value;
             if (IsSpoiler)
                 payload["hasSpoiler"] = IsSpoiler.ToString();
+            if (MessageReference.IsSpecified)
+                payload["message_reference"] = MessageReference.Value;
 
             StringBuilder json = new StringBuilder();
             using (StringWriter text = new StringWriter(json))
