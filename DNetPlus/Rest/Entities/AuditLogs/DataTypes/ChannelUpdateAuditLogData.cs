@@ -26,6 +26,7 @@ namespace Discord.Rest
             API.AuditLogChangeJson rateLimitPerUserModel = changes.FirstOrDefault(x => x.ChangedProperty == "rate_limit_per_user");
             API.AuditLogChangeJson nsfwModel = changes.FirstOrDefault(x => x.ChangedProperty == "nsfw");
             API.AuditLogChangeJson bitrateModel = changes.FirstOrDefault(x => x.ChangedProperty == "bitrate");
+            API.AuditLogChangeJson typeModel = changes.FirstOrDefault(x => x.ChangedProperty == "type");
 
             string oldName = nameModel?.OldValue?.ToObject<string>(discord.ApiClient.Serializer),
                 newName = nameModel?.NewValue?.ToObject<string>(discord.ApiClient.Serializer);
@@ -37,9 +38,11 @@ namespace Discord.Rest
                 newNsfw = nsfwModel?.NewValue?.ToObject<bool>(discord.ApiClient.Serializer);
             int? oldBitrate = bitrateModel?.OldValue?.ToObject<int>(discord.ApiClient.Serializer),
                 newBitrate = bitrateModel?.NewValue?.ToObject<int>(discord.ApiClient.Serializer);
+            ChannelType? oldType = typeModel?.OldValue?.ToObject<ChannelType>(discord.ApiClient.Serializer),
+                newType = typeModel?.NewValue?.ToObject<ChannelType>(discord.ApiClient.Serializer);
 
-            ChannelInfo before = new ChannelInfo(oldName, oldTopic, oldRateLimitPerUser, oldNsfw, oldBitrate);
-            ChannelInfo after = new ChannelInfo(newName, newTopic, newRateLimitPerUser, newNsfw, newBitrate);
+            ChannelInfo before = new ChannelInfo(oldName, oldTopic, oldRateLimitPerUser, oldNsfw, oldBitrate, oldType);
+            ChannelInfo after = new ChannelInfo(newName, newTopic, newRateLimitPerUser, newNsfw, newBitrate, newType);
 
             return new ChannelUpdateAuditLogData(entry.TargetId.Value, before, after);
         }

@@ -138,13 +138,26 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         public DateTimeOffset CreatedAt => SnowflakeUtils.FromSnowflake(Id);
         /// <inheritdoc />
-        public string IconUrl => CDN.GetGuildIconUrl(Id, IconId);
+        public string GetIconUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
+        {
+            return CDN.GetGuildIconUrl(Id, IconId, size, format);
+        }
         /// <inheritdoc />
-        public string SplashUrl => CDN.GetGuildSplashUrl(Id, SplashId);
+        public string GetSplashUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null)
+        {
+            return CDN.GetGuildSplashUrl(Id, SplashId, size, format);
+        }
+
         /// <inheritdoc />
-        public string DiscoverySplashUrl => CDN.GetGuildDiscoverySplashUrl(Id, DiscoverySplashId);
+        public string GetDiscoverySplashUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null)
+        {
+            return CDN.GetGuildDiscoverySplashUrl(Id, DiscoverySplashId, size, format);
+        }
         /// <inheritdoc />
-        public string BannerUrl => CDN.GetGuildBannerUrl(Id, BannerId);
+        public string GetBannerUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null)
+        {
+            return CDN.GetGuildBannerUrl(Id, BannerId, size, format);
+        }
         /// <summary> Indicates whether the client has all the members downloaded to the local guild cache. </summary>
         public bool HasAllMembers => MemberCount <= DownloadedMemberCount;// _downloaderPromise.Task.IsCompleted;
         /// <summary> Indicates whether the guild cache is synced to this guild. </summary>

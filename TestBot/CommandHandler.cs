@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -29,7 +30,6 @@ namespace TestBot
             SocketUserMessage message = messageParam as SocketUserMessage;
             if (message == null || message.Author.IsBot) 
                 return;
-
             int argPos = 0;
             if (!message.HasStringPrefix("tb/", ref argPos))
                 return;

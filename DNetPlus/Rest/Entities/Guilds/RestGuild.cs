@@ -104,14 +104,27 @@ namespace Discord.Rest
         [Obsolete("DefaultChannelId is deprecated, use GetDefaultChannelAsync")]
         public ulong DefaultChannelId => Id;
         /// <inheritdoc />
-        public string IconUrl => CDN.GetGuildIconUrl(Id, IconId);
-        /// <inheritdoc />
-        public string SplashUrl => CDN.GetGuildSplashUrl(Id, SplashId);
-        /// <inheritdoc />
-        public string DiscoverySplashUrl => CDN.GetGuildDiscoverySplashUrl(Id, DiscoverySplashId);
+        public string GetIconUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
+        {
+            return CDN.GetGuildIconUrl(Id, IconId, size, format);
+        }
 
         /// <inheritdoc />
-        public string BannerUrl => CDN.GetGuildBannerUrl(Id, BannerId);
+        public string GetSplashUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null)
+        {
+            return CDN.GetGuildSplashUrl(Id, SplashId, size, format);
+        }
+        /// <inheritdoc />
+        public string GetDiscoverySplashUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null)
+        {
+            return CDN.GetGuildDiscoverySplashUrl(Id, DiscoverySplashId, size, format);
+        }
+
+        /// <inheritdoc />
+        public string GetBannerUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null)
+        {
+            return CDN.GetGuildBannerUrl(Id, BannerId, size, format);
+        }
 
         /// <summary>
         ///     Gets the built-in role containing all users in this guild.
@@ -1103,5 +1116,7 @@ namespace Discord.Rest
 
         async Task<IReadOnlyCollection<RestInteraction>> IGuild.GetCommandsAsync(RequestOptions options)
             => await GetCommandsAsync(options).ConfigureAwait(false);
+
+
     }
 }

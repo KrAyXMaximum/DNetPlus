@@ -96,11 +96,11 @@ namespace Discord.Rest
 
         /// <inheritdoc />
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
-        public Task<RestUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null)
-            => ChannelHelper.SendMessageAsync(this, Discord, text, isTTS, embed, allowedMentions, reference, options);
+        public Task<RestUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionComponent[] components = null)
+            => ChannelHelper.SendMessageAsync(this, Discord, text, isTTS, embed, allowedMentions, reference, options, components);
 
-        public Task<RestUserMessage> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
-            => ChannelHelper.SendInteractionMessageAsync(this, Discord, interaction, text, isTTS, embed, allowedMentions, reference, options, type, ghostMessage);
+        public Task<RestUserMessage> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false, InteractionComponent[] components = null)
+            => ChannelHelper.SendInteractionMessageAsync(this, Discord, interaction, text, isTTS, embed, allowedMentions, reference, options, type, ghostMessage, components);
 
         public Task<RestUserMessage> SendInteractionFileAsync(InteractionData interaction, string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
             => ChannelHelper.SendInteractionFileAsync(this, Discord, interaction, filePath, text, isTTS, embed, allowedMentions, options, isSpoiler, reference, type, ghostMessage);
@@ -195,8 +195,8 @@ namespace Discord.Rest
         async Task<IUserMessage> IMessageChannel.SendFileAsync(Stream stream, string filename, string text, bool isTTS, Embed embed, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions, MessageReferenceParams reference)
             => await SendFileAsync(stream, filename, text, isTTS, embed, options, isSpoiler, allowedMentions, reference).ConfigureAwait(false);
 
-        async Task<IUserMessage> IMessageChannel.SendMessageAsync(string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference)
-            => await SendMessageAsync(text, isTTS, embed, options, allowedMentions, reference).ConfigureAwait(false);
+        async Task<IUserMessage> IMessageChannel.SendMessageAsync(string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference, InteractionComponent[] components)
+            => await SendMessageAsync(text, isTTS, embed, options, allowedMentions, reference, components).ConfigureAwait(false);
 
         async Task<IUserMessage> IMessageChannel.SendInteractionMessageAsync(InteractionData interaction, string text, bool isTTS, Embed embed, RequestOptions options, AllowedMentions allowedMentions, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage)
         => await SendInteractionMessageAsync(interaction, text, isTTS, embed, options, allowedMentions, reference, type, ghostMessage).ConfigureAwait(false);

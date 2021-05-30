@@ -11,7 +11,7 @@ namespace Discord.Webhook
         private DiscordWebhookClient _client;
 
         public ulong Id { get; }
-        public ulong ChannelId { get; }
+        public ulong ChannelId { get; private set; }
         public string Token { get; }
 
         public string Name { get; private set; }
@@ -38,6 +38,8 @@ namespace Discord.Webhook
 
         internal void Update(Model model)
         {
+            if (ChannelId != model.ChannelId)
+                ChannelId = model.ChannelId;
             if (model.Avatar.IsSpecified)
                 AvatarId = model.Avatar.Value;
             if (model.GuildId.IsSpecified)

@@ -105,6 +105,21 @@ namespace Discord.Rest
             };
         }
 
+        public static InteractionComponent_Json ToModel(this InteractionComponent component)
+        {
+            return new InteractionComponent_Json
+            {
+                Id = !string.IsNullOrEmpty(component.Id) ? component.Id : Optional.Create<string>(),
+                Disabled = component.Disabled ? true : Optional.Create<bool>(),
+                Components = component.Components != null ? component.Components.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
+                Emoji = component.Emoji != null ? component.Emoji : Optional.Create<Emoji>(),
+                Label = !string.IsNullOrEmpty(component.Label) ? component.Label : Optional.Create<string>(),
+                Style = component.Style.HasValue ? component.Style.Value : Optional.Create<ComponentButtonType>(),
+                Type = component.Type,
+                Url = !string.IsNullOrEmpty(component.Url) ? component.Url : Optional.Create<string>()
+            };
+        }
+
         public static IEnumerable<string> EnumerateMentionTypes(this AllowedMentionTypes mentionTypes)
         {
             if (mentionTypes.HasFlag(AllowedMentionTypes.Everyone))

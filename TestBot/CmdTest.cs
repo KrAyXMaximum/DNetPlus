@@ -9,6 +9,42 @@ namespace TestBot
 {
     public class CmdTest : ModuleBase<SocketCommandContext>
     {
+        [Command("button")]
+        public async Task Button()
+        {
+            try
+            {
+                await Context.Channel.SendMessageAsync("Test", components: new InteractionComponent[]
+                    {
+                    new InteractionComponent
+                    {
+                        Type = ComponentType.ActionRow,
+                        Components = new InteractionComponent[]
+                        {
+                            new InteractionComponent
+                    {
+                        Label = "Hello World",
+                        Style = ComponentButtonType.Primary,
+                        Type = ComponentType.Button,
+                        Id = "hello"
+                    },
+                    new InteractionComponent
+                    {
+                        Label = "Website",
+                        Style = ComponentButtonType.Link,
+                        Type = ComponentType.Button,
+                        Url = "https://fluxpoint.dev"
+                        }
+                        }
+                    }
+                    });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
         [Command("rrole")]
         public async Task RRole(string option = "", string role = "")
         {

@@ -12,5 +12,7 @@ namespace Discord.API.Gateway
         public ulong ChannelId { get; set; }
         [JsonProperty("emoji")]
         public EmojiJson Emoji { get; set; }
+        [JsonProperty("member")]
+        public Optional<GuildMemberJson> Member { get; set; }
     }
 }

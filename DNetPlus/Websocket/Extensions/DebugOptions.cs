@@ -3,7 +3,7 @@
     public class DiscordDebugConfig
     {
         public bool VoiceFix { get; set; }
-
+        public bool WarnRolesLimit { get; set; }
         public DiscordDebugEvents Events { get; set; } 
     }
     public class DiscordDebugEvents

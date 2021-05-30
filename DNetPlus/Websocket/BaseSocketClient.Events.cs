@@ -348,12 +348,23 @@ namespace Discord.WebSocket
             remove { _userUnbannedEvent.Remove(value); }
         }
         internal readonly AsyncEvent<Func<SocketUser, SocketGuild, Task>> _userUnbannedEvent = new AsyncEvent<Func<SocketUser, SocketGuild, Task>>();
+        
         /// <summary> Fired when a user is updated. </summary>
         public event Func<SocketUser, SocketUser, Task> UserUpdated {
             add { _userUpdatedEvent.Add(value); }
             remove { _userUpdatedEvent.Remove(value); }
         }
         internal readonly AsyncEvent<Func<SocketUser, SocketUser, Task>> _userUpdatedEvent = new AsyncEvent<Func<SocketUser, SocketUser, Task>>();
+
+        /// <summary> Fired when a user leaves the server while still pending. </summary>
+        public event Func<SocketUser, SocketGuild, Task> UserJoinRequestDeleted
+        {
+            add { _userJoinRequestDeletedEvent.Add(value); }
+            remove { _userJoinRequestDeletedEvent.Remove(value); }
+        }
+        internal readonly AsyncEvent<Func<SocketUser, SocketGuild, Task>> _userJoinRequestDeletedEvent = new AsyncEvent<Func<SocketUser, SocketGuild, Task>>();
+
+
         /// <summary> Fired when a guild member is updated, or a member presence is updated. </summary>
         public event Func<SocketGuildUser, SocketGuildUser, Task> GuildMemberUpdated {
             add { _guildMemberUpdatedEvent.Add(value); }

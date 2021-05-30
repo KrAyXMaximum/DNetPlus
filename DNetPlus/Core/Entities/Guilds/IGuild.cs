@@ -80,7 +80,7 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's icon; <c>null</c> if none is set.
         /// </returns>
-        string IconUrl { get; }
+        string GetIconUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128);
         /// <summary>
         ///     Gets the ID of this guild's splash image.
         /// </summary>
@@ -94,7 +94,7 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's splash image; <c>null</c> if none is set.
         /// </returns>
-        string SplashUrl { get; }
+        string GetSplashUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null);
         /// <summary>
         ///     Gets the ID of this guild's discovery splash image.
         /// </summary>
@@ -108,7 +108,7 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's discovery splash image; <c>null</c> if none is set.
         /// </returns>
-        string DiscoverySplashUrl { get; }
+        string GetDiscoverySplashUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null);
         /// <summary>
         ///     Determines if this guild is currently connected and ready to be used.
         /// </summary>
@@ -255,7 +255,7 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's banner image; <c>null</c> if none is set.
         /// </returns>
-        string BannerUrl { get; }
+        string GetBannerUrl(ImageFormat format = ImageFormat.Jpeg, ushort? size = null);
         /// <summary>
         ///     Gets the code for this guild's vanity invite URL.
         /// </summary>

@@ -299,7 +299,7 @@ namespace Discord.WebSocket
             }
             //Wait for READY
             await _connection.WaitAsync().ConfigureAwait(false);
-            await SendStatusAsync().ConfigureAwait(false);
+            //await SendStatusAsync().ConfigureAwait(false);
         }
 
 
@@ -701,6 +701,8 @@ namespace Discord.WebSocket
                                             if (_unavailableGuildCount != 0)
                                                 _unavailableGuildCount--;
                                             await GuildAvailableAsync(guild).ConfigureAwait(false);
+                                            if (base.BaseConfig.Debug.WarnRolesLimit && guild.Roles.Count() > 250)
+                                            await _gatewayLogger.WarningAsync($"Max roles limit over 250 in {guild.Name} | {guild.Id}").ConfigureAwait(false);
 
                                             if (guild.DownloadedMemberCount >= guild.MemberCount && !guild.DownloaderPromise.IsCompleted)
                                             {
@@ -1253,7 +1255,29 @@ namespace Discord.WebSocket
                                     }
                                 }
                                 break;
+                            case "GUILD_JOIN_REQUEST_DELETE":
+                                {
+                                    await _gatewayLogger.DebugAsync("Received Dispatch (GUILD_JOIN_REQUEST_DELETE)").ConfigureAwait(false);
+                                    GuildJoinRequestDeleted data = (payload as JToken).ToObject<GuildJoinRequestDeleted>(_serializer);
+                                    SocketGuild guild = State.GetGuild(data.GuildId);
+                                    if (guild != null)
+                                    {
+                                        if (!guild.IsSynced)
+                                        {
+                                            await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
+                                            return;
+                                        }
 
+                                        SocketUser user = State.GetUser(data.UserId);
+                                        await TimedInvokeAsync(_userJoinRequestDeletedEvent, nameof(UserJoinRequestDeleted), user, guild).ConfigureAwait(false);
+                                    }
+                                    else
+                                    {
+                                        await UnknownGuildAsync(type, data.GuildId).ConfigureAwait(false);
+                                        return;
+                                    }
+                                }
+                                break;
                             //Messages
                             case "MESSAGE_CREATE":
                                 {
@@ -1406,6 +1430,14 @@ namespace Discord.WebSocket
                                         Optional<SocketUserMessage> optionalMsg = !isCached
                                             ? Optional.Create<SocketUserMessage>()
                                             : Optional.Create(cachedMsg);
+
+                                        if (data.Member.IsSpecified)
+                                        {
+                                            SocketGuild guild = (channel as SocketGuildChannel)?.Guild;
+
+                                            if (guild != null)
+                                                user = guild.AddOrUpdateUser(data.Member.Value);
+                                        }
 
                                         Optional<IUser> optionalUser = user is null
                                             ? Optional.Create<IUser>()

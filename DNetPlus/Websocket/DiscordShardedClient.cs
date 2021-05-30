@@ -412,6 +412,7 @@ namespace Discord.WebSocket
             client.UserBanned += (user, guild) => _userBannedEvent.InvokeAsync(user, guild);
             client.UserUnbanned += (user, guild) => _userUnbannedEvent.InvokeAsync(user, guild);
             client.UserUpdated += (oldUser, newUser) => _userUpdatedEvent.InvokeAsync(oldUser, newUser);
+            client.UserJoinRequestDeleted += (user, guild) => _userJoinRequestDeletedEvent.InvokeAsync(user, guild);
             client.GuildMemberUpdated += (oldUser, newUser) => _guildMemberUpdatedEvent.InvokeAsync(oldUser, newUser);
             client.UserVoiceStateUpdated += (user, oldVoiceState, newVoiceState) => _userVoiceStateUpdatedEvent.InvokeAsync(user, oldVoiceState, newVoiceState);
             client.VoiceServerUpdated += (server) => _voiceServerUpdatedEvent.InvokeAsync(server);

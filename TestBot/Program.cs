@@ -27,6 +27,7 @@ namespace TestBot
             });
             string File = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/DiscordBots/Boaty/Config.json";
             Client.Log += Client_Log;
+            Client.UserJoinRequestDeleted += Client_UserJoinRequestDeleted;
             await Client.LoginAsync(Discord.TokenType.Bot, JObject.Parse(System.IO.File.ReadAllText(File))["Discord"].ToString());
             await Client.StartAsync();
             Client.InteractionReceived += Client_InteractionReceived;
@@ -34,6 +35,12 @@ namespace TestBot
             Handler = new CommandHandler(Client, Commands);
             await Handler.InstallCommandsAsync();
             await Task.Delay(-1);
+        }
+
+        private static async Task Client_UserJoinRequestDeleted(SocketUser arg1, SocketGuild arg2)
+        {
+            Console.WriteLine("GOT LEAVE");
+            Console.WriteLine($"User: {arg1.Username} Guild: {arg2.Name}");
         }
 
         private static async Task Client_InteractionReceived(Interaction arg)

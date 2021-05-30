@@ -44,7 +44,7 @@ namespace Discord
             if (avatarId == null)
                 return null;
             string extension = FormatToExtension(format, avatarId);
-            return $"{DiscordConfig.CDNUrl}avatars/{userId}/{avatarId}.{extension}?size={size}";
+            return avatarId != null ? $"{DiscordConfig.CDNUrl}avatars/{userId}/{avatarId}.{extension}?size={size}" : null;
         }
         /// <summary>
         ///     Returns the default user avatar URL.
@@ -62,11 +62,18 @@ namespace Discord
         /// </summary>
         /// <param name="guildId">The guild snowflake identifier.</param>
         /// <param name="iconId">The icon identifier.</param>
+        /// <param name="size">The size of the image to return in horizontal pixels. This can be any power of two between 16 and 2048.</param>
+        /// <param name="format">The format to return.</param>
         /// <returns>
         ///     A URL pointing to the guild's icon.
         /// </returns>
-        public static string GetGuildIconUrl(ulong guildId, string iconId)
-            => iconId != null ? $"{DiscordConfig.CDNUrl}icons/{guildId}/{iconId}.jpg" : null;
+        public static string GetGuildIconUrl(ulong guildId, string iconId, ushort size, ImageFormat format)
+        {
+            if (iconId == null)
+                return null;
+            string extension = FormatToExtension(format, iconId);
+            return $"{DiscordConfig.CDNUrl}icons/{guildId}/{iconId}.{extension}?size={size}";
+        }
         /// <summary>
         ///     Returns a guild splash URL.
         /// </summary>
@@ -75,8 +82,13 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's splash.
         /// </returns>
-        public static string GetGuildSplashUrl(ulong guildId, string splashId)
-            => splashId != null ? $"{DiscordConfig.CDNUrl}splashes/{guildId}/{splashId}.jpg" : null;
+        public static string GetGuildSplashUrl(ulong guildId, string splashId, ushort? size, ImageFormat format)
+        {
+            if (splashId == null)
+                return null;
+            string extension = FormatToExtension(format, splashId, true);
+            return $"{DiscordConfig.CDNUrl}splashes/{guildId}/{splashId}.{extension}" + (size.HasValue ? $"?size={size}" : string.Empty);
+        }
         /// <summary>
         ///     Returns a guild discovery splash URL.
         /// </summary>
@@ -85,18 +97,13 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's discovery splash.
         /// </returns>
-        public static string GetGuildDiscoverySplashUrl(ulong guildId, string discoverySplashId)
-            => discoverySplashId != null ? $"{DiscordConfig.CDNUrl}discovery-splashes/{guildId}/{discoverySplashId}.jpg" : null;
-        /// <summary>
-        ///     Returns a channel icon URL.
-        /// </summary>
-        /// <param name="channelId">The channel snowflake identifier.</param>
-        /// <param name="iconId">The icon identifier.</param>
-        /// <returns>
-        ///     A URL pointing to the channel's icon.
-        /// </returns>
-        public static string GetChannelIconUrl(ulong channelId, string iconId)
-            => iconId != null ? $"{DiscordConfig.CDNUrl}channel-icons/{channelId}/{iconId}.jpg" : null;
+        public static string GetGuildDiscoverySplashUrl(ulong guildId, string discoverySplashId, ushort? size, ImageFormat format)
+        {
+            if (discoverySplashId == null)
+                return null;
+            string extension = FormatToExtension(format, discoverySplashId, true);
+            return $"{DiscordConfig.CDNUrl}discovery-splashes/{guildId}/{discoverySplashId}.{extension}" + (size.HasValue ? $"?size={size}" : string.Empty);
+        }
 
         /// <summary>
         ///     Returns a guild banner URL.
@@ -107,11 +114,12 @@ namespace Discord
         /// <returns>
         ///     A URL pointing to the guild's banner image.
         /// </returns>
-        public static string GetGuildBannerUrl(ulong guildId, string bannerId, ushort? size = null)
+        public static string GetGuildBannerUrl(ulong guildId, string bannerId, ushort? size = null, ImageFormat format = ImageFormat.Auto)
         {
-            if (!string.IsNullOrEmpty(bannerId))
-                return $"{DiscordConfig.CDNUrl}banners/{guildId}/{bannerId}.jpg" + (size.HasValue ? $"?size={size}" : string.Empty);
-            return null;
+            if (bannerId == null)
+                return null;
+            string extension = FormatToExtension(format, bannerId, true);
+            return $"{DiscordConfig.CDNUrl}banners/{guildId}/{bannerId}.{extension}" + (size.HasValue ? $"?size={size}" : string.Empty);
         }
         /// <summary>
         ///     Returns an emoji URL.
@@ -159,17 +167,21 @@ namespace Discord
         public static string GetSpotifyDirectUrl(string trackId)
             => $"https://open.spotify.com/track/{trackId}";
 
-        private static string FormatToExtension(ImageFormat format, string imageId)
+        private static string FormatToExtension(ImageFormat format, string imageId, bool forceJpg = false)
         {
             if (format == ImageFormat.Auto)
-                format = imageId.StartsWith("a_") ? ImageFormat.Gif : ImageFormat.Png;
+                format = imageId.StartsWith("a_") ? ImageFormat.Gif : forceJpg ? ImageFormat.Jpeg : ImageFormat.Png;
             switch (format)
             {
                 case ImageFormat.Gif:
+                    if (forceJpg)
+                        return "jpg";
                     return "gif";
                 case ImageFormat.Jpeg:
-                    return "jpeg";
+                    return "jpg";
                 case ImageFormat.Png:
+                        if (forceJpg)
+                            return "jpg";
                     return "png";
                 case ImageFormat.WebP:
                     return "webp";

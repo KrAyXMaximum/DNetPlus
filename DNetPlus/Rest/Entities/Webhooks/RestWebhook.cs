@@ -12,7 +12,7 @@ namespace Discord.Rest
         internal ITextChannel Channel { get; private set; }
 
         /// <inheritdoc />
-        public ulong ChannelId { get; }
+        public ulong ChannelId { get; private set; }
         /// <inheritdoc />
         public string Token { get; }
 
@@ -58,6 +58,8 @@ namespace Discord.Rest
 
         internal void Update(Model model)
         {
+            if (ChannelId != model.ChannelId)
+                ChannelId = model.ChannelId;
             if (model.Avatar.IsSpecified)
                 AvatarId = model.Avatar.Value;
             if (model.Creator.IsSpecified)

@@ -1,5 +1,7 @@
 using Discord.API.Rest;
+using Discord.Net.Converters;
 using Discord.WebSocket;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -202,7 +204,7 @@ namespace Discord.Rest
 
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public static async Task<RestUserMessage> SendMessageAsync(IMessageChannel channel, BaseDiscordClient client,
-            string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, MessageReferenceParams reference, RequestOptions options)
+            string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, MessageReferenceParams reference, RequestOptions options, InteractionComponent[] components)
         {
             Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
             Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");
@@ -224,17 +226,18 @@ namespace Discord.Rest
             }
 
             CreateMessageParams args = new CreateMessageParams(text) { IsTTS = isTTS, Embed = embed?.ToModel(), AllowedMentions = allowedMentions?.ToModel(), 
-                MessageReference = reference?.ToModel() 
+                MessageReference = reference?.ToModel(), Components = components?.Select(x => x.ToModel()).ToArray()
             };
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(args, Newtonsoft.Json.Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
             API.MessageJson model = await client.ApiClient.CreateMessageAsync(channel.Id, args, options).ConfigureAwait(false);
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
 
         public static async Task<RestUserMessage> SendInteractionMessageAsync(IMessageChannel channel, BaseDiscordClient client,
-            InteractionData interaction, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, MessageReferenceParams reference, RequestOptions options, InteractionMessageType type, bool ghostMessage)
+            InteractionData interaction, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, MessageReferenceParams reference, RequestOptions options, InteractionMessageType type, bool ghostMessage, InteractionComponent[] components)
         {
             if (interaction == null)
-                return await SendMessageAsync(channel, client, text, isTTS, embed, allowedMentions, reference, options).ConfigureAwait(false);
+                return await SendMessageAsync(channel, client, text, isTTS, embed, allowedMentions, reference, options, components).ConfigureAwait(false);
 
             Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
             Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");
@@ -261,7 +264,6 @@ namespace Discord.Rest
             };
             switch (type)
             {
-                case InteractionMessageType.ChannelMessage:
                 case InteractionMessageType.ChannelMessageWithSource:
                     args.Data = new CreateWebhookMessageParams(text)
                     {
