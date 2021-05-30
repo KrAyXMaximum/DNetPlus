@@ -45,8 +45,29 @@ namespace TestBot
 
         private static async Task Client_InteractionReceived(Interaction arg)
         {
-            ShardedCommandContext context = new ShardedCommandContext(Client, arg);
-            _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: null);
+            Console.WriteLine("Got interaction");
+            switch (arg.Type)
+            {
+                case InteractionType.ApplicationCommand:
+                    ShardedCommandContext context = new ShardedCommandContext(Client, arg);
+                    _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: null);
+                    break;
+                case InteractionType.MessageComponent:
+                    if (arg.Data.CustomId == "boop")
+                    {
+                        Console.WriteLine("Boop!");
+                        try
+                        {
+                            await (arg.Channel as ISocketMessageChannel).SendInteractionMessageAsync(arg.Data, $"<@{arg.User.Id}> You have been booped");
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
+                    }
+                    break;
+            }
+            
         }
 
         private static async Task Client_Log(Discord.LogMessage arg)

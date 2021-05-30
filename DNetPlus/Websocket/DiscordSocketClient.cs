@@ -1891,9 +1891,9 @@ namespace Discord.WebSocket
                                 break;
                             case "INTERACTION_CREATE":
                                 {
+                                    //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(payload, Formatting.Indented));
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
-
-                                    if (data.Type == InteractionType.ApplicationCommand && State.GetChannel(data.ChannelId) is SocketChannel channel)
+                                    if (data.Type != InteractionType.Ping && State.GetChannel(data.ChannelId) is SocketChannel channel)
                                     {
                                         SocketGuild guild = null;
                                         if (data.GuildId.IsSpecified)

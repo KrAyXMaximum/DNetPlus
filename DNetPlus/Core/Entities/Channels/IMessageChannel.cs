@@ -36,13 +36,13 @@ namespace Discord
         ///     A task that represents an asynchronous send operation for delivering the message. The task result
         ///     contains the sent message.
         /// </returns>
-        Task<IUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionComponent[] components = null);
+        Task<IUserMessage> SendMessageAsync(string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionRow[] components = null);
 
-        Task<IUserMessage> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false);
+        Task<IUserMessage> SendInteractionMessageAsync(InteractionData interaction, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false, InteractionRow[] components = null);
 
-        Task<IUserMessage> SendInteractionFileAsync(InteractionData interaction, string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false);
+        Task<IUserMessage> SendInteractionFileAsync(InteractionData interaction, string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false, InteractionRow[] components = null);
         
-        Task<IUserMessage> SendInteractionFileAsync(InteractionData interaction, Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false);
+        Task<IUserMessage> SendInteractionFileAsync(InteractionData interaction, Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false, InteractionRow[] components = null);
 
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Discord
         ///     A task that represents an asynchronous send operation for delivering the message. The task result
         ///     contains the sent message.
         /// </returns>
-        Task<IUserMessage> SendFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null);
+        Task<IUserMessage> SendFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionRow[] components = null);
         /// <summary>
         ///     Sends a file to this message channel with an optional caption.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Discord
         ///     A task that represents an asynchronous send operation for delivering the message. The task result
         ///     contains the sent message.
         /// </returns>
-        Task<IUserMessage> SendFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null);
+        Task<IUserMessage> SendFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionRow[] components = null);
 
         /// <summary>
         ///     Gets a message from this message channel.

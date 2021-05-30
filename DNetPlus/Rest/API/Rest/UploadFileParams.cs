@@ -22,6 +22,8 @@ namespace Discord.API.Rest
         public Optional<AllowedMentions> AllowedMentions { get; set; }
         public Optional<MessageReference> MessageReference { get; set; }
         public bool IsSpoiler { get; set; } = false;
+        
+        public Optional<InteractionComponent_Json[]> Components { get; set; }
 
         public UploadFileParams(Stream file)
         {
@@ -51,6 +53,8 @@ namespace Discord.API.Rest
                 payload["hasSpoiler"] = IsSpoiler.ToString();
             if (MessageReference.IsSpecified)
                 payload["message_reference"] = MessageReference.Value;
+            if (Components.IsSpecified)
+                payload["components"] = Components.Value;
 
             StringBuilder json = new StringBuilder();
             using (StringWriter text = new StringWriter(json))

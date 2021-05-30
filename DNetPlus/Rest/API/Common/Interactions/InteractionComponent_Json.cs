@@ -8,7 +8,7 @@ namespace Discord.API
     public class InteractionComponent_Json
     {
         [JsonProperty("type")]
-        public ComponentType Type { get; set; }
+        public int Type { get; set; }
         [JsonProperty("style")]
         public Optional<ComponentButtonType> Style { get; set; }
         [JsonProperty("label")]

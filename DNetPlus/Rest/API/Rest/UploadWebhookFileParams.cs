@@ -24,9 +24,9 @@ namespace Discord.API.Rest
         public Optional<AllowedMentions> AllowedMentions { get; set; }
         public bool IsSpoiler { get; set; } = false;
 
-        [JsonProperty("flags")]
         public Optional<int> Flags { get; set; }
 
+        public Optional<InteractionComponent_Json[]> Components { get; set; }
         public UploadWebhookFileParams(Stream file)
         {
             File = file;
@@ -56,6 +56,10 @@ namespace Discord.API.Rest
                 payload["embeds"] = Embeds.Value;
             if (AllowedMentions.IsSpecified)
                 payload["allowed_mentions"] = AllowedMentions.Value;
+            if (Flags.IsSpecified)
+                payload["flags"] = Flags.Value;
+            if (Components.IsSpecified)
+                payload["components"] = Components.Value;
 
             StringBuilder json = new StringBuilder();
             using (StringWriter text = new StringWriter(json))

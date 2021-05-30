@@ -37,14 +37,14 @@ namespace Discord.Commands
         ///     Specifies if notifications are sent for mentioned users and roles in the <paramref name="message"/>.
         ///     If <c>null</c>, all mentioned roles and users will be notified.
         /// </param>
-        protected virtual async Task<IUserMessage> ReplyAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionComponent[] components = null)
+        protected virtual async Task<IUserMessage> ReplyAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionRow[] components = null)
         {
             return await Context.Channel.SendMessageAsync(message, isTTS, embed, options, allowedMentions, reference, components).ConfigureAwait(false);
         }
 
-        protected virtual async Task<IUserMessage> ReplyInteractionAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false)
+        protected virtual async Task<IUserMessage> ReplyInteractionAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionMessageType type = InteractionMessageType.ChannelMessageWithSource, bool ghostMessage = false, InteractionRow[] components = null)
         {
-            return await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, message, isTTS, embed, options, allowedMentions, reference, type, ghostMessage).ConfigureAwait(false);
+            return await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, message, isTTS, embed, options, allowedMentions, reference, type, ghostMessage, components).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace Discord.Commands
         ///     Specifies if notifications are sent for mentioned users and roles in the message <paramref name="text"/>.
         ///     If <c>null</c>, all mentioned roles and users will be notified.
         /// </param>
-        protected virtual async Task<IUserMessage> ReplyFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null)
+        protected virtual async Task<IUserMessage> ReplyFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionRow[] components = null)
         {
-            return await Context.Channel.SendFileAsync(filePath, text, isTTS, embed, options, isTTS, allowedMentions, reference).ConfigureAwait(false);
+            return await Context.Channel.SendFileAsync(filePath, text, isTTS, embed, options, isTTS, allowedMentions, reference, components).ConfigureAwait(false);
         }
         /// <summary>
         ///     Sends a file to this message channel with an optional caption.
@@ -78,9 +78,9 @@ namespace Discord.Commands
         ///     Specifies if notifications are sent for mentioned users and roles in the message <paramref name="text"/>.
         ///     If <c>null</c>, all mentioned roles and users will be notified.
         /// </param>
-        protected virtual async Task<IUserMessage> ReplyFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null)
+        protected virtual async Task<IUserMessage> ReplyFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, MessageReferenceParams reference = null, InteractionRow[] components = null)
         {
-            return await Context.Channel.SendFileAsync(stream, filename, text, isTTS, embed, options, isSpoiler, allowedMentions, reference).ConfigureAwait(false);
+            return await Context.Channel.SendFileAsync(stream, filename, text, isTTS, embed, options, isSpoiler, allowedMentions, reference, components).ConfigureAwait(false);
         }
 
         /// <summary>

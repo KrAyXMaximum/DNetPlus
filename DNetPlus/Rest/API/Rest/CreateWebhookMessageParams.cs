@@ -23,6 +23,8 @@ namespace Discord.API.Rest
         public Optional<AllowedMentions> AllowedMentions { get; set; }
         [JsonProperty("flags")]
         public Optional<int> Flags { get; set; }
+        [JsonProperty("components")]
+        public Optional<InteractionComponent_Json[]> Components { get; set; }
         public CreateWebhookMessageParams(string content)
         {
             Content = content;

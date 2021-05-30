@@ -24,12 +24,16 @@ namespace Discord.API.Gateway
     }
     internal class InteractionDataJson
     {
+        [JsonProperty("custom_id")]
+        public Optional<string> CustomId { get; set; }
+        [JsonProperty("component_type")]
+        public ComponentType ComponentType { get; set; }
         [JsonProperty("options")]
         public InteractionOptionJson[] Options { get; set; }
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public Optional<string> Name { get; set; }
         [JsonProperty("id")]
-        public ulong Id { get; set; }
+        public Optional<ulong> Id { get; set; }
     }
     internal class InteractionOptionJson
     {

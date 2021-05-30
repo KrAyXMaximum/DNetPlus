@@ -14,30 +14,27 @@ namespace TestBot
         {
             try
             {
-                await Context.Channel.SendMessageAsync("Test", components: new InteractionComponent[]
+                await Context.Channel.SendMessageAsync("Test", components: new InteractionRow[]
+                {
+                    new InteractionRow
                     {
-                    new InteractionComponent
-                    {
-                        Type = ComponentType.ActionRow,
-                        Components = new InteractionComponent[]
+                        Components = new InteractionButton[]
                         {
-                            new InteractionComponent
-                    {
-                        Label = "Hello World",
+                            new InteractionButton
+                            {
+                        Label = "Boop Button",
                         Style = ComponentButtonType.Primary,
-                        Type = ComponentType.Button,
-                        Id = "hello"
-                    },
-                    new InteractionComponent
+                        Id = "boop"
+                        },
+                    new InteractionButton
                     {
                         Label = "Website",
                         Style = ComponentButtonType.Link,
-                        Type = ComponentType.Button,
                         Url = "https://fluxpoint.dev"
                         }
-                        }
+                     }
                     }
-                    });
+                 });
             }
             catch(Exception ex)
             {

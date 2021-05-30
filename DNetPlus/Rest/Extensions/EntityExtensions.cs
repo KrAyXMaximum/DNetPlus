@@ -105,17 +105,25 @@ namespace Discord.Rest
             };
         }
 
-        public static InteractionComponent_Json ToModel(this InteractionComponent component)
+        public static InteractionComponent_Json ToModel(this InteractionRow row)
+        {
+            return new InteractionComponent_Json
+            {
+                Type = 1,
+                Components = row.Components != null ? row.Components.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
+            };
+        }
+
+        public static InteractionComponent_Json ToModel(this InteractionButton component)
         {
             return new InteractionComponent_Json
             {
                 Id = !string.IsNullOrEmpty(component.Id) ? component.Id : Optional.Create<string>(),
                 Disabled = component.Disabled ? true : Optional.Create<bool>(),
-                Components = component.Components != null ? component.Components.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
                 Emoji = component.Emoji != null ? component.Emoji : Optional.Create<Emoji>(),
                 Label = !string.IsNullOrEmpty(component.Label) ? component.Label : Optional.Create<string>(),
                 Style = component.Style.HasValue ? component.Style.Value : Optional.Create<ComponentButtonType>(),
-                Type = component.Type,
+                Type = 2,
                 Url = !string.IsNullOrEmpty(component.Url) ? component.Url : Optional.Create<string>()
             };
         }
