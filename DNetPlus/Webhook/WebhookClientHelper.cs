@@ -21,9 +21,11 @@ namespace Discord.Webhook
             return RestInternalWebhook.Create(client, model);
         }
         public static async Task<ulong> SendMessageAsync(DiscordWebhookClient client, 
-            string text, bool isTTS, IEnumerable<Embed> embeds, string username, string avatarUrl, RequestOptions options, AllowedMentions allowedMentions)
+            string text, bool isTTS, IEnumerable<Embed> embeds, string username, string avatarUrl, RequestOptions options, AllowedMentions allowedMentions, InteractionRow[] components)
         {
-            CreateWebhookMessageParams args = new CreateWebhookMessageParams(text) { IsTTS = isTTS };
+            CreateWebhookMessageParams args = new CreateWebhookMessageParams(text) { 
+                IsTTS = isTTS
+            };
             if (embeds != null)
                 args.Embeds = embeds.Select(x => x.ToModel()).ToArray();
             if (username != null)
@@ -32,19 +34,21 @@ namespace Discord.Webhook
                 args.AvatarUrl = avatarUrl;
             if (allowedMentions != null)
                 args.AllowedMentions = allowedMentions.ToModel();
+            if (components != null)
+                args.Components = components.Select(x => x.ToModel()).ToArray();
 
             API.MessageJson model = await client.ApiClient.CreateWebhookMessageAsync(client.Webhook.Id, args, options: options).ConfigureAwait(false);
             return model.Id;
         }
         public static async Task<ulong> SendFileAsync(DiscordWebhookClient client, string filePath, string text, bool isTTS, 
-            IEnumerable<Embed> embeds, string username, string avatarUrl, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions)
+            IEnumerable<Embed> embeds, string username, string avatarUrl, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions, InteractionRow[] components)
         {
             string filename = Path.GetFileName(filePath);
             using (FileStream file = File.OpenRead(filePath))
-                return await SendFileAsync(client, file, filename, text, isTTS, embeds, username, avatarUrl, options, isSpoiler, allowedMentions).ConfigureAwait(false);
+                return await SendFileAsync(client, file, filename, text, isTTS, embeds, username, avatarUrl, options, isSpoiler, allowedMentions, components).ConfigureAwait(false);
         }
         public static async Task<ulong> SendFileAsync(DiscordWebhookClient client, Stream stream, string filename, string text, bool isTTS,
-            IEnumerable<Embed> embeds, string username, string avatarUrl, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions)
+            IEnumerable<Embed> embeds, string username, string avatarUrl, RequestOptions options, bool isSpoiler, AllowedMentions allowedMentions, InteractionRow[] components)
         {
             UploadWebhookFileParams args = new UploadWebhookFileParams(stream) { Filename = filename, Content = text, IsTTS = isTTS, IsSpoiler = isSpoiler };
             if (username != null)
@@ -55,6 +59,8 @@ namespace Discord.Webhook
                 args.Embeds = embeds.Select(x => x.ToModel()).ToArray();
             if (allowedMentions != null)
                 args.AllowedMentions = allowedMentions.ToModel();
+            if (components != null)
+                args.Components = components.Select(x => x.ToModel()).ToArray();
 
             API.MessageJson msg = await client.ApiClient.UploadWebhookFileAsync(client.Webhook.Id, args, options).ConfigureAwait(false);
             return msg.Id;
