@@ -15,7 +15,7 @@ namespace Discord
         public IUser? User { get; private set; }
         public ulong Id { get; private set; }
         public IGuild? Guild { get; private set; }
-        public IChannel Channel { get; private set; }
+        public IMessageChannel Channel { get; private set; }
         public InteractionData Data { get; private set;  }
 
         internal void Update(ClientState state, WebSocket.SocketGuild guild, InteractionCreateModel model)
@@ -31,7 +31,7 @@ namespace Discord
             }
             else
             {
-                Channel = state.GetChannel(model.ChannelId);
+                Channel = state.GetChannel(model.ChannelId) as IMessageChannel;
                 User = state.GetUser(model.User.Value.Id);
             }
             

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Discord.API
 {
-    public class InteractionComponent_Json
+    internal class InteractionComponent_Json
     {
         [JsonProperty("type")]
         public int Type { get; set; }
@@ -14,7 +14,7 @@ namespace Discord.API
         [JsonProperty("label")]
         public Optional<string> Label { get; set; }
         [JsonProperty("emoji")]
-        public Optional<Emoji> Emoji { get; set; }
+        public Optional<EmojiJson> Emoji { get; set; }
         [JsonProperty("custom_id")]
         public Optional<string> Id { get; set; }
         [JsonProperty("url")]

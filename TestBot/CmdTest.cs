@@ -10,31 +10,20 @@ namespace TestBot
     public class CmdTest : ModuleBase<SocketCommandContext>
     {
         [Command("button")]
-        public async Task Button()
+        public async Task Button(string emote)
         {
             try
             {
-                await Context.Channel.SendMessageAsync("Test", components: new InteractionRow[]
+                await Context.Channel.SendMessageAsync(".", components: new InteractionRow[]
                 {
                     new InteractionRow
                     {
-                        Components = new InteractionButton[]
+                        Buttons = new InteractionButton[]
                         {
-                            new InteractionButton
-                            {
-                        Label = "Boop Button",
-                        Style = ComponentButtonType.Primary,
-                        Id = "boop"
-                        },
-                    new InteractionButton
-                    {
-                        Label = "Website",
-                        Style = ComponentButtonType.Link,
-                        Url = "https://fluxpoint.dev"
+                            new InteractionButton(ComponentButtonType.Primary, "Test", "test")
                         }
-                     }
                     }
-                 });
+                 }); 
             }
             catch(Exception ex)
             {

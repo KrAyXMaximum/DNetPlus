@@ -6,13 +6,20 @@ namespace Discord
 {
     public class InteractionRow
     {
-        public InteractionButton[] Components { get; set; }
+        public InteractionButton[] Buttons { get; set; }
     }
     public class InteractionButton
     {
-        public ComponentButtonType? Style { get; set; }
+        public InteractionButton(ComponentButtonType style, string label, string id)
+        {
+            Style = style;
+            Label = label;
+            Id = id;
+        }
+
+        public ComponentButtonType Style { get; set; }
         public string Label { get; set; }
-        public Emoji Emoji { get; set; }
+        public IEmote Emoji { get; set; }
         public string Id { get; set; }
         public string Url { get; set; }
         public bool Disabled { get; set; }

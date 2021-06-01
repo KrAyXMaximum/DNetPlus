@@ -45,7 +45,6 @@ namespace TestBot
 
         private static async Task Client_InteractionReceived(Interaction arg)
         {
-            Console.WriteLine("Got interaction");
             switch (arg.Type)
             {
                 case InteractionType.ApplicationCommand:
@@ -53,12 +52,11 @@ namespace TestBot
                     _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: null);
                     break;
                 case InteractionType.MessageComponent:
-                    if (arg.Data.CustomId == "boop")
+                    if (arg.User.Id == 190590364871032834 && arg.Data.CustomId == "test")
                     {
-                        Console.WriteLine("Boop!");
                         try
                         {
-                            await (arg.Channel as ISocketMessageChannel).SendInteractionMessageAsync(arg.Data, $"<@{arg.User.Id}> You have been booped");
+                            await arg.Channel.SendInteractionMessageAsync(arg.Data, $"Test button clicked!");
                         }
                         catch(Exception ex)
                         {

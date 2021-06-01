@@ -14,6 +14,14 @@ namespace Discord.Rest
             return new Emoji(model.Name);
         }
 
+        public static API.EmojiJson ToModel(this IEmote emote)
+        {
+            return new EmojiJson
+            {
+                Name = emote.Name
+            };
+        }
+
         public static GuildEmote ToEntity(this API.EmojiJson model)
             => new GuildEmote(model.Id.Value,
                 model.Name,
@@ -110,7 +118,7 @@ namespace Discord.Rest
             return new InteractionComponent_Json
             {
                 Type = 1,
-                Components = row.Components != null ? row.Components.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
+                Components = row.Buttons != null ? row.Buttons.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
             };
         }
 
@@ -118,13 +126,13 @@ namespace Discord.Rest
         {
             return new InteractionComponent_Json
             {
-                Id = !string.IsNullOrEmpty(component.Id) ? component.Id : Optional.Create<string>(),
-                Disabled = component.Disabled ? true : Optional.Create<bool>(),
-                Emoji = component.Emoji != null ? component.Emoji : Optional.Create<Emoji>(),
-                Label = !string.IsNullOrEmpty(component.Label) ? component.Label : Optional.Create<string>(),
-                Style = component.Style.HasValue ? component.Style.Value : Optional.Create<ComponentButtonType>(),
+                Id = component.Id,
+                Disabled = component.Disabled,
+                Emoji = component.Emoji?.ToModel(),
+                Label = component.Label,
+                Style = component.Style,
                 Type = 2,
-                Url = !string.IsNullOrEmpty(component.Url) ? component.Url : Optional.Create<string>()
+                Url = component.Url
             };
         }
 
