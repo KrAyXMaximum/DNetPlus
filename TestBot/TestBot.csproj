@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="DNetPlus-Interactive" Version="1.0.0" />
+    <PackageReference Include="DNetPlus-InteractiveButtons" Version="1.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>

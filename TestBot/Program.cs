@@ -1,10 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
-
+using DNetPlus_InteractiveButtons;
 namespace TestBot
 {
     public class Program
@@ -12,6 +13,7 @@ namespace TestBot
         public static DiscordShardedClient Client;
         public static CommandService Commands;
         public static CommandHandler Handler;
+        public static IServiceProvider _services;
         public static void Main(string[] args)
         {
             Start().GetAwaiter().GetResult();
@@ -32,10 +34,20 @@ namespace TestBot
             await Client.StartAsync();
             Client.InteractionReceived += Client_InteractionReceived;
             Commands = new CommandService();
-            Handler = new CommandHandler(Client, Commands);
+            _services = BuildServiceProvider();
+            Handler = new CommandHandler(Client, Commands, _services);
+            
             await Handler.InstallCommandsAsync();
             await Task.Delay(-1);
         }
+
+        public static IServiceProvider BuildServiceProvider() => new ServiceCollection()
+        .AddSingleton(Client)
+        .AddSingleton(Commands)
+        .AddSingleton(new InteractiveButtonsService(Client))
+        
+        .AddSingleton<CommandHandler>()
+        .BuildServiceProvider();
 
         private static async Task Client_UserJoinRequestDeleted(SocketUser arg1, SocketGuild arg2)
         {

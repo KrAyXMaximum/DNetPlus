@@ -1,5 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
+using DNetPlus_InteractiveButtons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,26 +11,32 @@ namespace TestBot
 {
     public class CmdTest : ModuleBase<SocketCommandContext>
     {
-        [Command("button")]
-        public async Task Button(string emote)
+        private InteractiveButtonsService ib { get; set; }
+        public CmdTest(InteractiveButtonsService inter)
         {
-            try
+            ib = inter;
+        }
+        [Command("button", RunMode = RunMode.Async)]
+        public async Task Button()
+        {
+            IUserMessage Mes = await ReplyAsync("Select a fruit", components: new InteractionRow[]
             {
-                await Context.Channel.SendMessageAsync(".", components: new InteractionRow[]
-                {
-                    new InteractionRow
-                    {
-                        Buttons = new InteractionButton[]
-                        {
-                            new InteractionButton(ComponentButtonType.Primary, "Test", "test")
-                        }
-                    }
-                 }); 
-            }
-            catch(Exception ex)
+                 new InteractionRow
+                 {
+                     Buttons = new InteractionButton[]
+                     {
+                         new InteractionButton(ComponentButtonType.Primary, "Apple", "apple"),
+                          new InteractionButton(ComponentButtonType.Primary, "Orange", "orange"),
+                     }
+                 }
+            });
+            InteractionData Reply = await ib.NextButtonAsync(Context, Mes, true, new TimeSpan(0, 5, 0));
+            if (Reply == null)
             {
-                Console.WriteLine(ex);
+                await ReplyAsync("Invalid data");
+                return;
             }
+            await Context.Channel.SendInteractionMessageAsync(Reply, $"{Context.User.Mention} you selected {Reply.CustomId}");
         }
 
         [Command("rrole")]

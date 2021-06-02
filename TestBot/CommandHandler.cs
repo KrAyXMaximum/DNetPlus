@@ -10,11 +10,12 @@ namespace TestBot
     {
         private readonly DiscordShardedClient _client;
         private readonly CommandService _commands;
-
-        public CommandHandler(DiscordShardedClient client, CommandService commands)
+        public readonly IServiceProvider _services;
+        public CommandHandler(DiscordShardedClient client, CommandService commands, IServiceProvider services)
         {
             _commands = commands;
             _client = client;
+            _services = services;
         }
 
         public async Task InstallCommandsAsync()
@@ -22,7 +23,7 @@ namespace TestBot
             _client.MessageReceived += HandleCommandAsync;
 
             await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                            services: null);
+                                            services: _services);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -37,7 +38,7 @@ namespace TestBot
             _ = await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
-                services: null);
+                services: _services);
 
         }
     }

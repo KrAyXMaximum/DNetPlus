@@ -12,6 +12,9 @@ namespace Discord.API.Gateway
         public Optional<GuildMemberJson> Member { get; set; }
         [JsonProperty("user")]
         public Optional<UserJson> User { get; set; }
+        [JsonProperty("message")]
+        public Optional<MessageJson> Message { get; set; }
+
 
         [JsonProperty("id")]
         public ulong Id { get; set; }
