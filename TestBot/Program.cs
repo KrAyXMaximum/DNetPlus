@@ -60,15 +60,19 @@ namespace TestBot
             switch (arg.Type)
             {
                 case InteractionType.ApplicationCommand:
+                    Console.WriteLine("INTERCTION HANDLER: " + arg.Channel.Name + " " + arg.Channel.GetType().Name);
                     ShardedCommandContext context = new ShardedCommandContext(Client, arg);
-                    _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: null);
+                    Console.WriteLine("INTERCTION HANDLER CONTEXT: " + context.Channel.Name);
+                    
+                        _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
+                   
                     break;
                 case InteractionType.MessageComponent:
                     if (arg.User.Id == 190590364871032834 && arg.Data.CustomId == "test")
                     {
                         try
                         {
-                            await arg.Channel.SendInteractionMessageAsync(arg.Data, $"Test button clicked!");
+                            //await arg.Channel.SendInteractionMessageAsync(arg.Data, $"Test button clicked!");
                         }
                         catch(Exception ex)
                         {

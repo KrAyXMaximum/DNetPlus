@@ -16,14 +16,23 @@ namespace TestBot
             _commands = commands;
             _client = client;
             _services = services;
+            _commands.CommandExecuted += _commands_CommandExecuted;
         }
+
+        private async Task _commands_CommandExecuted(Discord.Optional<CommandInfo> arg1, ICommandContext arg2, IResult arg3)
+        {
+           if (!arg3.IsSuccess)
+           {
+                Console.WriteLine("COMMAND: " + arg3.ErrorReason);
+            }
+        }
+
 
         public async Task InstallCommandsAsync()
         {
             _client.MessageReceived += HandleCommandAsync;
-
-            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                            services: _services);
+            await _commands.AddModulesAsync(assembly: Assembly.GetExecutingAssembly(), services: _services);
+            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)

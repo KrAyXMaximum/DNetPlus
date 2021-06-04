@@ -1891,26 +1891,41 @@ namespace Discord.WebSocket
                                 break;
                             case "INTERACTION_CREATE":
                                 {
-                                    //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(payload, Formatting.Indented));
+                                    await _gatewayLogger.DebugAsync("Received Dispatch (INTERACTION_CREATE)").ConfigureAwait(false);
+                                    
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
-                                    if (data.Type != InteractionType.Ping && State.GetChannel(data.ChannelId) is SocketChannel channel)
-                                    {
+                                    if (data.Type == InteractionType.Ping)
+                                        return;
+                                        IMessageChannel channel = State.GetChannel(data.ChannelId) as IMessageChannel;
                                         SocketGuild guild = null;
-                                        if (data.GuildId.IsSpecified)
+                                    if (data.GuildId.IsSpecified)
+                                    {
+                                        guild = (channel as SocketGuildChannel).Guild;
+                                        if (!guild.IsSynced)
                                         {
-                                            guild = (channel as SocketGuildChannel).Guild;
-                                            if (!guild.IsSynced)
-                                            {
-                                                await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
-                                                return;
-                                            }
+                                            await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
+                                            return;
                                         }
-                                        Interaction Interaction = new Interaction();
-                                        Interaction.Update(State, guild, data);
-
-                                        await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
                                     }
-                                }
+                                    else
+                                    {
+                                        if (channel == null)
+                                        {
+                                            channel = await Rest.GetDMChannelAsync(data.ChannelId).ConfigureAwait(false);
+                                        }
+                                    }
+                                        try
+                                        {
+                                            Interaction Interaction = new Interaction();
+                                        Interaction.Update(this, State, guild, channel, data);
+                                            await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex);
+                                        }
+                                    }
+                                
                                 break;
                             //Others
                             default:

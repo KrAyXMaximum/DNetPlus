@@ -64,11 +64,18 @@ namespace Discord.Commands
         {
             Client = client;
             Guild = interaction.Guild as SocketGuild;
-            Channel = interaction.Channel as SocketTextChannel;
-            User = interaction.Member as SocketUser ?? interaction.User as SocketUser;
+            User = interaction.User as SocketUser;
+           
             if (Guild != null)
+            {
+                Channel = interaction.Channel as SocketTextChannel;
                 GuildUser = interaction.Member as SocketGuildUser;
-            Message = new SocketUserMessage(client, 0, Channel, User, MessageSource.User, CommandService.ParseInteractionData(interaction.Data));
+            }
+            else
+            {
+                Channel = new SocketDMChannel(client, interaction.ChannelId, User as SocketGlobalUser);
+            }
+            Message = new SocketUserMessage(client, interaction.MessageId.HasValue ? interaction.MessageId.Value : 0, Channel, User, MessageSource.User, CommandService.ParseInteractionData(interaction.Data));
             InteractionData = interaction.Data;
         }
 

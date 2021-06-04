@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DNetPlus_InteractiveButtons;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace TestBot
 {
+    [RequireOwner]
     public class CmdTest : ModuleBase<SocketCommandContext>
     {
         private InteractiveButtonsService ib { get; set; }
@@ -16,11 +18,74 @@ namespace TestBot
         {
             ib = inter;
         }
+        [Command("interactive", RunMode = RunMode.Async)]
+        public async Task Interactive(string user = "")
+        {
+            SocketGuildUser GU = Context.User as SocketGuildUser;
+            IGuildUser User = Context.Guild.GetUser(ulong.Parse(user)) ?? await Context.Client.Rest.GetGuildUserAsync(Context.Guild.Id, ulong.Parse(user)) as IGuildUser;
+            IUserMessage Mes = null;
+            try
+            {
+                EmbedBuilder embed = new EmbedBuilder()
+                {
+                    Title = "Test",
+                    Description = $"**{GU.Nickname ?? GU.Username}** :crossed_swords: **{User.Nickname ?? User.Username}**\n\n" +
+                    $"`accept @{Context.User.Username}`"
+                };
+
+                Mes = await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, embed: embed.Build(), components: new InteractionRow[]
+                {
+                    new InteractionRow
+                    {
+                        Buttons = new InteractionButton[]
+                        {
+                            new InteractionButton(ComponentButtonType.Secondary, "Accept Invite", "bot-acceptinvite")
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                await ReplyAsync("Error");
+                return;
+            }
+            if (Mes == null)
+                return;
+            InteractionData Reply = await ib.NextButtonAsync(Context, Mes, User, new TimeSpan(0, 1, 0));
+            if (Reply == null)
+            {
+                try
+                {
+                    await Mes.ModifyAsync(x => x.Content = "Multiplayer invite timed out.");
+                }
+                catch { }
+                return;
+            }
+            await ReplyAsync("Accepted");
+        }
+
+        [Command("addslash")]
+        public async Task AddSlash(string name, [Remainder] string desc)
+        {
+            await Context.Guild.CreateCommandAsync(new CreateInteraction
+            {
+                Name = name,
+                Description = desc
+            });
+            await ReplyAsync("Added");
+        }
+
         [Command("button", RunMode = RunMode.Async)]
         public async Task Button()
         {
-            IUserMessage Mes = await ReplyAsync("Select a fruit", components: new InteractionRow[]
+            await ReplyInteractionAsync("Got inter");
+            Console.WriteLine("GOT BUTTON COMMAND");
+            try
             {
+                Console.WriteLine("BUTTON JSON");
+                IUserMessage Mes = await ReplyAsync("Select a fruit", components: new InteractionRow[]
+                {
                  new InteractionRow
                  {
                      Buttons = new InteractionButton[]
@@ -29,14 +94,19 @@ namespace TestBot
                           new InteractionButton(ComponentButtonType.Primary, "Orange", "orange"),
                      }
                  }
-            });
-            InteractionData Reply = await ib.NextButtonAsync(Context, Mes, true, new TimeSpan(0, 5, 0));
-            if (Reply == null)
-            {
-                await ReplyAsync("Invalid data");
-                return;
+                });
+                InteractionData Reply = await ib.NextButtonAsync(Context, Mes, true, new TimeSpan(0, 5, 0));
+                if (Reply == null)
+                {
+                    await ReplyAsync("Invalid data");
+                    return;
+                }
+                await Context.Channel.SendInteractionMessageAsync(Reply, $"{Context.User.Mention} you selected {Reply.CustomId}");
             }
-            await Context.Channel.SendInteractionMessageAsync(Reply, $"{Context.User.Mention} you selected {Reply.CustomId}");
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         [Command("rrole")]
