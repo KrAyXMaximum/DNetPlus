@@ -14,7 +14,8 @@ namespace Discord
         {
             Style = style;
             Label = label;
-            Id = id;
+            Url = style == ComponentButtonType.Link ? id : "";
+            Id = style == ComponentButtonType.Link ? "" : id;
         }
 
         public ComponentButtonType Style { get; set; }
