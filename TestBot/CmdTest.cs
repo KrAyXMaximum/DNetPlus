@@ -84,6 +84,8 @@ namespace TestBot
             try
             {
                 Console.WriteLine("BUTTON JSON");
+
+
                 IUserMessage Mes = await ReplyAsync("Select a fruit", components: new InteractionRow[]
                 {
                  new InteractionRow
@@ -101,7 +103,7 @@ namespace TestBot
                     await ReplyAsync("Invalid data");
                     return;
                 }
-                await Context.Channel.SendInteractionMessageAsync(Reply, $"{Context.User.Mention} you selected {Reply.CustomId}");
+                await Context.Channel.SendInteractionMessageAsync(Reply, $"You chose {Reply.CustomId}", type: Discord.API.Rest.InteractionMessageType.DeferredUpdateMessage);
             }
             catch(Exception ex)
             {

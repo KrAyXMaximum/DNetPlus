@@ -14,6 +14,6 @@ namespace Discord
         public string Description { get; set; }
 
         [JsonProperty("options")]
-        public CreateInteractionOption[] Options { get; set; }
+        public CreateInteractionOption[] Options { get; set; } 
     }
 }

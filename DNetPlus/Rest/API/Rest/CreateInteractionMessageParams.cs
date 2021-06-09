@@ -14,6 +14,8 @@ namespace Discord.API.Rest
     {
         Pong = 1,
         ChannelMessageWithSource = 4,
-        AcknowledgeWithSource = 5
+        AcknowledgeWithSource = 5,
+        DeferredUpdateMessage = 6,
+        UpdateMessage = 7
     }
 }

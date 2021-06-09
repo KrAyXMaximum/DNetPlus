@@ -32,7 +32,7 @@ namespace Discord
             {
                 Guild = guild;
                 Member = guild.GetUser(model.Member.Value.User.Id) ?? guild.AddOrUpdateUser(model.Member.Value.User);
-                User = state.GetUser(model.Member.Value.User.Id);
+                User = Member as SocketUser;
             }
             else
             {

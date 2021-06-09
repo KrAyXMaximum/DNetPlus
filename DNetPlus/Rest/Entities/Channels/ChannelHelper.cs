@@ -298,6 +298,8 @@ namespace Discord.Rest
         public static async Task<RestUserMessage> SendInteractionFileAsync(IMessageChannel channel, BaseDiscordClient client,
             InteractionData interaction, Stream stream, string filename, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage, InteractionRow[] components)
         {
+            if (interaction == null)
+                return await SendFileAsync(channel, client, stream, filename, text, isTTS, embed, allowedMentions, options, isSpoiler, reference, components).ConfigureAwait(false);
             Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
             Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");
 
@@ -326,6 +328,7 @@ namespace Discord.Rest
 
             if (ghostMessage)
                 args.Data.Flags = 64;
+
 
             API.MessageJson model = await client.ApiClient.UploadInteractionFileAsync(channel.Id, interaction, args, options).ConfigureAwait(false);
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
