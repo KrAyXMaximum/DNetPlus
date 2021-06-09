@@ -58,9 +58,6 @@ namespace Discord.Rest
 
         public async Task LoginAsync(TokenType tokenType, string token, bool validateToken = true)
         {
-            if (tokenType == TokenType.User)
-                throw new ArgumentException("User tokens are not allowed");
-
             await _stateLock.WaitAsync().ConfigureAwait(false);
             try
             {
