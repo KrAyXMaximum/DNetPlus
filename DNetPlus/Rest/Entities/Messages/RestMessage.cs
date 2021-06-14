@@ -69,7 +69,7 @@ namespace Discord.Rest
         ///     Gets a collection of the <see cref="ISticker"/>'s on the message.
         /// </summary>
         public virtual IReadOnlyCollection<MessageSticker> Stickers => ImmutableArray.Create<MessageSticker>();
-
+        public virtual IReadOnlyCollection<InteractionRow> Components => ImmutableArray.Create<InteractionRow>();
 
         internal RestMessage(BaseDiscordClient discord, ulong id, IMessageChannel channel, IUser author, MessageSource source)
             : base(discord, id)
@@ -171,6 +171,8 @@ namespace Discord.Rest
         IReadOnlyCollection<IEmbed> IMessage.Embeds => Embeds;
 
         IReadOnlyCollection<ISticker> IMessage.Stickers => Stickers;
+
+        IReadOnlyCollection<InteractionRow> IMessage.Components => Components;
         /// <inheritdoc />
         IReadOnlyCollection<ulong> IMessage.MentionedUserIds => MentionedUsers.Select(x => x.Id).ToImmutableArray();
 

@@ -99,6 +99,8 @@ namespace Discord.WebSocket
 
         public virtual IReadOnlyCollection<MessageSticker> Stickers => ImmutableArray.Create<MessageSticker>();
 
+        public virtual IReadOnlyCollection<InteractionRow> Components => ImmutableArray.Create<InteractionRow>();
+
         /// <inheritdoc />
         public DateTimeOffset Timestamp => DateTimeUtils.FromTicks(_timestampTicks);
 
@@ -187,6 +189,8 @@ namespace Discord.WebSocket
         IReadOnlyCollection<IEmbed> IMessage.Embeds => Embeds;
 
         IReadOnlyCollection<ISticker> IMessage.Stickers => Stickers;
+
+        IReadOnlyCollection<InteractionRow> IMessage.Components => Components;
         /// <inheritdoc />
         IReadOnlyCollection<ulong> IMessage.MentionedChannelIds => MentionedChannels.Select(x => x.Id).ToImmutableArray();
         /// <inheritdoc />

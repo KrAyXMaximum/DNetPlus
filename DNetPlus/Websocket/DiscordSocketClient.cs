@@ -143,7 +143,9 @@ namespace Discord.WebSocket
             HandlerTimeout = config.HandlerTimeout;
             ExclusiveBulkDelete = config.ExclusiveBulkDelete;
             State = new ClientState(0, 0);
-            Rest = new DiscordSocketRestClient(config, ApiClient);
+            base._shardedClient = shardedClient;
+
+            Rest = new DiscordSocketRestClient(config, ApiClient, shardedClient);
             _heartbeatTimes = new ConcurrentQueue<long>();
             _guildSubscriptions = config.GuildSubscriptions;
             _gatewayIntents = config.GatewayIntents;
@@ -636,6 +638,8 @@ namespace Discord.WebSocket
                                         _sessionId = data.SessionId;
                                         _unavailableGuildCount = unavailableGuilds;
                                         CurrentUser = currentUser;
+                                        if (Rest.CurrentUser == null)
+                                        Rest.CurrentUser = RestSelfUser.Create(this, data.User);
                                         State = state;
                                     }
                                     catch (Exception ex)

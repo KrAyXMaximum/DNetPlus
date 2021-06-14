@@ -1,4 +1,5 @@
 using Discord.Logging;
+using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,6 +22,7 @@ namespace Discord.Rest
         internal readonly Logger _restLogger;
         private readonly SemaphoreSlim _stateLock;
         private bool _isFirstLogin, _isDisposed;
+        internal DiscordShardedClient _shardedClient;
 
         internal API.DiscordRestApiClient ApiClient { get; }
         internal LogManager LogManager { get; }

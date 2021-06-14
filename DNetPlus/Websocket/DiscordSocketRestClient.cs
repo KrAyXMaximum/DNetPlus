@@ -6,7 +6,7 @@ namespace Discord.WebSocket
 {
     public class DiscordSocketRestClient : DiscordRestClient
     {
-        internal DiscordSocketRestClient(DiscordRestConfig config, API.DiscordRestApiClient api) : base(config, api) { }
+        internal DiscordSocketRestClient(DiscordRestConfig config, API.DiscordRestApiClient api, DiscordShardedClient shardedClient) : base(config, api, shardedClient) { }
 
         public new Task LoginAsync(TokenType tokenType, string token, bool validateToken = true)
             => throw new NotSupportedException("The Socket REST wrapper cannot be used to log in or out.");

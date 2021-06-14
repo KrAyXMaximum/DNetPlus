@@ -1,3 +1,5 @@
+using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -15,7 +17,7 @@ namespace Discord.Rest
         /// <summary>
         ///     Gets the logged-in user.
         /// </summary>
-        public new RestSelfUser CurrentUser => base.CurrentUser as RestSelfUser;
+        public new RestSelfUser CurrentUser { get => base.CurrentUser as RestSelfUser; internal set => base.CurrentUser = value; }
 
         /// <inheritdoc />
         public DiscordRestClient() : this(new DiscordRestConfig()) { }
@@ -25,7 +27,10 @@ namespace Discord.Rest
         /// <param name="config">The configuration to be used with the client.</param>
         public DiscordRestClient(DiscordRestConfig config) : base(config, CreateApiClient(config)) { }
         // used for socket client rest access
-        internal DiscordRestClient(DiscordRestConfig config, API.DiscordRestApiClient api) : base(config, api) { }
+        internal DiscordRestClient(DiscordRestConfig config, API.DiscordRestApiClient api, DiscordShardedClient shardedClient) : base(config, api)
+        {
+            base._shardedClient = shardedClient;
+        }
 
         private static API.DiscordRestApiClient CreateApiClient(DiscordRestConfig config)
             => new API.DiscordRestApiClient(config.RestClientProvider, 
@@ -53,10 +58,29 @@ namespace Discord.Rest
         /// <inheritdoc />
         internal override async Task OnLoginAsync(TokenType tokenType, string token)
         {
-            API.UserJson user = await ApiClient.GetMyUserAsync(new RequestOptions { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
-            ApiClient.CurrentUserId = user.Id;
-            base.CurrentUser = RestSelfUser.Create(this, user);
+            if (base._shardedClient == null)
+            {
+                API.UserJson user = await ApiClient.GetMyUserAsync(new RequestOptions { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
+                ApiClient.CurrentUserId = user.Id;
+                base.CurrentUser = RestSelfUser.Create(this, user);
+            }
+            else
+            {
+                if (base._shardedClient._currentRestUser == null)
+                {
+                    API.UserJson user = await ApiClient.GetMyUserAsync(new RequestOptions { RetryMode = RetryMode.AlwaysRetry }).ConfigureAwait(false);
+                    ApiClient.CurrentUserId = user.Id;
+                    base.CurrentUser = RestSelfUser.Create(this, user);
+                    base._shardedClient._currentRestUser = base.CurrentUser;
+                    
+                }
+                else
+                {
+                    base.CurrentUser = base._shardedClient._currentRestUser;
+                }
+            }
         }
+
         /// <inheritdoc />
         internal override Task OnLogoutAsync()
         {

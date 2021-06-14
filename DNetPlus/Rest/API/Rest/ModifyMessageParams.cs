@@ -12,5 +12,7 @@ namespace Discord.API.Rest
         public Optional<EmbedJson> Embed { get; set; }
         [JsonProperty("allowed_mentions")]
         public Optional<AllowedMentions> AllowedMentions { get; set; }
+        [JsonProperty("components")]
+        public Optional<InteractionComponent_Json[]> Components { get; set; }
     }
 }

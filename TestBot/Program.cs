@@ -23,11 +23,13 @@ namespace TestBot
             Client = new DiscordShardedClient(new DiscordSocketConfig
             {
                 OwnerIds = new ulong[] { 190590364871032834 },
-                GatewayIntents = Discord.GatewayIntents.Guilds | Discord.GatewayIntents.GuildMessages | Discord.GatewayIntents.GuildMembers,
+                GatewayIntents = Discord.GatewayIntents.Guilds,
                 AlwaysDownloadUsers = false,
-                LogLevel = Discord.LogSeverity.Debug
+                //MaxWaitBetweenGuildAvailablesBeforeReady = 5000,
+                LogLevel = Discord.LogSeverity.Debug,
+                TotalShards = 64
             });
-            string File = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/DiscordBots/Boaty/Config.json";
+            string File = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/DiscordBots/Waifu/Config.json";
             Client.Log += Client_Log;
             Client.UserJoinRequestDeleted += Client_UserJoinRequestDeleted;
             await Client.LoginAsync(Discord.TokenType.Bot, JObject.Parse(System.IO.File.ReadAllText(File))["Discord"].ToString());

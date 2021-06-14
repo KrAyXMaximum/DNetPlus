@@ -59,5 +59,8 @@ namespace Discord.API
 
         [JsonProperty("stickers")]
         public Optional<StickerJson[]> Stickers { get; set; }
+
+        [JsonProperty("components")]
+        public Optional<InteractionComponent_Json[]> Components { get; set; }
     }
 }

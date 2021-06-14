@@ -20,7 +20,7 @@ namespace Discord.WebSocket
         private SemaphoreSlim[] _identifySemaphores;
         private object _semaphoreResetLock;
         private Task _semaphoreResetTask;
-
+        internal ISelfUser _currentRestUser;
         private bool _isDisposed;
 
         /// <inheritdoc />

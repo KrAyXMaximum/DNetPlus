@@ -19,6 +19,7 @@ namespace Discord.Rest
         private ImmutableArray<Attachment> _attachments = ImmutableArray.Create<Attachment>();
         private ImmutableArray<Embed> _embeds = ImmutableArray.Create<Embed>();
         private ImmutableArray<MessageSticker> _stickers = ImmutableArray.Create<MessageSticker>();
+        private ImmutableArray<InteractionRow> _components = ImmutableArray.Create<InteractionRow>();
         private ImmutableArray<ITag> _tags = ImmutableArray.Create<ITag>();
 
         /// <inheritdoc />
@@ -43,6 +44,7 @@ namespace Discord.Rest
         public override IReadOnlyCollection<ITag> Tags => _tags;
 
         public override IReadOnlyCollection<MessageSticker> Stickers => _stickers;
+        public override IReadOnlyCollection<InteractionRow> Components => _components;
 
         internal RestUserMessage(BaseDiscordClient discord, ulong id, IMessageChannel channel, IUser author, MessageSource source)
             : base(discord, id, channel, author, source)
@@ -114,6 +116,19 @@ namespace Discord.Rest
                     _stickers = ImmutableArray.Create<MessageSticker>();
             }
 
+                if (model.Components.IsSpecified)
+                {
+                    InteractionComponent_Json[] value = model.Components.Value;
+                    if (value.Length > 0)
+                    {
+                        ImmutableArray<InteractionRow>.Builder buttons = ImmutableArray.CreateBuilder<InteractionRow>(value.Length);
+                        for (int i = 0; i < value.Length; i++)
+                            buttons.Add(value[i].ToEntity());
+                        _components = buttons.ToImmutable();
+                    }
+                    else
+                        _components = ImmutableArray.Create<InteractionRow>();
+                }
             ImmutableArray<IUser> mentions = ImmutableArray.Create<IUser>();
             if (model.UserMentions.IsSpecified)
             {

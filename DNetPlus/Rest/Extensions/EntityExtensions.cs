@@ -94,6 +94,20 @@ namespace Discord.Rest
                 PreviewAsset = model.PreviewAsset
             };
         }
+
+        public static InteractionRow ToEntity(this InteractionComponent_Json model)
+        {
+            return new InteractionRow
+            {
+                Buttons = model.Components.Value.Select(x => new InteractionButton((ComponentButtonType)x.Type, x.Label.GetValueOrDefault(), x.Id.GetValueOrDefault())
+                {
+                    Disabled = x.Disabled.GetValueOrDefault(),
+                    Emoji = x.Emoji.GetValueOrDefault()?.ToEntity(),
+                    Url = x.Url.GetValueOrDefault()
+                }).ToArray()
+            };
+        }
+
         public static API.AllowedMentions ToModel(this AllowedMentions entity)
         {
             return new API.AllowedMentions()

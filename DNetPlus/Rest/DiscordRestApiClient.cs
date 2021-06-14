@@ -1373,6 +1373,7 @@ namespace Discord.API
             options = RequestOptions.CreateOrClone(options);
             return await SendAsync<UserJson>("GET", () => "users/@me", new BucketIds(), options: options).ConfigureAwait(false);
         }
+
         public async Task<IReadOnlyCollection<ConnectionJson>> GetMyConnectionsAsync(RequestOptions options = null)
         {
             options = RequestOptions.CreateOrClone(options);

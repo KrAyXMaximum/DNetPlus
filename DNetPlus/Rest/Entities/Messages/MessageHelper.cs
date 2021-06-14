@@ -1,3 +1,4 @@
+using Discord.API;
 using Discord.API.Rest;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,8 @@ namespace Discord.Rest
             ModifyMessageParams apiArgs = new API.Rest.ModifyMessageParams
             {
                 Content = args.Content,
-                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel() : Optional.Create<API.EmbedJson>()
+                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel() : Optional.Create<API.EmbedJson>(),
+                Components = args.Components.IsSpecified ? args.Components.Value.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>()
             };
             if (allowedMentions != null)
                 apiArgs.AllowedMentions = allowedMentions.ToModel();

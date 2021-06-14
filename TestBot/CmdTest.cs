@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace TestBot
@@ -18,6 +19,31 @@ namespace TestBot
         {
             ib = inter;
         }
+        [Command("getbutton")]
+        public async Task GetButton()
+        {
+            IMessage Message = await Context.Guild.GetTextChannel(275062423159963648).GetMessageAsync(852184325147590696);
+            await ReplyAsync($"Buttons: {Message.Components.First().Buttons.Count()}");
+        }
+
+        [Command("testbutton")]
+        public async Task TestButton()
+        {
+            InteractionRow[] rows = new InteractionRow[]
+            {
+                new InteractionRow
+                {
+                    Buttons = new InteractionButton[]
+                    {
+                        new InteractionButton(ComponentButtonType.Primary, "Test", "test")
+                    }
+                }
+            };
+            var Message = await Context.Channel.SendMessageAsync("Test", components: rows);
+            rows.First().Buttons.First().Disabled = true;
+            await Message.ModifyAsync(x => x.Components = rows);
+        }
+
         [Command("interactive", RunMode = RunMode.Async)]
         public async Task Interactive(string user = "")
         {
@@ -85,8 +111,7 @@ namespace TestBot
             {
                 Console.WriteLine("BUTTON JSON");
 
-
-                IUserMessage Mes = await ReplyAsync("Select a fruit", components: new InteractionRow[]
+                InteractionRow[] rows = new InteractionRow[]
                 {
                  new InteractionRow
                  {
@@ -96,14 +121,25 @@ namespace TestBot
                           new InteractionButton(ComponentButtonType.Primary, "Orange", "orange"),
                      }
                  }
-                });
-                InteractionData Reply = await ib.NextButtonAsync(Context, Mes, true, new TimeSpan(0, 5, 0));
+                };
+                IUserMessage Mes = await ReplyAsync("Select a fruit", components: rows);
+                InteractionData Reply = await ib.NextButtonAsync(Context, Mes, new EnsureGuildPermissionCriterion(GuildPermission.SendMessages), new TimeSpan(0, 15, 0));
+                try
+                {
+                    foreach (var i in rows.First().Buttons)
+                    {
+                        i.Disabled = true;
+                    }
+                    await Mes.ModifyAsync(x => x.Components = rows);
+                }
+                catch { }
                 if (Reply == null)
                 {
                     await ReplyAsync("Invalid data");
                     return;
                 }
-                await Context.Channel.SendInteractionMessageAsync(Reply, $"You chose {Reply.CustomId}", type: Discord.API.Rest.InteractionMessageType.DeferredUpdateMessage);
+                await Context.Channel.SendInteractionMessageAsync(Reply, $"You chose {Reply.CustomId}", type: Discord.API.Rest.InteractionMessageType.ChannelMessageWithSource);
+                
             }
             catch(Exception ex)
             {

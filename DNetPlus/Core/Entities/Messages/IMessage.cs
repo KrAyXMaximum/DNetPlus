@@ -155,6 +155,8 @@ namespace Discord
 
         IReadOnlyCollection<ISticker> Stickers { get; }
 
+        IReadOnlyCollection<InteractionRow> Components { get; }
+
         /// <summary>
         ///     Gets all reactions included in this message.
         /// </summary>
