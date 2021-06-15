@@ -6,6 +6,8 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
 using DNetPlus_InteractiveButtons;
+using System.Linq;
+
 namespace TestBot
 {
     public class Program
@@ -25,15 +27,16 @@ namespace TestBot
                 OwnerIds = new ulong[] { 190590364871032834 },
                 GatewayIntents = Discord.GatewayIntents.Guilds,
                 AlwaysDownloadUsers = false,
+                TotalShards = 1,
                 //MaxWaitBetweenGuildAvailablesBeforeReady = 5000,
-                LogLevel = Discord.LogSeverity.Debug,
-                TotalShards = 64
+                LogLevel = Discord.LogSeverity.Debug
             });
-            string File = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/DiscordBots/Waifu/Config.json";
+            string File = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/DiscordBots/Boaty/Config.json";
             Client.Log += Client_Log;
             Client.UserJoinRequestDeleted += Client_UserJoinRequestDeleted;
             await Client.LoginAsync(Discord.TokenType.Bot, JObject.Parse(System.IO.File.ReadAllText(File))["Discord"].ToString());
             await Client.StartAsync();
+
             Client.InteractionReceived += Client_InteractionReceived;
             Commands = new CommandService();
             _services = BuildServiceProvider();

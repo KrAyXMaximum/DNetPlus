@@ -17,7 +17,7 @@ namespace Discord.WebSocket
         private int[] _shardIds;
         private DiscordSocketClient[] _shards;
         private int _totalShards;
-        private SemaphoreSlim[] _identifySemaphores;
+        private SemaphoreSlim[] _identifySemaphores { get; set; }
         private object _semaphoreResetLock;
         private Task _semaphoreResetTask;
         internal ISelfUser _currentRestUser;
@@ -131,28 +131,32 @@ namespace Discord.WebSocket
             if (_automaticShards)
             {
                 BotGateway botGateway = await GetBotGatewayAsync().ConfigureAwait(false);
-                _shardIds = Enumerable.Range(0, botGateway.Shards).ToArray();
-                _totalShards = _shardIds.Length;
-                _shards = new DiscordSocketClient[_shardIds.Length];
-                int maxConcurrency = botGateway.SessionStartLimit.MaxConcurrency;
-                _baseConfig.IdentifyMaxConcurrency = maxConcurrency;
-                _identifySemaphores = new SemaphoreSlim[maxConcurrency];
-                for (int i = 0; i < maxConcurrency; i++)
-                    _identifySemaphores[i] = new SemaphoreSlim(1, 1);
-                for (int i = 0; i < _shardIds.Length; i++)
-                {
-                    _shardIdsToIndex.Add(_shardIds[i], i);
-                    DiscordSocketConfig newConfig = _baseConfig.Clone();
-                    newConfig.ShardId = _shardIds[i];
-                    newConfig.TotalShards = _totalShards;
-                    _shards[i] = new DiscordSocketClient(newConfig, this, i != 0 ? _shards[0] : null);
-                    RegisterEvents(_shards[i], i == 0);
-                }
-            }
 
-            //Assume thread safe: already in a connection lock
-            for (int i = 0; i < _shards.Length; i++)
-                await _shards[i].LoginAsync(tokenType, token);
+                _shardIds = Enumerable.Range(0, botGateway.Shards).ToArray();
+                    _totalShards = _shardIds.Length;
+                    _shards = new DiscordSocketClient[_shardIds.Length];
+                    int maxConcurrency = botGateway.SessionStartLimit.MaxConcurrency;
+
+                    _baseConfig.IdentifyMaxConcurrency = maxConcurrency;
+                    _identifySemaphores = new SemaphoreSlim[maxConcurrency];
+                    for (int i = 0; i < maxConcurrency; i++)
+                        _identifySemaphores[i] = new SemaphoreSlim(1, 1);
+
+                    for (int i = 0; i < _shardIds.Length; i++)
+                    {
+                        _shardIdsToIndex.Add(_shardIds[i], i);
+                        DiscordSocketConfig newConfig = _baseConfig.Clone();
+                        newConfig.ShardId = _shardIds[i];
+                        newConfig.TotalShards = _totalShards;
+                        _shards[i] = new DiscordSocketClient(newConfig, this, i != 0 ? _shards[0] : null);
+                        RegisterEvents(_shards[i], i == 0);
+                    }
+            }
+           
+                //Assume thread safe: already in a connection lock
+                for (int i = 0; i < _shards.Length; i++)
+                    await _shards[i].LoginAsync(tokenType, token);
+            
         }
         internal override async Task OnLogoutAsync()
         {
