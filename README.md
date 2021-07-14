@@ -26,3 +26,5 @@ https://github.com/xXBuilderBXx/DNetPlus-Addons
 - Victoria (Lavalink)
 - BotListAPI (Botlist server count posting)
 - Translation command base (Coming soon)
+
+[![Widget](https://discordservices.net/bot/434556304661544960/widget.svg?v=2)](https://dbot.page/waifu)
