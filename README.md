@@ -12,7 +12,7 @@ Here is a list of basic features/tweaks
 - Allows you parse or check emotes
 - Command info and prefix can be used in Context
 - Updated with latest permissions and overwrite perms
-- Adds missing guild properties like discover splash/rules channel
+- Adds missing guild properties like discover splash/ru Otherles channel
 - Better optimized especially for sharded bots and intents
 - Opened up more of the client for getting rest client or client config
 
@@ -26,3 +26,6 @@ https://github.com/xXBuilderBXx/DNetPlus-Addons
 - Victoria (Lavalink)
 - BotListAPI (Botlist server count posting)
 - Translation command base (Coming soon)
+
+#
+[![Widget](https://discordservices.net/bot/434556304661544960/widget.svg?v=2)](https://dbot.page/waifu)
