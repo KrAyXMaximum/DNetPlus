@@ -14,6 +14,8 @@ namespace Discord
         /// <summary> The channel is a category channel. </summary>
         Category = 4,
         /// <summary> The channel is a news channel. </summary>
-        News = 5
+        News = 5,
+        Store = 6,
+        PrivateThread = 12
     }
 }

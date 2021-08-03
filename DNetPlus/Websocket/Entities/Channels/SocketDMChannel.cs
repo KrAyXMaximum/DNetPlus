@@ -1,3 +1,4 @@
+using Discord.API;
 using Discord.API.Rest;
 using Discord.Rest;
 using System;
@@ -46,9 +47,20 @@ namespace Discord.WebSocket
             entity.Update(state, model);
             return entity;
         }
+        internal static SocketDMChannel Create(DiscordSocketClient discord, ClientState state, ulong channelId, UserJson recipient)
+        {
+            SocketGlobalUser User = state.GetUser(recipient.Id) ?? SocketGlobalUser.Create(discord, state, recipient);
+            var entity = new SocketDMChannel(discord, channelId, User);
+            entity.Update(state, recipient);
+            return entity;
+        }
         internal override void Update(ClientState state, Model model)
         {
             Recipient.Update(state, model.Recipients.Value[0]);
+        }
+        internal void Update(ClientState state, UserJson user)
+        {
+            Recipient.Update(state, user);
         }
 
         /// <inheritdoc />

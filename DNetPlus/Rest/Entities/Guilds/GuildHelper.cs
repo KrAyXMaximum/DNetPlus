@@ -260,6 +260,28 @@ namespace Discord.Rest
             return RestCategoryChannel.Create(client, guild, model);
         }
 
+        public static async Task<RestTextChannel> CreateThreadChannelAsync(IGuild guild, BaseDiscordClient client,
+            string name, RequestOptions options, Action<TextChannelProperties> func = null)
+        {
+            if (name == null) throw new ArgumentNullException(paramName: nameof(name));
+
+            TextChannelProperties props = new TextChannelProperties();
+            func?.Invoke(props);
+
+            CreateGuildChannelParams args = new CreateGuildChannelParams(name, ChannelType.PrivateThread)
+            {
+                OwnerId = props.OwnerId,
+                CategoryId = props.CategoryId,
+                Topic = props.Topic,
+                IsNsfw = props.IsNsfw,
+                Position = props.Position,
+                SlowModeInterval = props.SlowModeInterval,
+            };
+            ChannelJson model = await client.ApiClient.CreateGuildChannelAsync(guild.Id, args, options).ConfigureAwait(false);
+            return RestTextChannel.Create(client, guild, model);
+        }
+
+
         //Voice Regions
         public static async Task<IReadOnlyCollection<RestVoiceRegion>> GetVoiceRegionsAsync(IGuild guild, BaseDiscordClient client,
             RequestOptions options)

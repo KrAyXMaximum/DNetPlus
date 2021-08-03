@@ -261,7 +261,7 @@ namespace Discord.API
         {
             options = options ?? new RequestOptions();
             options.BucketId = bucketId;
-
+            
             string json = payload != null ? SerializeJson(payload) : null;
             JsonRestRequest request = new JsonRestRequest(RestClient, method, endpoint, json, options);
             return DeserializeJson<TResponse>(await SendInternalAsync(method, endpoint, request).ConfigureAwait(false));

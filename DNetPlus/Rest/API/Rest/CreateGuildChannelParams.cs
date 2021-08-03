@@ -12,6 +12,8 @@ namespace Discord.API.Rest
         public ChannelType Type { get; }
         [JsonProperty("parent_id")]
         public Optional<ulong?> CategoryId { get; set; }
+        [JsonProperty("owner_id")]
+        public Optional<ulong?> OwnerId { get; set; }
         [JsonProperty("position")]
         public Optional<int> Position { get; set; }
         [JsonProperty("permission_overwrites")]

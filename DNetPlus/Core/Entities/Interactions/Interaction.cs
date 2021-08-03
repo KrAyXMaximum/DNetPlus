@@ -20,7 +20,7 @@ namespace Discord
         public ulong ChannelId { get; private set; }
         public InteractionData Data { get; private set;  }
 
-        internal void Update(DiscordSocketClient client, ClientState state, WebSocket.SocketGuild guild, IMessageChannel channel, InteractionCreateModel model)
+        internal void Update(DiscordSocketClient client, ClientState state, WebSocket.SocketGuild guild, IMessageChannel channel, SocketUser user, InteractionCreateModel model)
         {
             Type = model.Type;
             Id = model.Id;
@@ -31,13 +31,9 @@ namespace Discord
             if (guild != null)
             {
                 Guild = guild;
-                Member = guild.GetUser(model.Member.Value.User.Id) ?? guild.AddOrUpdateUser(model.Member.Value.User);
-                User = Member as SocketUser;
+                Member = guild.GetUser(model.Member.Value.User.Id);
             }
-            else
-            {
-                User = SocketGlobalUser.Create(client, state, model.User.Value);
-            }
+            User = user;
             Data = new InteractionData
             {
                 Id = model.Id,

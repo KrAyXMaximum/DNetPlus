@@ -290,6 +290,7 @@ namespace TestBot
         [Command("test")]
         public async Task Ahh(string ani = "")
         {
+            Context.User.GetOrCreateDMChannelAsync();
             await ReplyInteractionAsync("Hello");
 
         }
