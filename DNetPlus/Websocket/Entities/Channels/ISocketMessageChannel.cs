@@ -64,7 +64,7 @@ namespace Discord.WebSocket
         ///     Sends a file to this message channel with an optional caption.
         /// </summary>
         /// <remarks>
-        ///     This method follows the same behavior as described in <see cref="IMessageChannel.SendFileAsync(Stream, string, string, bool, Embed, RequestOptions, bool, AllowedMentions, MessageReferenceParams reference = null)"/>.
+        ///     This method follows the same behavior as described in <see cref="IMessageChannel.SendFileAsync(Stream, string, string, bool, Embed, RequestOptions, bool, AllowedMentions, MessageReferenceParams reference)"/>.
         ///     Please visit its documentation for more details on this method.
         /// </remarks>
         /// <param name="stream">The <see cref="Stream" /> of the file to be sent.</param>

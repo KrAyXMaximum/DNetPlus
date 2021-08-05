@@ -1532,7 +1532,7 @@ namespace Discord.WebSocket
                                         Cacheable<IUserMessage, ulong> cacheable = new Cacheable<IUserMessage, ulong>(cachedMsg, data.MessageId, isCached, async () => await channel.GetMessageAsync(data.MessageId).ConfigureAwait(false) as IUserMessage);
                                         IEmote emote = data.Emoji.ToIEmote();
 
-                                        cachedMsg?.RemoveAllReactionsForEmoteAsync(emote);
+                                        cachedMsg?.RemoveReactionsForEmote(emote);
 
                                         await TimedInvokeAsync(_reactionsRemovedForEmoteEvent, nameof(ReactionsRemovedForEmote), cacheable, channel, emote).ConfigureAwait(false);
                                     }

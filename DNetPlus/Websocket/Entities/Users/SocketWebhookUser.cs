@@ -81,9 +81,20 @@ namespace Discord.WebSocket
         Task IGuildUser.ModifyAsync(Action<GuildUserProperties> func, RequestOptions options) => 
             throw new NotSupportedException("Webhook users cannot be modified.");
 
+
+        /// <inheritdoc />
+        /// <exception cref="NotSupportedException">Roles are not supported on webhook users.</exception>
+        Task IGuildUser.AddRoleAsync(ulong role, RequestOptions options) =>
+            throw new NotSupportedException("Roles are not supported on webhook users.");
+
         /// <inheritdoc />
         /// <exception cref="NotSupportedException">Roles are not supported on webhook users.</exception>
         Task IGuildUser.AddRoleAsync(IRole role, RequestOptions options) => 
+            throw new NotSupportedException("Roles are not supported on webhook users.");
+
+        /// <inheritdoc />
+        /// <exception cref="NotSupportedException">Roles are not supported on webhook users.</exception>
+        Task IGuildUser.AddRolesAsync(IEnumerable<ulong> roles, RequestOptions options) =>
             throw new NotSupportedException("Roles are not supported on webhook users.");
 
         /// <inheritdoc />
@@ -93,7 +104,17 @@ namespace Discord.WebSocket
 
         /// <inheritdoc />
         /// <exception cref="NotSupportedException">Roles are not supported on webhook users.</exception>
+        Task IGuildUser.RemoveRoleAsync(ulong role, RequestOptions options) =>
+            throw new NotSupportedException("Roles are not supported on webhook users.");
+
+        /// <inheritdoc />
+        /// <exception cref="NotSupportedException">Roles are not supported on webhook users.</exception>
         Task IGuildUser.RemoveRoleAsync(IRole role, RequestOptions options) => 
+            throw new NotSupportedException("Roles are not supported on webhook users.");
+
+        /// <inheritdoc />
+        /// <exception cref="NotSupportedException">Roles are not supported on webhook users.</exception>
+        Task IGuildUser.RemoveRolesAsync(IEnumerable<ulong> roles, RequestOptions options) =>
             throw new NotSupportedException("Roles are not supported on webhook users.");
 
         /// <inheritdoc />

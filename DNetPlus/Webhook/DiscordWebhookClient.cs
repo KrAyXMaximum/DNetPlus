@@ -102,6 +102,35 @@ namespace Discord.Webhook
             IEnumerable<Embed> embeds = null, string username = null, string avatarUrl = null, RequestOptions options = null, bool isSpoiler = false, AllowedMentions allowedMentions = null, InteractionRow[] components = null)
             => WebhookClientHelper.SendFileAsync(this, stream, filename, text, isTTS, embeds, username, avatarUrl, options, isSpoiler, allowedMentions, components);
 
+        /// <summary>
+        ///     Modifies a message posted using this webhook.
+        /// </summary>
+        /// <remarks>
+        ///     This method can only modify messages that were sent using the same webhook.
+        /// </remarks>
+        /// <param name="messageId">ID of the modified message.</param>
+        /// <param name="func">A delegate containing the properties to modify the message with.</param>
+        /// <param name="options">The options to be used when sending the request.</param>
+        /// <returns>
+        ///     A task that represents the asynchronous modification operation.
+        /// </returns>
+        public Task ModifyMessageAsync(ulong messageId, Action<WebhookMessageProperties> func, RequestOptions options = null)
+            => WebhookClientHelper.ModifyMessageAsync(this, messageId, func, options);
+
+        /// <summary>
+        ///     Deletes a message posted using this webhook.
+        /// </summary>
+        /// <remarks>
+        ///     This method can only delete messages that were sent using the same webhook.
+        /// </remarks>
+        /// <param name="messageId">ID of the deleted message.</param>
+        /// <param name="options">The options to be used when sending the request.</param>
+        /// <returns>
+        ///     A task that represents the asynchronous deletion operation.
+        /// </returns>
+        public Task DeleteMessageAsync(ulong messageId, RequestOptions options = null)
+            => WebhookClientHelper.DeleteMessageAsync(this, messageId, options);
+
         /// <summary> Modifies the properties of this webhook. </summary>
         public Task ModifyWebhookAsync(Action<WebhookProperties> func, RequestOptions options = null)
             => Webhook.ModifyAsync(func, options);

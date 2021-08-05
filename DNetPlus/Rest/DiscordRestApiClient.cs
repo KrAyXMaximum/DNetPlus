@@ -578,6 +578,42 @@ namespace Discord.API
         }
 
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
+        /// <exception cref="InvalidOperationException">This operation may only be called with a <see cref="TokenType.Webhook"/> token.</exception>
+        public async Task ModifyWebhookMessageAsync(ulong webhookId, ulong messageId, ModifyWebhookMessageParams args, RequestOptions options = null)
+        {
+            if (AuthTokenType != TokenType.Webhook)
+                throw new InvalidOperationException($"This operation may only be called with a {nameof(TokenType.Webhook)} token.");
+
+            Preconditions.NotNull(args, nameof(args));
+            Preconditions.NotEqual(webhookId, 0, nameof(webhookId));
+            Preconditions.NotEqual(messageId, 0, nameof(messageId));
+
+            if (args.Embeds.IsSpecified)
+                Preconditions.AtMost(args.Embeds.Value.Length, 10, nameof(args.Embeds), "A max of 10 Embeds are allowed.");
+            if (args.Content.IsSpecified && args.Content.Value.Length > DiscordConfig.MaxMessageSize)
+                throw new ArgumentException(message: $"Message content is too long, length must be less or equal to {DiscordConfig.MaxMessageSize}.", paramName: nameof(args.Content));
+            options = RequestOptions.CreateOrClone(options);
+
+            var ids = new BucketIds(webhookId: webhookId);
+            await SendJsonAsync<MessageJson>("PATCH", () => $"webhooks/{webhookId}/{AuthToken}/messages/{messageId}", args, ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
+        }
+
+        /// <exception cref="InvalidOperationException">This operation may only be called with a <see cref="TokenType.Webhook"/> token.</exception>
+        public async Task DeleteWebhookMessageAsync(ulong webhookId, ulong messageId, RequestOptions options = null)
+        {
+            if (AuthTokenType != TokenType.Webhook)
+                throw new InvalidOperationException($"This operation may only be called with a {nameof(TokenType.Webhook)} token.");
+
+            Preconditions.NotEqual(webhookId, 0, nameof(webhookId));
+            Preconditions.NotEqual(messageId, 0, nameof(messageId));
+
+            options = RequestOptions.CreateOrClone(options);
+
+            var ids = new BucketIds(webhookId: webhookId);
+            await SendAsync("DELETE", () => $"webhooks/{webhookId}/{AuthToken}/messages/{messageId}", ids, options: options).ConfigureAwait(false);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public async Task<MessageJson> UploadFileAsync(ulong channelId, UploadFileParams args, RequestOptions options = null)
         {
             Preconditions.NotNull(args, nameof(args));
@@ -1270,6 +1306,15 @@ namespace Discord.API
         }
 
         //Guild emoji
+        public async Task<IReadOnlyCollection<EmojiJson>> GetGuildEmotesAsync(ulong guildId, RequestOptions options = null)
+        {
+            Preconditions.NotEqual(guildId, 0, nameof(guildId));
+            options = RequestOptions.CreateOrClone(options);
+
+            var ids = new BucketIds(guildId: guildId);
+            return await SendAsync<IReadOnlyCollection<EmojiJson>>("GET", () => $"guilds/{guildId}/emojis", ids, options: options).ConfigureAwait(false);
+        }
+
         public async Task<EmojiJson> GetGuildEmoteAsync(ulong guildId, ulong emoteId, RequestOptions options = null)
         {
             Preconditions.NotEqual(guildId, 0, nameof(guildId));

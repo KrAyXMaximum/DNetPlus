@@ -137,6 +137,13 @@ namespace Discord.Rest
         public Task<RestWebhook> GetWebhookAsync(ulong id, RequestOptions options = null)
             => ClientHelper.GetWebhookAsync(this, id, options);
 
+        public Task AddRoleAsync(ulong guildId, ulong userId, ulong roleId)
+    => ClientHelper.AddRoleAsync(this, guildId, userId, roleId);
+        public Task RemoveRoleAsync(ulong guildId, ulong userId, ulong roleId)
+            => ClientHelper.RemoveRoleAsync(this, guildId, userId, roleId);
+
+
+
         // Reaction stuff
         public Task RemoveReactionAsync(ulong channelId, ulong messageId, ulong userId, IEmote emote, RequestOptions options = null)
            => MessageHelper.RemoveReactionAsync(channelId, messageId, userId, emote, this, options);

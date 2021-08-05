@@ -409,7 +409,7 @@ namespace Discord.Commands
             TypeInfo typeInfo = type.GetTypeInfo();
             if (typeInfo.IsEnum)
                 return true;
-            return _entityTypeReaders.Any(x => type == x.EntityType || typeInfo.ImplementedInterfaces.Contains(x.TypeReaderType));
+            return _entityTypeReaders.Any(x => type == x.EntityType || typeInfo.ImplementedInterfaces.Contains(x.EntityType));
         }
         internal void AddNullableTypeReader(Type valueType, TypeReader valueTypeReader)
         {
