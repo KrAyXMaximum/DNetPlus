@@ -41,13 +41,13 @@ namespace Discord
                 Token = model.Token,
                 Choices = model.Data.Options == null ? new InteractionChoice[0] : model.Data.Options.Select(x => new InteractionChoice { Name = x.Name, Value = x.Value, Choices = GetChoices(x) }).ToArray(),
                 ComponentType = model.Data.ComponentType,
-                CustomId = model.Data.CustomId.IsSpecified ? model.Data.CustomId.Value : null
+                CustomId = model.Data.CustomId.IsSpecified ? model.Data.CustomId.Value : null,
+                DropdownOptions = model.Data.DropdownValues.IsSpecified ? model.Data.DropdownValues.Value : null
             };
         }
 
         internal InteractionChoice[] GetChoices(API.Gateway.InteractionOptionJson option)
         {
-
             if (option.Options != null && option.Options.Any())
                 return option.Options.Select(x => new InteractionChoice { Name = x.Name, Value = x.Value, Choices = GetChoices(x) }).ToArray();
           return new InteractionChoice[0];
@@ -64,6 +64,8 @@ namespace Discord
         public string CustomId { get; internal set; }
         public ComponentType ComponentType { get; internal set; }
         public InteractionChoice[] Choices { get; internal set; }
+
+        public string[] DropdownOptions { get; set; }
         public string Name { get; internal set; }
         public ulong Id { get; internal set; }
 

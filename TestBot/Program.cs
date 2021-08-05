@@ -75,6 +75,10 @@ namespace TestBot
                 case InteractionType.MessageComponent:
                     if (arg.User.Id == 190590364871032834 && arg.Data.CustomId == "test")
                     {
+                        if (arg.Data.ComponentType == ComponentType.Dropdown)
+                        {
+                            
+                        }
                         try
                         {
                             //await arg.Channel.SendInteractionMessageAsync(arg.Data, $"Test button clicked!");

@@ -1334,6 +1334,17 @@ namespace Discord.API
             return await SendJsonAsync<Interaction_Json>("POST", () => $"applications/{CurrentUserId.Value}/guilds/{guildId}/commands", args, ids, options: options).ConfigureAwait(false);
         }
 
+        public async Task CreateGuildCommandsAsync(ulong guildId, CreateInteraction[] args, RequestOptions options = null)
+        {
+            Preconditions.NotEqual(guildId, 0, nameof(guildId));
+            Preconditions.NotNull(args, nameof(args));
+
+            options = RequestOptions.CreateOrClone(options);
+
+            BucketIds ids = new BucketIds();
+            await SendJsonAsync("PUT", () => $"applications/{CurrentUserId.Value}/guilds/{guildId}/commands", args, ids, options: options).ConfigureAwait(false);
+        }
+
         public async Task DeleteGuildCommandAsync(ulong guildId, ulong interactionId, RequestOptions options = null)
         {
             Preconditions.NotEqual(guildId, 0, nameof(guildId));

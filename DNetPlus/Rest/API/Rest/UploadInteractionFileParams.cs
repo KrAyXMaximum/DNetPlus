@@ -28,9 +28,8 @@ namespace Discord.API.Rest
                 filename = filename.Insert(0, AttachmentExtensions.SpoilerPrefix);
 
             d["file"] = new MultipartFile(Data.File, filename);
-            d["type"] = (int)Type;
             Dictionary<string, object> payload = new Dictionary<string, object>();
-            
+            payload["type"] = (int)Type;
             if (Data.Content.IsSpecified)
                 payload["content"] = Data.Content.Value;
             if (Data.IsTTS.IsSpecified)
@@ -45,7 +44,6 @@ namespace Discord.API.Rest
                 payload["embeds"] = Data.Embeds.Value;
             if (Data.AllowedMentions.IsSpecified)
                 payload["allowed_mentions"] = Data.AllowedMentions.Value;
-
             StringBuilder json = new StringBuilder();
             using (StringWriter text = new StringWriter(json))
             using (JsonTextWriter writer = new JsonTextWriter(text))

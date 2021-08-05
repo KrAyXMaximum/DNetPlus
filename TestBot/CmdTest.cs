@@ -5,6 +5,7 @@ using DNetPlus_InteractiveButtons;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -19,6 +20,20 @@ namespace TestBot
         {
             ib = inter;
         }
+        [Command("helloa")]
+        public async Task TestAttach()
+        {
+            var Bytes = File.ReadAllBytes("C:/Users/Brandan/Documents/DiscordBots/Waifu/Testwelcome.jpg");
+            try
+            {
+                await Context.Channel.SendInteractionFileAsync(Context.InteractionData, new MemoryStream(Bytes), "Test.jpg", "");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
         [Command("getbutton")]
         public async Task GetButton()
         {
@@ -37,11 +52,20 @@ namespace TestBot
                     {
                         new InteractionButton(ComponentButtonType.Primary, "Test", "test")
                     }
+                },
+                new InteractionRow
+                {
+                    Dropdown = new InteractionDropdown
+                    {
+                        Options = new InteractionOption[]
+                        {
+                            new InteractionOption("Option 1", "op1", "Description", new Emoji("🔨")),
+                            new InteractionOption("Option 2", "op2", "Description", Context.Guild.Emotes.First(x => x.Id == 805194713287360632)),
+                        }
+                    }
                 }
             };
-            var Message = await Context.Channel.SendMessageAsync("Test", components: rows);
-            rows.First().Buttons.First().Disabled = true;
-            await Message.ModifyAsync(x => x.Components = rows);
+            await Context.Channel.SendMessageAsync("Test", components: rows);
         }
 
         [Command("interactive", RunMode = RunMode.Async)]
@@ -92,12 +116,32 @@ namespace TestBot
         }
 
         [Command("addslash")]
-        public async Task AddSlash(string name, [Remainder] string desc)
+        public async Task AddSlash()
         {
-            await Context.Guild.CreateCommandAsync(new CreateInteraction
+            await Context.Guild.CreateCommandAsync(
+                new CreateInteraction
+                {
+                Name = "Hello",
+                Description = "Test desc"
+                }
+            );
+        }
+
+        [Command("addslashmulti")]
+        public async Task AddSlashMulti(string name, [Remainder] string desc)
+        {
+            await Context.Guild.CreateCommandsAsync(new CreateInteraction[]
             {
+                new CreateInteraction
+                {
                 Name = name,
                 Description = desc
+                },
+                new CreateInteraction
+                {
+                Name = name + "2",
+                Description = desc + "2"
+                },
             });
             await ReplyAsync("Added");
         }

@@ -1,7 +1,9 @@
 using Discord.API;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Discord.Rest
 {
@@ -16,6 +18,13 @@ namespace Discord.Rest
 
         public static API.EmojiJson ToModel(this IEmote emote)
         {
+            if (emote is GuildEmote ge)
+            {
+                return new EmojiJson
+                {
+                    Id = ge.Id
+                };
+            }
             return new EmojiJson
             {
                 Name = emote.Name
@@ -129,10 +138,45 @@ namespace Discord.Rest
 
         public static InteractionComponent_Json ToModel(this InteractionRow row)
         {
-            return new InteractionComponent_Json
+            if (row.Dropdown == null)
             {
-                Type = 1,
-                Components = row.Buttons != null ? row.Buttons.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
+                return new InteractionComponent_Json
+                {
+                    Type = ComponentType.ActionRow,
+                    Components = row.Buttons != null ? row.Buttons.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
+                };
+            }
+            else
+            {
+                return new InteractionComponent_Json
+                {
+                    Type = ComponentType.ActionRow,
+                    Components = new InteractionComponent_Json[]
+                    {
+                        new InteractionComponent_Json
+                        {
+                            Id = "test",
+                            Type = ComponentType.Dropdown,
+                            MaxValues = row.Dropdown.MaxValues,
+                            MinValues = row.Dropdown.MinValues,
+                            Placeholder = row.Dropdown.Placeholder,
+                            SelectOptions = row.Dropdown.Options.Select(x => x.ToModel()).ToArray()
+                        }
+                    }
+                    
+                };
+            }
+        }
+
+        public static InteractionSelectJson ToModel(this InteractionOption option)
+        {
+            return new InteractionSelectJson
+            {
+                Default = option.Default,
+                Description = option.Description,
+                Emoji = option.Emoji?.ToModel(),
+                Label = option.Label,
+                Value = option.Value
             };
         }
 
@@ -145,7 +189,7 @@ namespace Discord.Rest
                 Emoji = component.Emoji?.ToModel(),
                 Label = component.Label,
                 Style = component.Style,
-                Type = 2,
+                Type = ComponentType.Button,
                 Url = component.Url
             };
         }

@@ -654,6 +654,12 @@ namespace Discord.Rest
             return RestInteraction.Create(data);
         }
 
+        public static async Task CreateCommandsAsync(IGuild guild, BaseDiscordClient client, CreateInteraction[] interaction, RequestOptions options)
+        {
+            await client.ApiClient.CreateGuildCommandsAsync(guild.Id, interaction, options).ConfigureAwait(false);
+           
+        }
+
         public static Task DeleteCommandAsync(IGuild guild, BaseDiscordClient client, ulong interactionId, RequestOptions options)
          => client.ApiClient.DeleteGuildCommandAsync(guild.Id, interactionId, options);
 

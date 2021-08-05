@@ -1077,6 +1077,9 @@ namespace Discord.WebSocket
         public Task<RestInteraction> CreateCommandAsync(CreateInteraction interaction, RequestOptions options = null)
             => GuildHelper.CreateCommandAsync(this, Discord, interaction, options);
 
+        public Task CreateCommandsAsync(CreateInteraction[] interactions, RequestOptions options = null)
+            => GuildHelper.CreateCommandsAsync(this, Discord, interactions, options);
+
         public Task DeleteCommandAsync(ulong interactionId, RequestOptions options = null)
             => GuildHelper.DeleteCommandAsync(this, Discord, interactionId, options);
 

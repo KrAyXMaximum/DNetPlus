@@ -1903,11 +1903,11 @@ namespace Discord.WebSocket
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
                                     if (data.Type == InteractionType.Ping)
                                         return;
+                                    //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(payload, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
                                     ISocketMessageChannel channel = State.GetChannel(data.ChannelId) as ISocketMessageChannel;
                                     if (!data.Member.IsSpecified && channel == null)
-                                    {
                                         channel = CreateDMChannel(data.ChannelId, data.User.Value, State);
-                                    }
+
                                     if (channel != null)
                                     {
                                         SocketGuild guild = (channel as SocketGuildChannel)?.Guild;
@@ -1947,7 +1947,6 @@ namespace Discord.WebSocket
 
                                         Interaction Interaction = new Interaction();
                                         Interaction.Update(this, State, guild, channel, author, data);
-                                        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(Interaction, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
                                         await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
                                     }
                                     else
