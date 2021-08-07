@@ -39,9 +39,8 @@ namespace Discord.API
 
         public DiscordSocketApiClient(RestClientProvider restClientProvider, WebSocketProvider webSocketProvider, string userAgent,
             string url = null, RetryMode defaultRetryMode = RetryMode.AlwaysRetry, JsonSerializer serializer = null,
-            RateLimitPrecision rateLimitPrecision = RateLimitPrecision.Second,
 			bool useSystemClock = true)
-            : base(restClientProvider, userAgent, new RequestQueue(), defaultRetryMode, serializer, rateLimitPrecision, useSystemClock)
+            : base(restClientProvider, userAgent, serializer, useSystemClock)
         {
             _gatewayUrl = url;
             if (url != null)
@@ -219,7 +218,7 @@ namespace Discord.API
             await _sentGatewayMessageEvent.InvokeAsync(opCode).ConfigureAwait(false);
         }
 
-        public async Task SendIdentifyAsync(int largeThreshold = 100, int shardID = 0, int totalShards = 1, bool guildSubscriptions = true, GatewayIntents? gatewayIntents = null, Optional<StatusUpdateParams> presence = default, RequestOptions options = null)
+        public async Task SendIdentifyAsync(int largeThreshold = 100, int shardID = 0, int totalShards = 1, GatewayIntents gatewayIntents = GatewayIntents.AllUnprivileged, Optional<StatusUpdateParams> presence = default, RequestOptions options = null)
         {
             options = RequestOptions.CreateOrClone(options);
             Dictionary<string, string> props = new Dictionary<string, string>
@@ -236,10 +235,7 @@ namespace Discord.API
                 msg.ShardingParams = new int[] { shardID, totalShards };
 
             options.BucketId = GatewayBucket.Get(GatewayBucketType.Identify).Id;
-            if (gatewayIntents.HasValue)
-                msg.Intents = (int)gatewayIntents.Value;
-            else
-                msg.GuildSubscriptions = guildSubscriptions;
+            msg.Intents = (int)gatewayIntents;
             if (presence.IsSpecified)
                 msg.Presence = presence;
 

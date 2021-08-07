@@ -90,6 +90,8 @@ namespace Discord
         /// <summary> Creates a new <see cref="GuildPermissions"/> with the provided packed value. </summary>
         public GuildPermissions(ulong rawValue) { RawValue = rawValue; }
 
+        public GuildPermissions(string rawValue) { RawValue = ulong.Parse(rawValue); }
+
         private GuildPermissions(ulong initialValue,
             bool? createInstantInvite = null,
             bool? kickMembers = null,

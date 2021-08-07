@@ -101,8 +101,6 @@ namespace Discord.Rest
         /// <inheritdoc />
         public DateTimeOffset CreatedAt => SnowflakeUtils.FromSnowflake(Id);
 
-        [Obsolete("DefaultChannelId is deprecated, use GetDefaultChannelAsync")]
-        public ulong DefaultChannelId => Id;
         /// <inheritdoc />
         public string GetIconUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
         {

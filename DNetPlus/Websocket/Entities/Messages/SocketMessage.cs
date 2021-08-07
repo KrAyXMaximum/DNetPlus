@@ -57,6 +57,10 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         public MessageReference Reference { get; private set; }
 
+        public MessageFlags? Flags { get; private set; }
+
+        public MessageType Type { get; private set; }
+
         /// <summary>
         ///     Returns all attachments included in this message.
         /// </summary>
@@ -122,6 +126,7 @@ namespace Discord.WebSocket
         }
         internal virtual void Update(ClientState state, Model model)
         {
+            Type = model.Type;
             if (model.Timestamp.IsSpecified)
                 _timestampTicks = model.Timestamp.Value.UtcTicks;
 
@@ -161,6 +166,9 @@ namespace Discord.WebSocket
                     MessageId = model.Reference.Value.MessageId
                 };
             }
+
+            if (model.Flags.IsSpecified)
+                Flags = model.Flags.Value;
         }
 
         /// <inheritdoc />
@@ -181,8 +189,6 @@ namespace Discord.WebSocket
         IUser IMessage.Author => Author;
         /// <inheritdoc />
         IMessageChannel IMessage.Channel => Channel;
-        /// <inheritdoc />
-        MessageType IMessage.Type => MessageType.Default;
         /// <inheritdoc />
         IReadOnlyCollection<IAttachment> IMessage.Attachments => Attachments;
         /// <inheritdoc />

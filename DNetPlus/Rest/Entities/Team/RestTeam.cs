@@ -11,6 +11,9 @@ namespace Discord.Rest
         public string IconUrl => _iconId != null ? CDN.GetTeamIconUrl(Id, _iconId) : null;
         /// <inheritdoc />
         public IReadOnlyList<ITeamMember> TeamMembers { get; private set; }
+
+        /// <inheritdoc />
+        public string Name { get; private set; }
         /// <inheritdoc />
         public ulong OwnerUserId { get; private set; }
 
@@ -30,6 +33,7 @@ namespace Discord.Rest
         {
             if (model.Icon.IsSpecified)
                 _iconId = model.Icon.Value;
+            Name = model.Name;
             OwnerUserId = model.OwnerUserId;
             TeamMembers = model.TeamMembers.Select(x => new RestTeamMember(Discord, x)).ToImmutableArray();
         }

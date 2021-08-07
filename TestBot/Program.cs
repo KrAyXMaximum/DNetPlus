@@ -25,7 +25,6 @@ namespace TestBot
             Client = new DiscordShardedClient(new DiscordSocketConfig
             {
                 OwnerIds = new ulong[] { 190590364871032834 },
-                GatewayIntents = Discord.GatewayIntents.Guilds,
                 AlwaysDownloadUsers = false,
                 TotalShards = 1,
                 //MaxWaitBetweenGuildAvailablesBeforeReady = 5000,
@@ -65,11 +64,8 @@ namespace TestBot
             switch (arg.Type)
             {
                 case InteractionType.ApplicationCommand:
-                    Console.WriteLine("INTERCTION HANDLER: " + arg.Channel.Name + " " + arg.Channel.GetType().Name);
                     ShardedCommandContext context = new ShardedCommandContext(Client, arg);
-                    Console.WriteLine("INTERCTION HANDLER CONTEXT: " + context.Channel.Name);
-                    
-                        _ = await Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
+                        await Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
                    
                     break;
                 case InteractionType.MessageComponent:

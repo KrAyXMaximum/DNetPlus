@@ -197,8 +197,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
                     : Optional.Create<API.OverwriteJson[]>(),
             };
@@ -225,8 +225,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
                     : Optional.Create<API.OverwriteJson[]>(),
             };
@@ -250,8 +250,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
                     : Optional.Create<API.OverwriteJson[]>(),
             };
@@ -318,6 +318,7 @@ namespace Discord.Rest
             InviteVanityJson vanityModel = await client.ApiClient.GetVanityInviteAsync(guild.Id, options).ConfigureAwait(false);
             if (vanityModel == null) throw new InvalidOperationException("This guild does not have a vanity URL.");
             InviteMetadataJson inviteModel = await client.ApiClient.GetInviteAsync(vanityModel.Code, options).ConfigureAwait(false);
+            inviteModel.Uses = vanityModel.Uses;
             return RestInviteMetadata.Create(client, guild, null, inviteModel);
         }
 
@@ -334,7 +335,7 @@ namespace Discord.Rest
                 Hoist = isHoisted,
                 Mentionable = isMentionable,
                 Name = name,
-                Permissions = permissions?.RawValue ?? Optional.Create<ulong>()
+                Permissions = permissions?.RawValue.ToString() ?? Optional.Create<string>()
             };
 
             RoleModel model = await client.ApiClient.CreateGuildRoleAsync(guild.Id, createGuildRoleParams, options).ConfigureAwait(false);

@@ -15,8 +15,6 @@ namespace Discord.API.Gateway
         public int LargeThreshold { get; set; }
         [JsonProperty("shard")]
         public Optional<int[]> ShardingParams { get; set; }
-        [JsonProperty("guild_subscriptions")]
-        public Optional<bool> GuildSubscriptions { get; set; }
         [JsonProperty("intents")]
         public Optional<int> Intents { get; set; }
         [JsonProperty("presence")]

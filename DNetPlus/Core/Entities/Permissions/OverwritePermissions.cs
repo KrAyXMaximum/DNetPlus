@@ -93,6 +93,12 @@ namespace Discord
             DenyValue = denyValue;
         }
 
+        public OverwritePermissions(string allowValue, string denyValue)
+        {
+            AllowValue = ulong.Parse(allowValue);
+            DenyValue = ulong.Parse(denyValue);
+        }
+
         private OverwritePermissions(ulong allowValue, ulong denyValue,
             PermValue? createInstantInvite = null,
             PermValue? manageChannel = null, 

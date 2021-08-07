@@ -126,12 +126,16 @@ namespace Discord.WebSocket
         {
             SocketGuildUser entity = new SocketGuildUser(guild, guild.Discord.GetOrCreateUser(state, model.User));
             entity.Update(state, model);
+            if (!model.Roles.IsSpecified)
+                entity.UpdateRoles(new ulong[0]);
             return entity;
         }
         internal static SocketGuildUser Create(SocketGuild guild, ClientState state, PresenceModel model)
         {
             SocketGuildUser entity = new SocketGuildUser(guild, guild.Discord.GetOrCreateUser(state, model.User));
             entity.Update(state, model, false);
+            if (!model.Roles.IsSpecified)
+                entity.UpdateRoles(new ulong[0]);
             return entity;
         }
         internal void Update(ClientState state, MemberModel model)

@@ -37,7 +37,9 @@ namespace TestBot
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
+            Console.WriteLine($"{messageParam.Author.Username}: {messageParam.Content}");
             SocketUserMessage message = messageParam as SocketUserMessage;
+
             if (message == null || message.Author.IsBot) 
                 return;
             int argPos = 0;

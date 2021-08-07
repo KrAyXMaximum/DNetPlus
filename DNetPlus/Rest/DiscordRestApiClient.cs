@@ -46,7 +46,6 @@ namespace Discord.API
         internal string AuthToken { get; private set; }
         internal IRestClient RestClient { get; private set; }
         internal ulong? CurrentUserId { get; set; }
-        public RateLimitPrecision RateLimitPrecision { get; private set; }
 		internal bool UseSystemClock { get; set; }
 
         internal JsonSerializer Serializer => _serializer;
@@ -54,16 +53,14 @@ namespace Discord.API
 
 
         /// <exception cref="ArgumentException">Unknown OAuth token type.</exception>
-        public DiscordRestApiClient(RestClientProvider restClientProvider, string userAgent, RequestQueue requestQueue, RetryMode defaultRetryMode = RetryMode.AlwaysRetry,
-            JsonSerializer serializer = null, RateLimitPrecision rateLimitPrecision = RateLimitPrecision.Second, bool useSystemClock = true)
+        public DiscordRestApiClient(RestClientProvider restClientProvider, string userAgent, JsonSerializer serializer, bool useSystemClock = true)
         {
             _restClientProvider = restClientProvider;
             UserAgent = userAgent;
-            DefaultRetryMode = defaultRetryMode;
+            DefaultRetryMode = RetryMode.AlwaysRetry;
             _serializer = serializer ?? new JsonSerializer { ContractResolver = new DiscordContractResolver() };
-            RateLimitPrecision = rateLimitPrecision;
 			UseSystemClock = useSystemClock;
-            RequestQueue = requestQueue ?? new RequestQueue();
+            RequestQueue = new RequestQueue();
             _stateLock = new SemaphoreSlim(1, 1);
             SetBaseUrl(DiscordConfig.APIUrl);
         }
@@ -76,7 +73,6 @@ namespace Discord.API
             RestClient.SetHeader("accept", "*/*");
             RestClient.SetHeader("user-agent", UserAgent);
             RestClient.SetHeader("authorization", GetPrefixedToken(AuthTokenType, AuthToken));
-            RestClient.SetHeader("X-RateLimit-Precision", RateLimitPrecision.ToString().ToLower());
         }
         /// <exception cref="ArgumentException">Unknown OAuth token type.</exception>
         internal static string GetPrefixedToken(TokenType tokenType, string token)
@@ -699,16 +695,6 @@ namespace Discord.API
             return await SendJsonAsync<MessageJson>("PATCH", () => $"channels/{channelId}/messages/{messageId}", args, ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
         }
 
-        public async Task SuppressEmbedAsync(ulong channelId, ulong messageId, Rest.SuppressEmbedParams args, RequestOptions options = null)
-        {
-            Preconditions.NotEqual(channelId, 0, nameof(channelId));
-            Preconditions.NotEqual(messageId, 0, nameof(messageId));
-            options = RequestOptions.CreateOrClone(options);
-
-            BucketIds ids = new BucketIds(channelId: channelId);
-            await SendJsonAsync("POST", () => $"channels/{channelId}/messages/{messageId}/suppress-embeds", args, ids, options: options).ConfigureAwait(false);
-        }
-
         public async Task AddReactionAsync(ulong channelId, ulong messageId, string emoji, RequestOptions options = null)
         {
             Preconditions.NotEqual(channelId, 0, nameof(channelId));
@@ -988,7 +974,7 @@ namespace Discord.API
 
             BucketIds ids = new BucketIds(guildId: guildId);
             string reason = string.IsNullOrWhiteSpace(args.Reason) ? "" : $"&reason={Uri.EscapeDataString(args.Reason)}";
-            await SendAsync("PUT", () => $"guilds/{guildId}/bans/{userId}?delete-message-days={args.DeleteMessageDays}{reason}", ids, options: options).ConfigureAwait(false);
+            await SendAsync("PUT", () => $"guilds/{guildId}/bans/{userId}?delete_message_days={args.DeleteMessageDays}{reason}", ids, options: options).ConfigureAwait(false);
         }
         /// <exception cref="ArgumentException"><paramref name="guildId"/> and <paramref name="userId"/> must not be equal to zero.</exception>
         public async Task RemoveGuildBanAsync(ulong guildId, ulong userId, RequestOptions options = null)

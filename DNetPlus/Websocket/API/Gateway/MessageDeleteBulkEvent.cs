@@ -9,5 +9,7 @@ namespace Discord.API.Gateway
         public ulong ChannelId { get; set; }
         [JsonProperty("ids")]
         public ulong[] Ids { get; set; }
+        [JsonProperty("guild_id")]
+        public Optional<ulong> GuildId { get; set; }
     }
 }

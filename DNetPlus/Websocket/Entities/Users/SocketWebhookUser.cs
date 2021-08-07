@@ -32,7 +32,7 @@ namespace Discord.WebSocket
         /// <inheritdoc />
         bool? IGuildUser.IsPending => null;
         /// <inheritdoc />
-        internal override SocketPresence Presence { get { return new SocketPresence(UserStatus.Offline, null, null, null); } set { } }
+        internal override SocketPresence Presence { get { return new SocketPresence(UserStatus.Offline, null, null); } set { } }
         internal override SocketGlobalUser GlobalUser => 
             throw new NotSupportedException();
 

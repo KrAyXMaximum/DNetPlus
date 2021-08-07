@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>1.6.3</Version>
+    <Version>2.0.1</Version>
     <AssemblyName>DNetPlus</AssemblyName>
     <RootNamespace>DNetPlus</RootNamespace>
     <PackageId>DNetPlus</PackageId>
@@ -13,7 +13,7 @@
     <RepositoryUrl>https://github.com/xXBuilderBXx/DNetPlus</RepositoryUrl>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageTags>discord;discordapp;discordlib;dnetplus</PackageTags>
-    <PackageReleaseNotes>Fixes for slash commands and also ignoring recent lib warnings for stuff like GUILD_COMMANDS_COUNT</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix for thread channels throwing overwrite perm errors.</PackageReleaseNotes>
     <Description>Fork of discord.net with many tweaks and added functionality instead of waiting months for them.</Description>
   <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>

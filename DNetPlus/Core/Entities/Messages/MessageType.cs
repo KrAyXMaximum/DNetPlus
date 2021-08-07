@@ -65,5 +65,15 @@ namespace Discord
         ///     The message for when a guild is added to Discovery.
         /// </summary>
         GuildDiscoveryRequalified = 15,
+        GuildDiscoveryDisqualifyInitialWarn = 16,
+        GuildDiscoveryDisqualifyFinalWarn = 17,
+        ThreadCreated = 18,
+        /// <summary>
+        ///     The message is an inline reply.
+        /// </summary>
+        Reply = 19,
+        ApplicationCommand = 20,
+        ThreadStarterMessage = 21,
+        GuildInviteReminder = 22
     }
 }

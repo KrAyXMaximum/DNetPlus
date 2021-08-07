@@ -71,7 +71,7 @@ namespace Discord.Rest
                 _isMentioningEveryone = model.MentionEveryone.Value;
             if (model.Flags.IsSpecified)
             {
-                _isSuppressed = model.Flags.Value.HasFlag(API.MessageFlags.Suppressed);
+                _isSuppressed = model.Flags.Value.HasFlag(MessageFlags.SuppressEmbeds);
             }
 
             if (model.Attachments.IsSpecified)
@@ -170,8 +170,6 @@ namespace Discord.Rest
         public Task UnpinAsync(RequestOptions options = null)
             => MessageHelper.UnpinAsync(this, Discord, options);
         /// <inheritdoc />
-        public Task ModifySuppressionAsync(bool suppressEmbeds, RequestOptions options = null)
-            => MessageHelper.SuppressEmbedsAsync(this, Discord, suppressEmbeds, options);
 
         public string Resolve(int startIndex, TagHandling userHandling = TagHandling.Name, TagHandling channelHandling = TagHandling.Name,
             TagHandling roleHandling = TagHandling.Name, TagHandling everyoneHandling = TagHandling.Ignore, TagHandling emojiHandling = TagHandling.Name)

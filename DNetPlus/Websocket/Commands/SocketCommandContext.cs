@@ -68,7 +68,7 @@ namespace Discord.Commands
            
             if (Guild != null)
             {
-                Channel = interaction.Channel as SocketTextChannel;
+                Channel = interaction.Channel;
                 GuildUser = interaction.Member as SocketGuildUser;
             }
             else

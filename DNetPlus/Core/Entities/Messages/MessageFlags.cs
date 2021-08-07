@@ -32,5 +32,9 @@ namespace Discord
         ///     Flag given to messages that came from the urgent message system.
         /// </summary>
         Urgent = 1 << 4,
+        HasThread = 1 << 5,
+        Emphemeral = 1 << 6,
+        Loading = 1 << 7
+
     }
 }

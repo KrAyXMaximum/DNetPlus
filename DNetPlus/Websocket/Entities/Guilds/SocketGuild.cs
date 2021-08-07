@@ -419,7 +419,8 @@ namespace Discord.WebSocket
                 for (int i = 0; i < model.Members.Length; i++)
                 {
                     SocketGuildUser member = SocketGuildUser.Create(this, state, model.Members[i]);
-                    members.TryAdd(member.Id, member);
+                    if (members.TryAdd(member.Id, member))
+                        member.GlobalUser.AddRef();
                 }
                 DownloadedMemberCount = members.Count;
 
@@ -889,16 +890,11 @@ namespace Discord.WebSocket
             else
             {
                 member = SocketGuildUser.Create(this, Discord.State, model);
-                if (member == null)
-                    throw new InvalidOperationException("SocketGuildUser.Create failed to produce a member"); // TODO 2.2rel: delete this
-                if (member.GlobalUser == null)
-                    throw new InvalidOperationException("Member was created without global user"); // TODO 2.2rel: delete this
                 member.GlobalUser.AddRef();
                 _members[member.Id] = member;
                 DownloadedMemberCount++;
             }
-            if (member == null)
-                throw new InvalidOperationException("AddOrUpdateUser failed to produce a user"); // TODO 2.2rel: delete this
+           
             return member;
         }
         internal SocketGuildUser AddOrUpdateUser(PresenceModel model)
@@ -932,6 +928,7 @@ namespace Discord.WebSocket
             if (self != null)
                 _members.TryAdd(self.Id, self);
 
+            _downloaderPromise = new TaskCompletionSource<bool>();
             DownloadedMemberCount = _members.Count;
 
             foreach (SocketGuildUser member in members)
@@ -1296,8 +1293,6 @@ namespace Discord.WebSocket
         IAudioClient IGuild.AudioClient => null;
         /// <inheritdoc />
         bool IGuild.Available => true;
-        /// <inheritdoc />
-        ulong IGuild.DefaultChannelId => DefaultChannel?.Id ?? 0;
         /// <inheritdoc />
         ulong? IGuild.WidgetChannelId => WidgetChannelId;
         /// <inheritdoc />

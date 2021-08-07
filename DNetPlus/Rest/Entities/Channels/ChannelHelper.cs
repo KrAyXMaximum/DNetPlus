@@ -37,8 +37,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
                     : Optional.Create<API.OverwriteJson[]>()
             };
@@ -63,8 +63,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
                     : Optional.Create<API.OverwriteJson[]>(),
             };
@@ -88,8 +88,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
                     : Optional.Create<API.OverwriteJson[]>()
             };
@@ -229,6 +229,7 @@ namespace Discord.Rest
                 MessageReference = reference?.ToModel(),
                 Components = components?.Select(x => x.ToModel()).ToArray()
             };
+
             //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(args, Newtonsoft.Json.Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
             API.MessageJson model = await client.ApiClient.CreateMessageAsync(channel.Id, args, options).ConfigureAwait(false);
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
@@ -436,13 +437,13 @@ namespace Discord.Rest
         public static async Task AddPermissionOverwriteAsync(IGuildChannel channel, BaseDiscordClient client,
             IUser user, OverwritePermissions perms, RequestOptions options)
         {
-            ModifyChannelPermissionsParams args = new ModifyChannelPermissionsParams("member", perms.AllowValue, perms.DenyValue);
+            ModifyChannelPermissionsParams args = new ModifyChannelPermissionsParams((int)PermissionTarget.User, perms.AllowValue.ToString(), perms.DenyValue.ToString());
             await client.ApiClient.ModifyChannelPermissionsAsync(channel.Id, user.Id, args, options).ConfigureAwait(false);
         }
         public static async Task AddPermissionOverwriteAsync(IGuildChannel channel, BaseDiscordClient client,
             IRole role, OverwritePermissions perms, RequestOptions options)
         {
-            ModifyChannelPermissionsParams args = new ModifyChannelPermissionsParams("role", perms.AllowValue, perms.DenyValue);
+            ModifyChannelPermissionsParams args = new ModifyChannelPermissionsParams((int)PermissionTarget.Role, perms.AllowValue.ToString(), perms.DenyValue.ToString());
             await client.ApiClient.ModifyChannelPermissionsAsync(channel.Id, role.Id, args, options).ConfigureAwait(false);
         }
         public static async Task RemovePermissionOverwriteAsync(IGuildChannel channel, BaseDiscordClient client,
@@ -565,8 +566,8 @@ namespace Discord.Rest
                     {
                         TargetId = overwrite.TargetId,
                         TargetType = overwrite.TargetType,
-                        Allow = overwrite.Permissions.AllowValue,
-                        Deny = overwrite.Permissions.DenyValue
+                        Allow = overwrite.Permissions.AllowValue.ToString(),
+                        Deny = overwrite.Permissions.DenyValue.ToString()
                     }).ToArray()
             };
             await client.ApiClient.ModifyGuildChannelAsync(channel.Id, apiArgs, options).ConfigureAwait(false);

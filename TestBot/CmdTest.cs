@@ -65,7 +65,7 @@ namespace TestBot
                     }
                 }
             };
-            await Context.Channel.SendMessageAsync("Test", components: rows);
+            await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, "Test", components: rows);
         }
 
         [Command("interactive", RunMode = RunMode.Async)]
@@ -331,12 +331,104 @@ namespace TestBot
             await ReplyAsync("Test owner");
         }
 
-        [Command("test")]
-        public async Task Ahh(string ani = "")
+        public ulong MentionToID(string User)
         {
-            Context.User.GetOrCreateDMChannelAsync();
-            await ReplyInteractionAsync("Hello");
+            if (User.StartsWith("("))
+                User = User.Replace("(", "");
+            if (User.EndsWith(")"))
+                User = User.Replace(")", "");
+            if (User.StartsWith("<@"))
+            {
+                User = User.Replace("<@", "").Replace(">", "");
+                if (User.Contains("!"))
+                    User = User.Replace("!", "");
+            }
+            try
+            {
+                return Convert.ToUInt64(User);
+            }
+            catch { }
+            return 0;
+        }
 
+        [Command("test"), RequireBotPermission(ChannelPermission.ManageMessages)]
+        public async Task Ahh(string user = "<@!622890595614195722>")
+        {
+            IGuildUser User = null;
+            if (!string.IsNullOrEmpty(user))
+            {
+                ulong UID = MentionToID(user);
+                //if (UID == 0)
+                //    ThrowError.Log("Invalid user mention/id.");
+                User = (Context.Channel as MockedThreadChannel).GetUser(UID) as IGuildUser ?? await Context.Client.Rest.GetGuildUserAsync(Context.Guild.Id, UID);
+            }
+            else
+                User = Context.User as SocketGuildUser;
+
+            //if (User == null)
+            //    ThrowError.Log($"Could not find user in server.");
+
+            string Joined = "Unknown";
+            List<string> Values = new List<string>();
+            string Mention = $"{User.ToString()} - <@{User.Id}>";
+            Values.Add($"**Created:** `{User.CreatedAt.Day} {User.CreatedAt.DateTime.ToString("MMMM")} {User.CreatedAt.Year}`");
+            if (User.JoinedAt.HasValue)
+            {
+                Joined = $"{User.JoinedAt.Value.Day} {User.JoinedAt.Value.DateTime.ToString("MMMM")} {User.JoinedAt.Value.Year}";
+            }
+            if (User.IsBot)
+                Mention += " <:dboatsBotTag:500353491169181711>";
+
+            if (User.Id == 190590364871032834)
+                Joined = "18 September 2018";
+
+
+            Values.Add($"**Joined:** `{Joined}`");
+
+            List<string> Badges = new List<string>();
+            IGuildUser GU = User as IGuildUser;
+
+            if (GU.RoleIds.Contains<ulong>(491309023908593666))
+                Badges.Add("<:dboatsWumpusWizard:500353334016999435> Admin");
+            else if (GU.RoleIds.Contains<ulong>(588781632958234657))
+                Badges.Add("<a:dboatsMeowbadass:500353187308634122> Management");
+            else if (GU.RoleIds.Contains<ulong>(439872278809935873))
+                Badges.Add(":tools: Web Mod");
+            else if (GU.RoleIds.Contains<ulong>(439872254390829077))
+                Badges.Add(":hammer_pick: Mod");
+            else if (GU.RoleIds.Contains<ulong>(449253443513876480))
+                Badges.Add(":hammer: Trial Mod");
+
+            if (GU.RoleIds.Contains<ulong>(533692716702367785))
+                Badges.Add("<:dboatsSadCat:586284333342654478> Former Staff");
+
+            if (GU.RoleIds.Contains<ulong>(555125868893175935))
+                Badges.Add("<:dboatsDiscordPartner:500353536236716035> Partner");
+
+            if (GU.RoleIds.Contains<ulong>(524656361590489108))
+                Badges.Add("<:dboatsJacobwat:729450990243283004> Premium User");
+
+            if (GU.RoleIds.Contains<ulong>(439872287215190017))
+                Badges.Add("<:dboatsBoat:535107904714440704> Certified Bot Dev");
+            else if (GU.RoleIds.Contains<ulong>(439872291044589570))
+                Badges.Add("<:dboatsBoat:535107904714440704> Bot Dev");
+
+            if (GU.RoleIds.Contains<ulong>(585547797680488463))
+                Badges.Add("<:dboatsDiscordNitro:500353535901433866> Nitro Booster");
+
+            EmbedBuilder embed = new EmbedBuilder()
+            {
+                ThumbnailUrl = User.GetAvatarUrl(ImageFormat.WebP, 256) ?? User.GetDefaultAvatarUrl(),
+                Description = Mention
+            };
+
+            if (Badges.Count != 0)
+                embed.Description += $"\n\n{string.Join(" | ", Badges)}";
+
+
+            embed.Description += $"\n\n{string.Join("\n", Values)}";
+
+            await Context.Channel.SendMessageAsync($"**ID:** {User.Id}", embed: embed.Build());
         }
 
         [Command("usertags")]

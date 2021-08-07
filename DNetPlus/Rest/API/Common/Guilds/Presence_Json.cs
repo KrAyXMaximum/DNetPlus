@@ -13,8 +13,6 @@ namespace Discord.API
         public Optional<ulong> GuildId { get; set; }
         [JsonProperty("status")]
         public UserStatus Status { get; set; }
-        [JsonProperty("game")]
-        public GameJson Game { get; set; }
 
         [JsonProperty("roles")]
         public Optional<ulong[]> Roles { get; set; }

@@ -26,6 +26,12 @@ namespace Discord.WebSocket
         public SocketGuild Guild { get; }
         /// <inheritdoc />
         public string Name { get; private set; }
+
+        internal void SetName()
+        {
+            Name = "Thread Channel";
+            _overwrites = ImmutableArray.CreateBuilder<Overwrite>(0).ToImmutable();
+        }
         /// <inheritdoc />
         public int Position { get; private set; }        
 
@@ -69,7 +75,9 @@ namespace Discord.WebSocket
             API.OverwriteJson[] overwrites = model.PermissionOverwrites.Value;
             ImmutableArray<Overwrite>.Builder newOverwrites = ImmutableArray.CreateBuilder<Overwrite>(overwrites.Length);
             for (int i = 0; i < overwrites.Length; i++)
+            {
                 newOverwrites.Add(overwrites[i].ToEntity());
+            }
             _overwrites = newOverwrites.ToImmutable();
         }
 
