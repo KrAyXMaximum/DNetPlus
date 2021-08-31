@@ -42,7 +42,8 @@ namespace Discord.Rest
         {
             base.Update(model);
             CategoryId = model.CategoryId;
-            Topic = model.Topic.Value;
+            if (model.Topic.IsSpecified)
+                Topic = model.Topic.Value;
             if (model.SlowMode.IsSpecified)
                 SlowModeInterval = model.SlowMode.Value;
             IsNsfw = model.Nsfw.GetValueOrDefault();

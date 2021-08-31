@@ -12,25 +12,25 @@ namespace Discord
         /// <summary> Gets a <see cref="GuildPermissions"/> that grants all guild permissions for webhook users. </summary>
         public static readonly GuildPermissions Webhook = new GuildPermissions(0b00000_0000000_0001101100000_000000);
         /// <summary> Gets a <see cref="GuildPermissions"/> that grants all guild permissions. </summary>
-        public static readonly GuildPermissions All = new GuildPermissions(0b11111_1111111_1111111111111_111111);
+        public static readonly GuildPermissions All = GuildPermissions.GetAllPermissions();
 
         /// <summary> Gets a packed value representing all the permissions in this <see cref="GuildPermissions"/>. </summary>
         public ulong RawValue { get; }
 
         /// <summary> If <c>true</c>, a user may create invites. </summary>
         public bool CreateInstantInvite => Permissions.GetValue(RawValue, GuildPermission.CreateInstantInvite);
-        /// <summary> If <c>true</c>, a user may ban users from the guild. </summary>
-        public bool BanMembers => Permissions.GetValue(RawValue, GuildPermission.BanMembers);
         /// <summary> If <c>true</c>, a user may kick users from the guild. </summary>
         public bool KickMembers => Permissions.GetValue(RawValue, GuildPermission.KickMembers);
+
+        /// <summary> If <c>true</c>, a user may ban users from the guild. </summary>
+        public bool BanMembers => Permissions.GetValue(RawValue, GuildPermission.BanMembers);
+       
         /// <summary> If <c>true</c>, a user is granted all permissions, and cannot have them revoked via channel permissions. </summary>
         public bool Administrator => Permissions.GetValue(RawValue, GuildPermission.Administrator);
         /// <summary> If <c>true</c>, a user may create, delete and modify channels. </summary>
         public bool ManageChannels => Permissions.GetValue(RawValue, GuildPermission.ManageChannels);
         /// <summary> If <c>true</c>, a user may adjust guild properties. </summary>
         public bool ManageGuild => Permissions.GetValue(RawValue, GuildPermission.ManageGuild);
-
-        public bool ViewGuildInsights => Permissions.GetValue(RawValue, GuildPermission.ViewGuildInsights);
 
         /// <summary> If <c>true</c>, a user may add reactions. </summary>
         public bool AddReactions => Permissions.GetValue(RawValue, GuildPermission.AddReactions);
@@ -58,6 +58,7 @@ namespace Discord
         public bool MentionEveryone => Permissions.GetValue(RawValue, GuildPermission.MentionEveryone);
         /// <summary> If <c>true</c>, a user may use custom emoji from other guilds. </summary>
         public bool UseExternalEmojis => Permissions.GetValue(RawValue, GuildPermission.UseExternalEmojis);
+        public bool ViewGuildInsights => Permissions.GetValue(RawValue, GuildPermission.ViewGuildInsights);
 
         /// <summary> If <c>true</c>, a user may connect to a voice channel. </summary>
         public bool Connect => Permissions.GetValue(RawValue, GuildPermission.Connect);
@@ -86,6 +87,13 @@ namespace Discord
         public bool ManageWebhooks => Permissions.GetValue(RawValue, GuildPermission.ManageWebhooks);
         /// <summary> If <c>true</c>, a user may edit the emojis for this guild. </summary>
         public bool ManageEmojis => Permissions.GetValue(RawValue, GuildPermission.ManageEmojis);
+
+        public bool UseSlashCommands => Permissions.GetValue(RawValue, GuildPermission.UseSlashCommands);
+        public bool RequestToSpeak => Permissions.GetValue(RawValue, GuildPermission.RequestToSpeak);
+        public bool ManageThreads => Permissions.GetValue(RawValue, GuildPermission.ManageThreads);
+        public bool UsePublicThreads => Permissions.GetValue(RawValue, GuildPermission.UsePublicThreads);
+        public bool UsePrivateThreads => Permissions.GetValue(RawValue, GuildPermission.UsePrivateThreads);
+        public bool UseExternalStickers => Permissions.GetValue(RawValue, GuildPermission.UseExternalStickers);
 
         /// <summary> Creates a new <see cref="GuildPermissions"/> with the provided packed value. </summary>
         public GuildPermissions(ulong rawValue) { RawValue = rawValue; }
@@ -123,7 +131,13 @@ namespace Discord
             bool? manageNicknames = null,
             bool? manageRoles = null,
             bool? manageWebhooks = null,
-            bool? manageEmojis = null)
+            bool? manageEmojis = null,
+            bool? useSlashCommands = null,
+            bool? requestToSpeak = null,
+            bool? manageThreads = null,
+            bool? usePublicThreads = null,
+            bool? usePrivateThreads = null,
+            bool? useExternalStickers = null)
         {
             ulong value = initialValue;
 
@@ -159,6 +173,12 @@ namespace Discord
             Permissions.SetValue(ref value, manageWebhooks, GuildPermission.ManageWebhooks);
             Permissions.SetValue(ref value, manageEmojis, GuildPermission.ManageEmojis);
 
+            Permissions.SetValue(ref value, useSlashCommands, GuildPermission.UseSlashCommands);
+            Permissions.SetValue(ref value, requestToSpeak, GuildPermission.RequestToSpeak);
+            Permissions.SetValue(ref value, manageThreads, GuildPermission.ManageThreads);
+            Permissions.SetValue(ref value, usePublicThreads, GuildPermission.UsePublicThreads);
+            Permissions.SetValue(ref value, usePrivateThreads, GuildPermission.UsePrivateThreads);
+            Permissions.SetValue(ref value, useExternalStickers, GuildPermission.UseExternalStickers);
             RawValue = value;
         }
 
@@ -194,7 +214,13 @@ namespace Discord
             bool manageNicknames = false,
             bool manageRoles = false,
             bool manageWebhooks = false,
-            bool manageEmojis = false)
+            bool manageEmojis = false,
+            bool useSlashCommands = false,
+            bool requestToSpeak = false,
+            bool manageThreads = false,
+            bool usePublicThreads = false,
+            bool usePrivateThreads = false,
+            bool useExternalStickers = false)
             : this(0,
                 createInstantInvite: createInstantInvite,
                 manageRoles: manageRoles,
@@ -226,7 +252,13 @@ namespace Discord
                 changeNickname: changeNickname,
                 manageNicknames: manageNicknames,
                 manageWebhooks: manageWebhooks,
-                manageEmojis: manageEmojis)
+                manageEmojis: manageEmojis,
+                useSlashCommands: useSlashCommands,
+                requestToSpeak: requestToSpeak,
+                manageThreads: manageThreads,
+                usePublicThreads: usePublicThreads,
+                usePrivateThreads: usePrivateThreads,
+                useExternalStickers: useExternalStickers)
         { }
 
         /// <summary> Creates a new <see cref="GuildPermissions"/> from this one, changing the provided non-null permissions. </summary>
@@ -261,11 +293,18 @@ namespace Discord
             bool? manageNicknames = null,
             bool? manageRoles = null,
             bool? manageWebhooks = null,
-            bool? manageEmojis = null)
+            bool? manageEmojis = null,
+            bool? useSlashCommands = null,
+            bool? requestToSpeak = null,
+            bool? manageThreads = null,
+            bool? usePublicThreads = null,
+            bool? usePrivateThreads = null,
+            bool? useExternalStickers = null)
             => new GuildPermissions(RawValue, createInstantInvite, kickMembers, banMembers, administrator, manageChannels, manageGuild, viewGuildInsights, addReactions,
                 viewAuditLog, viewChannel, sendMessages, sendTTSMessages, manageMessages, embedLinks, attachFiles,
                 readMessageHistory, mentionEveryone, useExternalEmojis, connect, speak, muteMembers, deafenMembers, moveMembers,
-                useVoiceActivation, prioritySpeaker, stream, changeNickname, manageNicknames, manageRoles, manageWebhooks, manageEmojis);
+                useVoiceActivation, prioritySpeaker, stream, changeNickname, manageNicknames, manageRoles, manageWebhooks, manageEmojis,
+                useSlashCommands, requestToSpeak, manageThreads, usePublicThreads, usePrivateThreads, useExternalStickers);
 
         /// <summary>
         ///     Returns a value that indicates if a specific <see cref="GuildPermission"/> is enabled
@@ -293,6 +332,11 @@ namespace Discord
                     perms.Add((GuildPermission)flag);
             }
             return perms;
+        }
+
+        private static GuildPermissions GetAllPermissions()
+        {
+            return new GuildPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
         }
 
         public override string ToString() => RawValue.ToString();

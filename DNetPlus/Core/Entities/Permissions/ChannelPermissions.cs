@@ -90,6 +90,12 @@ namespace Discord
         /// <summary> If <c>true</c>, a user may edit the webhooks for this channel. </summary>
         public bool ManageWebhooks => Permissions.GetValue(RawValue, ChannelPermission.ManageWebhooks);
 
+        public bool UseSlashCommands => Permissions.GetValue(RawValue, ChannelPermission.UseSlashCommands);
+        public bool RequestToSpeak => Permissions.GetValue(RawValue, ChannelPermission.RequestToSpeak);
+        public bool ManageThreads => Permissions.GetValue(RawValue, ChannelPermission.ManageThreads);
+        public bool UsePublicThreads => Permissions.GetValue(RawValue, ChannelPermission.UsePublicThreads);
+        public bool UsePrivateThreads => Permissions.GetValue(RawValue, ChannelPermission.UsePrivateThreads);
+        public bool UseExternalStickers => Permissions.GetValue(RawValue, ChannelPermission.UseExternalStickers);
         /// <summary> Creates a new <see cref="ChannelPermissions"/> with the provided packed value. </summary>
         public ChannelPermissions(ulong rawValue) { RawValue = rawValue; }
 
@@ -115,7 +121,13 @@ namespace Discord
             bool? prioritySpeaker = null,
             bool? stream = null,
             bool? manageRoles = null,
-            bool? manageWebhooks = null)
+            bool? manageWebhooks = null,
+            bool? useSlashCommands = null,
+            bool? requestToSpeak = null,
+            bool? manageThreads = null,
+            bool? usePublicThreads = null,
+            bool? usePrivateThreads = null,
+            bool? useExternalStickers = null)
         {
             ulong value = initialValue;
 
@@ -141,7 +153,12 @@ namespace Discord
             Permissions.SetValue(ref value, stream, ChannelPermission.Stream);
             Permissions.SetValue(ref value, manageRoles, ChannelPermission.ManageRoles);
             Permissions.SetValue(ref value, manageWebhooks, ChannelPermission.ManageWebhooks);
-
+            Permissions.SetValue(ref value, useSlashCommands, ChannelPermission.UseSlashCommands);
+            Permissions.SetValue(ref value, requestToSpeak, ChannelPermission.RequestToSpeak);
+            Permissions.SetValue(ref value, manageThreads, ChannelPermission.ManageThreads);
+            Permissions.SetValue(ref value, usePublicThreads, ChannelPermission.UsePublicThreads);
+            Permissions.SetValue(ref value, usePrivateThreads, ChannelPermission.UsePrivateThreads);
+            Permissions.SetValue(ref value, useExternalStickers, ChannelPermission.UseExternalStickers);
             RawValue = value;
         }
 
@@ -168,10 +185,17 @@ namespace Discord
             bool prioritySpeaker = false,
             bool stream = false,
             bool manageRoles = false,
-            bool manageWebhooks = false)
+            bool manageWebhooks = false,
+            bool useSlashCommands = false,
+            bool requestToSpeak = false,
+            bool manageThreads = false,
+            bool usePublicThreads = false,
+            bool usePrivateThreads = false,
+            bool useExternalStickers = false)
             : this(0, createInstantInvite, manageChannel, addReactions, viewChannel, sendMessages, sendTTSMessages, manageMessages,
                 embedLinks, attachFiles, readMessageHistory, mentionEveryone, useExternalEmojis, connect,
-                speak, muteMembers, deafenMembers, moveMembers, useVoiceActivation, prioritySpeaker, stream, manageRoles, manageWebhooks)
+                speak, muteMembers, deafenMembers, moveMembers, useVoiceActivation, prioritySpeaker, stream, manageRoles, manageWebhooks,
+                useSlashCommands, requestToSpeak, manageThreads, usePublicThreads, usePrivateThreads, useExternalStickers)
         { }
 
         /// <summary> Creates a new <see cref="ChannelPermissions"/> from this one, changing the provided non-null permissions. </summary>
@@ -197,7 +221,13 @@ namespace Discord
             bool? prioritySpeaker = null,
             bool? stream = null,
             bool? manageRoles = null,
-            bool? manageWebhooks = null)
+            bool? manageWebhooks = null,
+            bool? useSlashCommands = null,
+            bool? requestToSpeak = null,
+            bool? manageThreads = null,
+            bool? usePublicThreads = null,
+            bool? usePrivateThreads = null,
+            bool? useExternalStickers = null)
             => new ChannelPermissions(RawValue,
                 createInstantInvite,
                 manageChannel,
@@ -220,7 +250,8 @@ namespace Discord
                 prioritySpeaker,
                 stream,
                 manageRoles,
-                manageWebhooks);
+                manageWebhooks,
+                useSlashCommands, requestToSpeak, manageThreads, usePublicThreads, usePrivateThreads, useExternalStickers);
 
         public bool Has(ChannelPermission permission) => Permissions.GetValue(RawValue, permission);
 

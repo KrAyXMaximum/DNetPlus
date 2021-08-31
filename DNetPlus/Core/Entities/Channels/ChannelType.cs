@@ -16,6 +16,7 @@ namespace Discord
         /// <summary> The channel is a news channel. </summary>
         News = 5,
         Store = 6,
+        PublicThread = 11,
         PrivateThread = 12
     }
 }

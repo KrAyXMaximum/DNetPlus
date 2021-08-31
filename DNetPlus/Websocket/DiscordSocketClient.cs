@@ -1312,77 +1312,84 @@ namespace Discord.WebSocket
                             case "MESSAGE_CREATE":
                                 {
                                     await _gatewayLogger.DebugAsync("Received Dispatch (MESSAGE_CREATE)").ConfigureAwait(false);
+                                    MessageJson data = (payload as JToken).ToObject<API.MessageJson>(_serializer);
 
-                                    var data = (payload as JToken).ToObject<API.MessageJson>(_serializer);
-
-                                    var channel = GetChannel(data.ChannelId) as ISocketMessageChannel;
-                                    if (channel == null)
+                                    try
                                     {
-                                        //Console.WriteLine("MS: " + data.Content);
-                                        //Console.WriteLine(payload);
-                                        //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(payload, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
-                                    }
-                                    if (channel == null && data.GuildId.IsSpecified)
-                                    {
-                                        channel = MockedThreadChannel.Create(GetGuild(data.GuildId.Value), State, data.ChannelId);
-                                    }
-
-                                    var guild = (channel as SocketGuildChannel)?.Guild;
-                                    if (guild != null && !guild.IsSynced)
-                                    {
-                                        await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
-                                        return;
-                                    }
-
-
-                                    if (channel == null)
-                                    {
-                                        if (!data.GuildId.IsSpecified)  // assume it is a DM
+                                        var channel = GetChannel(data.ChannelId) as ISocketMessageChannel;
+                                        if (channel == null)
                                         {
-                                            channel = CreateDMChannel(data.ChannelId, data.Author.Value, State);
+                                            //Console.WriteLine("MS: " + data.Content);
+                                            //Console.WriteLine(payload);
+                                            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(payload, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
                                         }
-                                        else
+                                        if (channel == null && data.GuildId.IsSpecified)
                                         {
-                                            await UnknownChannelAsync(type, data.ChannelId).ConfigureAwait(false);
+                                            channel = MockedThreadChannel.Create(GetGuild(data.GuildId.Value), State, data.ChannelId);
+                                        }
+
+                                        var guild = (channel as SocketGuildChannel)?.Guild;
+                                        if (guild != null && !guild.IsSynced)
+                                        {
+                                            await UnsyncedGuildAsync(type, guild.Id).ConfigureAwait(false);
                                             return;
                                         }
-                                    }
 
-                                    SocketUser author;
-                                    if (guild != null)
-                                    {
-                                        if (data.WebhookId.IsSpecified)
-                                            author = SocketWebhookUser.Create(guild, State, data.Author.Value, data.WebhookId.Value);
-                                        else
-                                            author = guild.GetUser(data.Author.Value.Id);
-                                    }
-                                    else
-                                        author = (channel as SocketChannel).GetUser(data.Author.Value.Id);
 
-                                    if (author == null)
-                                    {
-                                        if (guild != null)
+                                        if (channel == null)
                                         {
-                                            if (data.Member.IsSpecified) // member isn't always included, but use it when we can
+                                            if (!data.GuildId.IsSpecified)  // assume it is a DM
                                             {
-                                                data.Member.Value.User = data.Author.Value;
-                                                author = guild.AddOrUpdateUser(data.Member.Value);
+                                                channel = CreateDMChannel(data.ChannelId, data.Author.Value, State);
                                             }
                                             else
-                                                author = guild.AddOrUpdateUser(data.Author.Value); // user has no guild-specific data
+                                            {
+                                                await UnknownChannelAsync(type, data.ChannelId).ConfigureAwait(false);
+                                                return;
+                                            }
                                         }
-                                        else if (channel is SocketGroupChannel groupChannel)
-                                            author = groupChannel.GetOrAddUser(data.Author.Value);
-                                        else
-                                        {
-                                            await UnknownChannelUserAsync(type, data.Author.Value.Id, channel.Id).ConfigureAwait(false);
-                                            return;
-                                        }
-                                    }
 
-                                    var msg = SocketMessage.Create(this, State, author, channel, data);
-                                    SocketChannelHelper.AddMessage(channel, this, msg);
-                                    await TimedInvokeAsync(_messageReceivedEvent, nameof(MessageReceived), msg).ConfigureAwait(false);
+                                        SocketUser author;
+                                        if (guild != null)
+                                        {
+                                            if (data.WebhookId.IsSpecified)
+                                                author = SocketWebhookUser.Create(guild, State, data.Author.Value, data.WebhookId.Value);
+                                            else
+                                                author = guild.GetUser(data.Author.Value.Id);
+                                        }
+                                        else
+                                            author = (channel as SocketChannel).GetUser(data.Author.Value.Id);
+
+                                        if (author == null)
+                                        {
+                                            if (guild != null)
+                                            {
+                                                if (data.Member.IsSpecified) // member isn't always included, but use it when we can
+                                                {
+                                                    data.Member.Value.User = data.Author.Value;
+                                                    author = guild.AddOrUpdateUser(data.Member.Value);
+                                                }
+                                                else
+                                                    author = guild.AddOrUpdateUser(data.Author.Value); // user has no guild-specific data
+                                            }
+                                            else if (channel is SocketGroupChannel groupChannel)
+                                                author = groupChannel.GetOrAddUser(data.Author.Value);
+                                            else
+                                            {
+                                                await UnknownChannelUserAsync(type, data.Author.Value.Id, channel.Id).ConfigureAwait(false);
+                                                return;
+                                            }
+                                        }
+
+                                        var msg = SocketMessage.Create(this, State, author, channel, data);
+                                        SocketChannelHelper.AddMessage(channel, this, msg);
+                                        await TimedInvokeAsync(_messageReceivedEvent, nameof(MessageReceived), msg).ConfigureAwait(false);
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        Console.WriteLine(ex);
+                                    }
+                                    
                                 }
                                 break;
                             case "MESSAGE_UPDATE":
@@ -2050,9 +2057,17 @@ namespace Discord.WebSocket
                                         }
                                     }
 
-                                    Interaction Interaction = new Interaction();
-                                    Interaction.Update(this, State, guild, channel, author, data);
-                                    await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
+                                    try
+                                    {
+                                        Interaction Interaction = new Interaction();
+                                        Interaction.Update(this, State, guild, channel, author, data);
+                                        await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        Console.WriteLine(ex);
+                                    }
+                                   
                                 }
                                 break;
                             //Others

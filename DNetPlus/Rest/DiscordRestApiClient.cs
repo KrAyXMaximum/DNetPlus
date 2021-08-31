@@ -344,6 +344,17 @@ namespace Discord.API
             BucketIds ids = new BucketIds(guildId: guildId);
             return await SendAsync<IReadOnlyCollection<ChannelJson>>("GET", () => $"guilds/{guildId}/channels", ids, options: options).ConfigureAwait(false);
         }
+        public async Task<ChannelJson> CreateMessageThreadChannelAsync(ulong guildId, ulong channelId, ulong messageId, CreateGuildChannelParams args, RequestOptions options = null)
+        {
+            Preconditions.NotEqual(guildId, 0, nameof(guildId));
+            Preconditions.NotNull(args, nameof(args));
+            Preconditions.GreaterThan(args.Bitrate, 0, nameof(args.Bitrate));
+            Preconditions.NotNullOrWhitespace(args.Name, nameof(args.Name));
+            options = RequestOptions.CreateOrClone(options);
+
+            BucketIds ids = new BucketIds(guildId: guildId);
+            return await SendJsonAsync<ChannelJson>("POST", () => $"channels/{channelId}/messages/{messageId}/threads", args, ids, options: options).ConfigureAwait(false);
+        }
         public async Task<ChannelJson> CreateGuildChannelAsync(ulong guildId, CreateGuildChannelParams args, RequestOptions options = null)
         {
             Preconditions.NotEqual(guildId, 0, nameof(guildId));

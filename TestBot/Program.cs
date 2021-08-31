@@ -7,6 +7,8 @@ using System;
 using System.Threading.Tasks;
 using DNetPlus_InteractiveButtons;
 using System.Linq;
+using Newtonsoft.Json;
+using Discord.Net.Converters;
 
 namespace TestBot
 {
@@ -27,6 +29,7 @@ namespace TestBot
                 OwnerIds = new ulong[] { 190590364871032834 },
                 AlwaysDownloadUsers = false,
                 TotalShards = 1,
+                GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.DirectMessageReactions | GatewayIntents.Guilds,
                 //MaxWaitBetweenGuildAvailablesBeforeReady = 5000,
                 LogLevel = Discord.LogSeverity.Debug
             });
@@ -64,9 +67,10 @@ namespace TestBot
             switch (arg.Type)
             {
                 case InteractionType.ApplicationCommand:
+                    Console.WriteLine("INT: " + Newtonsoft.Json.JsonConvert.SerializeObject(arg, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
+                    return;
                     ShardedCommandContext context = new ShardedCommandContext(Client, arg);
-                        await Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
-                   
+                    await Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
                     break;
                 case InteractionType.MessageComponent:
                     if (arg.User.Id == 190590364871032834 && arg.Data.CustomId == "test")

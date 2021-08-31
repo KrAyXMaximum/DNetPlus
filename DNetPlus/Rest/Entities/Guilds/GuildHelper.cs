@@ -260,21 +260,37 @@ namespace Discord.Rest
             return RestCategoryChannel.Create(client, guild, model);
         }
 
-        public static async Task<RestTextChannel> CreateThreadChannelAsync(IGuild guild, BaseDiscordClient client,
-            string name, RequestOptions options, Action<TextChannelProperties> func = null)
+        public static async Task<RestTextChannel> CreateMessageThreadChannelAsync(IGuild guild, IChannel channel, IMessage message, BaseDiscordClient client,
+            string name, RequestOptions options, Action<ThreadChannelProperties> func = null)
         {
             if (name == null) throw new ArgumentNullException(paramName: nameof(name));
 
-            TextChannelProperties props = new TextChannelProperties();
+            ThreadChannelProperties props = new ThreadChannelProperties();
             func?.Invoke(props);
 
             CreateGuildChannelParams args = new CreateGuildChannelParams(name, ChannelType.PrivateThread)
             {
                 OwnerId = props.OwnerId,
                 CategoryId = props.CategoryId,
-                Topic = props.Topic,
-                IsNsfw = props.IsNsfw,
-                Position = props.Position,
+                SlowModeInterval = props.SlowModeInterval,
+            };
+            ChannelJson model = await client.ApiClient.CreateMessageThreadChannelAsync(guild.Id, channel.Id, message.Id, args, options).ConfigureAwait(false);
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(model, Newtonsoft.Json.Formatting.Indented, new Newtonsoft.Json.JsonSerializerSettings { ContractResolver = new Net.Converters.DiscordContractResolver() }));
+            return RestTextChannel.Create(client, guild, model);
+        }
+
+        public static async Task<RestTextChannel> CreateThreadChannelAsync(IGuild guild, BaseDiscordClient client,
+            string name, RequestOptions options, Action<ThreadChannelProperties> func = null)
+        {
+            if (name == null) throw new ArgumentNullException(paramName: nameof(name));
+
+            ThreadChannelProperties props = new ThreadChannelProperties();
+            func?.Invoke(props);
+
+            CreateGuildChannelParams args = new CreateGuildChannelParams(name, ChannelType.PrivateThread)
+            {
+                OwnerId = props.OwnerId,
+                CategoryId = props.CategoryId,
                 SlowModeInterval = props.SlowModeInterval,
             };
             ChannelJson model = await client.ApiClient.CreateGuildChannelAsync(guild.Id, args, options).ConfigureAwait(false);

@@ -64,6 +64,8 @@ namespace Discord
         /// </summary>
         UseExternalEmojis   = 0x00_04_00_00,
 
+
+
         // Voice
         /// <summary>
         ///     Allows for joining of a voice channel.
@@ -104,5 +106,12 @@ namespace Discord
         ///     Allows management and editing of webhooks.
         /// </summary>
         ManageWebhooks		= 0x20_00_00_00,
+
+        UseSlashCommands = 0x80_00_00_00,
+        RequestToSpeak = 0x01_00_00_00_00,
+        ManageThreads = 0x04_00_00_00_00,
+        UsePublicThreads = 0x08_00_00_00_00,
+        UsePrivateThreads = 0x10_00_00_00_00,
+        UseExternalStickers = 0x20_00_00_00_00
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Discord.API.Gateway
 {
@@ -42,6 +43,8 @@ namespace Discord.API.Gateway
         public Optional<string> Name { get; set; }
         [JsonProperty("id")]
         public Optional<ulong> Id { get; set; }
+        [JsonProperty("resolved")]
+        public Optional<InteractionResolvedJson> Resolved { get; set; }
     }
     internal class InteractionOptionJson
     {
@@ -52,5 +55,14 @@ namespace Discord.API.Gateway
 
         [JsonProperty("value")]
         public string Value { get; set; }
+    }
+    internal class InteractionResolvedJson
+    {
+        [JsonProperty("members")]
+        public Optional<Dictionary<string, GuildMemberJson>> Members { get; set; }
+        [JsonProperty("users")]
+        public Optional<Dictionary<string, UserJson>> Users { get; set; }
+        [JsonProperty("messages")]
+        public Optional<Dictionary<string, MessageJson>> Messages { get; set; }
     }
 }

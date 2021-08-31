@@ -110,6 +110,7 @@ namespace Discord
         {
             return ResolveChannel(user, channel, ResolveGuild(user));
         }*/
+
         public static ulong ResolveChannel(IGuild guild, IGuildUser user, IGuildChannel channel, ulong guildPermissions)
         {
             ulong resolvedPermissions = 0;

@@ -119,11 +119,15 @@ namespace Discord.WebSocket
         }
         internal static SocketMessage Create(DiscordSocketClient discord, ClientState state, SocketUser author, ISocketMessageChannel channel, Model model)
         {
-            if (model.Type == MessageType.Default)
-                return SocketUserMessage.Create(discord, state, author, channel, model);
-            else
-                return SocketSystemMessage.Create(discord, state, author, channel, model);
+            switch (model.Type)
+            {
+                case MessageType.Default:
+                case MessageType.Reply:
+                    return SocketUserMessage.Create(discord, state, author, channel, model);
+            }
+            return SocketSystemMessage.Create(discord, state, author, channel, model);
         }
+
         internal virtual void Update(ClientState state, Model model)
         {
             Type = model.Type;

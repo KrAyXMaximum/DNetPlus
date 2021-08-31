@@ -716,7 +716,10 @@ namespace Discord.WebSocket
         public Task<RestCategoryChannel> CreateCategoryChannelAsync(string name, Action<GuildChannelProperties> func = null, RequestOptions options = null)
             => GuildHelper.CreateCategoryChannelAsync(this, Discord, name, options, func);
 
-        public Task<RestTextChannel> CreateThreadChannelAsync(string name, Action<TextChannelProperties> func = null, RequestOptions options = null)
+
+        public Task<RestTextChannel> CreateMessageThreadChannel(ISocketMessageChannel channel, IMessage message, string name, Action<ThreadChannelProperties> func = null, RequestOptions options = null)
+            => GuildHelper.CreateMessageThreadChannelAsync(this, channel, message, Discord, name, options, func);
+        public Task<RestTextChannel> CreateThreadChannelAsync(string name, Action<ThreadChannelProperties> func = null, RequestOptions options = null)
             => GuildHelper.CreateThreadChannelAsync(this, Discord, name, options, func);
 
         internal SocketGuildChannel AddChannel(ClientState state, ChannelModel model)

@@ -51,6 +51,7 @@ namespace Discord.WebSocket
         }
         internal new static SocketUserMessage Create(DiscordSocketClient discord, ClientState state, SocketUser author, ISocketMessageChannel channel, Model model)
         {
+            
             SocketUserMessage entity = new SocketUserMessage(discord, model.Id, channel, author, MessageHelper.GetSource(model));
             entity.Update(state, model);
             return entity;

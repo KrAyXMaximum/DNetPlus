@@ -85,7 +85,12 @@ namespace Discord
         public PermValue ManageRoles => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.ManageRoles);
         /// <summary> If True, a user may edit the webhooks for this channel. </summary>
         public PermValue ManageWebhooks => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.ManageWebhooks);
-
+        public PermValue UseSlashCommands => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.UseSlashCommands);
+        public PermValue RequestToSpeak => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.RequestToSpeak);
+        public PermValue ManageThreads => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.ManageThreads);
+        public PermValue UsePublicThreads => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.UsePublicThreads);
+        public PermValue UsePrivateThreads => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.UsePrivateThreads);
+        public PermValue UseExternalStickers => Permissions.GetValue(AllowValue, DenyValue, ChannelPermission.UseExternalStickers);
         /// <summary> Creates a new OverwritePermissions with the provided allow and deny packed values. </summary>
         public OverwritePermissions(ulong allowValue, ulong denyValue)
         {
@@ -121,7 +126,13 @@ namespace Discord
             PermValue? manageRoles = null,
             PermValue? manageWebhooks = null,
             PermValue? prioritySpeaker = null,
-            PermValue? stream = null)
+            PermValue? stream = null,
+            PermValue? useSlashCommands = null,
+            PermValue? requestToSpeak = null,
+            PermValue? manageThreads = null,
+            PermValue? usePublicThreads = null,
+            PermValue? usePrivateThreads = null,
+            PermValue? useExternalStickers = null)
         {
             Permissions.SetValue(ref allowValue, ref denyValue, createInstantInvite, ChannelPermission.CreateInstantInvite);
             Permissions.SetValue(ref allowValue, ref denyValue, manageChannel, ChannelPermission.ManageChannels);
@@ -146,6 +157,12 @@ namespace Discord
             Permissions.SetValue(ref allowValue, ref denyValue, manageRoles, ChannelPermission.ManageRoles);
             Permissions.SetValue(ref allowValue, ref denyValue, manageWebhooks, ChannelPermission.ManageWebhooks);
 
+            Permissions.SetValue(ref allowValue, ref denyValue, useSlashCommands, ChannelPermission.UseSlashCommands);
+            Permissions.SetValue(ref allowValue, ref denyValue, requestToSpeak, ChannelPermission.RequestToSpeak);
+            Permissions.SetValue(ref allowValue, ref denyValue, manageThreads, ChannelPermission.ManageThreads);
+            Permissions.SetValue(ref allowValue, ref denyValue, usePublicThreads, ChannelPermission.UsePublicThreads);
+            Permissions.SetValue(ref allowValue, ref denyValue, usePrivateThreads, ChannelPermission.UsePrivateThreads);
+            Permissions.SetValue(ref allowValue, ref denyValue, useExternalStickers, ChannelPermission.UseExternalStickers);
             AllowValue = allowValue;
             DenyValue = denyValue;
         }
@@ -175,10 +192,17 @@ namespace Discord
             PermValue manageRoles = PermValue.Inherit,
             PermValue manageWebhooks = PermValue.Inherit,
             PermValue prioritySpeaker = PermValue.Inherit,
-            PermValue stream = PermValue.Inherit)
+            PermValue stream = PermValue.Inherit,
+            PermValue useSlashCommands = PermValue.Inherit,
+            PermValue requestToSpeak = PermValue.Inherit,
+            PermValue manageThreads = PermValue.Inherit,
+            PermValue usePublicThreads = PermValue.Inherit,
+            PermValue usePrivateThreads = PermValue.Inherit,
+            PermValue useExternalStickers = PermValue.Inherit)
             : this(0, 0, createInstantInvite, manageChannel, addReactions, viewChannel, sendMessages, sendTTSMessages, manageMessages, 
                   embedLinks, attachFiles, readMessageHistory, mentionEveryone, useExternalEmojis, connect, speak, muteMembers, deafenMembers, 
-                  moveMembers, useVoiceActivation, manageRoles, manageWebhooks, prioritySpeaker, stream) { }
+                  moveMembers, useVoiceActivation, manageRoles, manageWebhooks, prioritySpeaker, stream,
+                  useSlashCommands, requestToSpeak, manageThreads, usePublicThreads, usePrivateThreads, useExternalStickers) { }
 
         /// <summary>
         ///     Initializes a new <see cref="OverwritePermissions" /> from the current one, changing the provided
@@ -206,10 +230,17 @@ namespace Discord
             PermValue? manageRoles = null,
              PermValue? manageWebhooks = null,
             PermValue? prioritySpeaker = null,
-            PermValue? stream = null)
+            PermValue? stream = null,
+            PermValue? useSlashCommands = null,
+            PermValue? requestToSpeak = null,
+            PermValue? manageThreads = null,
+            PermValue? usePublicThreads = null,
+            PermValue? usePrivateThreads = null,
+            PermValue? useExternalStickers = null)
             => new OverwritePermissions(AllowValue, DenyValue, createInstantInvite, manageChannel, addReactions, viewChannel, sendMessages, sendTTSMessages, manageMessages, 
                 embedLinks, attachFiles, readMessageHistory, mentionEveryone, useExternalEmojis, connect, speak, muteMembers, deafenMembers, 
-                moveMembers, useVoiceActivation, manageRoles, manageWebhooks, prioritySpeaker, stream);
+                moveMembers, useVoiceActivation, manageRoles, manageWebhooks, prioritySpeaker, stream,
+                useSlashCommands, requestToSpeak, usePublicThreads, usePrivateThreads, useExternalStickers);
 
         /// <summary>
         ///     Creates a <see cref="List{T}"/> of all the <see cref="ChannelPermission"/> values that are allowed.

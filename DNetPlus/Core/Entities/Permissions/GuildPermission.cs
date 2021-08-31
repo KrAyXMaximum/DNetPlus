@@ -104,6 +104,8 @@ namespace Discord
         UseExternalEmojis	= 0x00_04_00_00,
 
 
+
+
         // Voice
         /// <summary>
         ///     Allows for joining of a voice channel.
@@ -167,6 +169,13 @@ namespace Discord
         ///     This permission requires the owner account to use two-factor
         ///     authentication when used on a guild that has server-wide 2FA enabled.
         /// </remarks>
-        ManageEmojis        = 0x40_00_00_00
+        ManageEmojis        = 0x40_00_00_00,
+
+        UseSlashCommands = 0x80_00_00_00,
+        RequestToSpeak = 0x01_00_00_00_00,
+        ManageThreads = 0x04_00_00_00_00,
+        UsePublicThreads = 0x08_00_00_00_00,
+        UsePrivateThreads = 0x10_00_00_00_00,
+        UseExternalStickers = 0x20_00_00_00_00
     }
 }

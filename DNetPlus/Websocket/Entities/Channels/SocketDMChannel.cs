@@ -37,7 +37,6 @@ namespace Discord.WebSocket
             : base(discord, id)
         {
             Recipient = recipient;
-            recipient.GlobalUser.AddRef();
             if (Discord.MessageCacheSize > 0)
                 _messages = new MessageCache(Discord);
         }

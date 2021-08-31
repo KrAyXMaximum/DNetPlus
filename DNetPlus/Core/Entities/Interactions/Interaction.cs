@@ -45,6 +45,15 @@ namespace Discord
                 CustomId = model.Data.CustomId.IsSpecified ? model.Data.CustomId.Value : null,
                 DropdownOptions = model.Data.DropdownValues.IsSpecified ? model.Data.DropdownValues.Value : null
             };
+            if (model.Data.Resolved.IsSpecified)
+            {
+                Data.Resolve = new InteractionResolved
+                {
+                    Members = model.Data.Resolved.Value.Members.IsSpecified ? model.Data.Resolved.Value.Members.Value.ToDictionary(x => x.Key, x => SocketGuildUser.Create(guild, state, x.Value)) : null,
+                    Users = model.Data.Resolved.Value.Users.IsSpecified ? model.Data.Resolved.Value.Users.Value.ToDictionary(x => x.Key, x => (SocketUser)SocketUnknownUser.Create(client, state, x.Value)) : null,
+                    Messages = model.Data.Resolved.Value.Messages.IsSpecified ? model.Data.Resolved.Value.Messages.Value.ToDictionary(x => x.Key, x => SocketMessage.Create(client, state, x.Value.Author.IsSpecified ? state.GetUser(x.Value.Author.Value.Id) : null, (ISocketMessageChannel)state.GetChannel(x.Value.ChannelId), x.Value)) : null,
+                };
+            }
         }
 
         internal InteractionChoice[] GetChoices(API.Gateway.InteractionOptionJson option)
@@ -65,12 +74,18 @@ namespace Discord
         public string CustomId { get; internal set; }
         public ComponentType ComponentType { get; internal set; }
         public InteractionChoice[] Choices { get; internal set; }
-
+        public InteractionResolved Resolve { get; internal set; }
         public string[] DropdownOptions { get; set; }
         public string Name { get; internal set; }
         public ulong Id { get; internal set; }
 
         public string Token { get; internal set; }
     }
-    
+    public class InteractionResolved
+    {
+        public Dictionary<string, SocketGuildUser> Members { get; set; }
+        public Dictionary<string, SocketUser> Users { get; set; }
+
+        public Dictionary<string, SocketMessage> Messages { get; set; }
+    }
 }
