@@ -25,13 +25,14 @@ namespace Discord.Rest
         /// <exception cref="InvalidOperationException">Only the author of a message may modify the message.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Message content is too long, length must be less or equal to <see cref="DiscordConfig.MaxMessageSize"/>.</exception>
         public static async Task<Model> ModifyAsync(IMessage msg, BaseDiscordClient client, Action<MessageProperties> func,
-            RequestOptions options, AllowedMentions allowedMentions)
+            RequestOptions options)
         {
-            if (msg.Author.Id != client.CurrentUser.Id)
-                throw new InvalidOperationException("Only the author of a message may modify the message.");
-
             MessageProperties args = new MessageProperties();
             func(args);
+
+            bool HasFlag = args.Flags.IsSpecified && args.Flags.Value.HasFlag(MessageFlags.SuppressEmbeds);
+            if (!HasFlag && msg.Author.Id != client.CurrentUser.Id)
+                throw new InvalidOperationException("Only the author of a message may modify the message.");
 
             bool hasText = args.Content.IsSpecified ? !string.IsNullOrEmpty(args.Content.Value) : !string.IsNullOrEmpty(msg.Content);
             bool hasEmbed = args.Embed.IsSpecified ? args.Embed.Value != null : msg.Embeds.Any();
@@ -41,11 +42,14 @@ namespace Discord.Rest
             ModifyMessageParams apiArgs = new API.Rest.ModifyMessageParams
             {
                 Content = args.Content,
-                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel() : Optional.Create<API.EmbedJson>(),
-                Components = args.Components.IsSpecified ? args.Components.Value.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>()
+                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel(client) : Optional.Create<API.EmbedJson>(),
+                Components = args.Components.IsSpecified ? args.Components.Value.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>(),
+                Flags = args.Flags.IsSpecified ? args.Flags.Value : Optional.Create<MessageFlags?>()
             };
-            if (allowedMentions != null)
-                apiArgs.AllowedMentions = allowedMentions.ToModel();
+            if (args.AllowedMentions.IsSpecified)
+                apiArgs.AllowedMentions = args.AllowedMentions.Value?.ToModel();
+            else
+                apiArgs.AllowedMentions = new AllowedMentions().ToModel();
 
             return await client.ApiClient.ModifyMessageAsync(msg.Channel.Id, msg.Id, apiArgs, options).ConfigureAwait(false);
         }
@@ -85,10 +89,14 @@ namespace Discord.Rest
             var apiArgs = new API.Rest.ModifyMessageParams
             {
                 Content = args.Content,
-                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel() : Optional.Create<API.EmbedJson>(),
+                Embed = args.Embed.IsSpecified ? args.Embed.Value.ToModel(client) : Optional.Create<API.EmbedJson>(),
                 Flags = args.Flags.IsSpecified ? args.Flags.Value : Optional.Create<MessageFlags?>(),
-                AllowedMentions = args.AllowedMentions.IsSpecified ? args.AllowedMentions.Value.ToModel() : Optional.Create<API.AllowedMentions>(),
+                Components = args.Components.IsSpecified ? args.Components.Value.Select(x => x.ToModel()).ToArray() : Optional.Create<InteractionComponent_Json[]>()
             };
+            if (args.AllowedMentions.IsSpecified)
+                apiArgs.AllowedMentions = args.AllowedMentions.Value?.ToModel();
+            else
+                apiArgs.AllowedMentions = new AllowedMentions().ToModel();
             return await client.ApiClient.ModifyMessageAsync(channelId, msgId, apiArgs, options).ConfigureAwait(false);
         }
 

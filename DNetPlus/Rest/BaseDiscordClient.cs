@@ -37,11 +37,14 @@ namespace Discord.Rest
         /// <inheritdoc />
         public TokenType TokenType => ApiClient.AuthTokenType;
 
+        public DiscordConfig BaseConfig { get; internal set; }
+
         /// <summary> Creates a new REST-only Discord client. </summary>
         internal BaseDiscordClient(DiscordRestConfig config, API.DiscordRestApiClient client)
         {
             ApiClient = client;
             LogManager = new LogManager(config.LogLevel);
+            BaseConfig = config;
             LogManager.Message += async msg => await _logEvent.InvokeAsync(msg).ConfigureAwait(false);
 
             _stateLock = new SemaphoreSlim(1, 1);

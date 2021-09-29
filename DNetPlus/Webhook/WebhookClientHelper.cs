@@ -27,7 +27,7 @@ namespace Discord.Webhook
                 IsTTS = isTTS
             };
             if (embeds != null)
-                args.Embeds = embeds.Select(x => x.ToModel()).ToArray();
+                args.Embeds = embeds.Select(x => x.ToModel(null)).ToArray();
             if (username != null)
                 args.Username = username;
             if (avatarUrl != null)
@@ -56,7 +56,7 @@ namespace Discord.Webhook
             if (avatarUrl != null)
                 args.AvatarUrl = avatarUrl;
             if (embeds != null)
-                args.Embeds = embeds.Select(x => x.ToModel()).ToArray();
+                args.Embeds = embeds.Select(x => x.ToModel(null)).ToArray();
             if (allowedMentions != null)
                 args.AllowedMentions = allowedMentions.ToModel();
             if (components != null)
@@ -104,7 +104,7 @@ namespace Discord.Webhook
                 Content = args.Content.IsSpecified ? args.Content.Value : Optional.Create<string>(),
                 Embeds =
                     args.Embeds.IsSpecified
-                        ? args.Embeds.Value.Select(embed => embed.ToModel()).ToArray()
+                        ? args.Embeds.Value.Select(embed => embed.ToModel(null)).ToArray()
                         : Optional.Create<API.EmbedJson[]>(),
                 AllowedMentions = args.AllowedMentions.IsSpecified
                     ? args.AllowedMentions.Value.ToModel()

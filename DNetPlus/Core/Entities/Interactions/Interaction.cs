@@ -35,7 +35,7 @@ namespace Discord
                 Member = guild.GetUser(model.Member.Value.User.Id);
             }
             User = user;
-            Data = new InteractionData
+            Data = new InteractionData(client)
             {
                 Id = model.Id,
                 Name = model.Data.Name.IsSpecified ? model.Data.Name.Value : null,
@@ -71,6 +71,11 @@ namespace Discord
     }
     public class InteractionData
     {
+        public InteractionData(BaseDiscordClient client)
+        {
+            Client = client;
+        }
+        internal BaseDiscordClient Client;
         public string CustomId { get; internal set; }
         public ComponentType ComponentType { get; internal set; }
         public InteractionChoice[] Choices { get; internal set; }
@@ -78,8 +83,8 @@ namespace Discord
         public string[] DropdownOptions { get; set; }
         public string Name { get; internal set; }
         public ulong Id { get; internal set; }
-
         public string Token { get; internal set; }
+        internal bool IsFollowup;
     }
     public class InteractionResolved
     {

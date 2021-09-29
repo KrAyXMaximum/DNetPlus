@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Net.Converters;
+using Discord.Rest;
 using Discord.WebSocket;
 using DNetPlus_InteractiveButtons;
 using Newtonsoft.Json;
@@ -20,6 +21,29 @@ namespace TestBot
         public CmdTest(InteractiveButtonsService inter)
         {
             ib = inter;
+        }
+
+        [Command("edit")]
+        public async Task Edit(string text = "")
+        {
+            var Msg = await ReplyAsync("Test <@190590364871032834>", allowedMentions: new AllowedMentions());
+            await Task.Delay(10000);
+            await Msg.ModifyAsync(x => x.Content = "T <@190590364871032834>");
+        }
+
+        [Command("emtest")]
+        public async Task EmTest()
+        {
+            await ReplyAsync("Test", components: new InteractionRow[]
+            {
+                new InteractionRow
+                {
+                    Buttons = new InteractionButton[]
+                    {
+                        new InteractionButton(ComponentButtonType.Primary, "Test", "test")
+                    }
+                }
+            });
         }
         [Command("create")]
         public async Task Create()
@@ -385,7 +409,13 @@ namespace TestBot
         [Command("test")]
         public async Task Test()
         {
-            await ReplyAsync("Test");
+            await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, "Loading", type: Discord.API.Rest.InteractionMessageType.AcknowledgeWithSource);
+           
+            Console.WriteLine("Get members");
+            if (!Context.Guild.HasAllMembers)
+                await Context.Guild.DownloadUsersAsync();
+            Console.WriteLine("Send hello");
+            await Context.InteractionData.SendFollowupAsync(Context.Channel, "Hello");
         }
 
         [Command("usertags")]

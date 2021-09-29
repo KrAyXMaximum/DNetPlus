@@ -29,7 +29,7 @@ namespace TestBot
                 OwnerIds = new ulong[] { 190590364871032834 },
                 AlwaysDownloadUsers = false,
                 TotalShards = 1,
-                GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.DirectMessageReactions | GatewayIntents.Guilds,
+                GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.DirectMessageReactions | GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.GuildMembers,
                 //MaxWaitBetweenGuildAvailablesBeforeReady = 5000,
                 LogLevel = Discord.LogSeverity.Debug
             });
@@ -40,7 +40,7 @@ namespace TestBot
             await Client.StartAsync();
 
             Client.InteractionReceived += Client_InteractionReceived;
-            Commands = new CommandService();
+            Commands = new CommandService(new CommandServiceConfig { DefaultRunMode = RunMode.Async });
             _services = BuildServiceProvider();
             Handler = new CommandHandler(Client, Commands, _services);
             
@@ -59,7 +59,7 @@ namespace TestBot
         private static async Task Client_UserJoinRequestDeleted(SocketUser arg1, SocketGuild arg2)
         {
             Console.WriteLine("GOT LEAVE");
-            Console.WriteLine($"User: {arg1.Username} Guild: {arg2.Name}");
+            { }; Console.WriteLine($"User: {arg1.Username} Guild: {arg2.Name}");
         }
 
         private static async Task Client_InteractionReceived(Interaction arg)
@@ -67,18 +67,28 @@ namespace TestBot
             switch (arg.Type)
             {
                 case InteractionType.ApplicationCommand:
-                    Console.WriteLine("INT: " + Newtonsoft.Json.JsonConvert.SerializeObject(arg, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
-                    return;
+                    
                     ShardedCommandContext context = new ShardedCommandContext(Client, arg);
-                    await Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
+                    Commands.ExecuteAsync(context: context, argPos: 0, services: _services);
                     break;
                 case InteractionType.MessageComponent:
-                    if (arg.User.Id == 190590364871032834 && arg.Data.CustomId == "test")
+                    if (arg.User.Id == 190590364871032834)
                     {
+                        Console.Write("Button Trigger");
                         if (arg.Data.ComponentType == ComponentType.Dropdown)
                         {
                             
                         }
+                        arg.Channel.SendInteractionMessageAsync(arg.Data, "Test Button", type: Discord.API.Rest.InteractionMessageType.ChannelMessageWithSource, ghostMessage: true, components: new InteractionRow[]
+                        {
+                            new InteractionRow
+                {
+                    Buttons = new InteractionButton[]
+                    {
+                        new InteractionButton(ComponentButtonType.Primary, "Test", "test")
+                    }
+                }
+                        });
                         try
                         {
                             //await arg.Channel.SendInteractionMessageAsync(arg.Data, $"Test button clicked!");

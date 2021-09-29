@@ -158,5 +158,7 @@ namespace Discord
 		///		clock. Your system will still need a stable clock.
 		/// </remarks>
 		public bool UseSystemClock { get; set; } = true;
+
+        public Optional<Color> Color { get; set; }
     }
 }

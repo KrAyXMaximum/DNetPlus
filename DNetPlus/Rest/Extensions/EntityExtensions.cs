@@ -61,7 +61,7 @@ namespace Discord.Rest
                 model.Thumbnail.IsSpecified ? model.Thumbnail.Value.ToEntity() : (EmbedThumbnail?)null,
                 model.Fields.IsSpecified ? model.Fields.Value.Select(x => x.ToEntity()).ToImmutableArray() : ImmutableArray.Create<EmbedField>());
         }
-        public static API.EmbedJson ToModel(this Embed entity)
+        public static API.EmbedJson ToModel(this Embed entity, BaseDiscordClient client)
         {
             if (entity == null) return null;
             API.EmbedJson model = new API.EmbedJson
@@ -73,6 +73,13 @@ namespace Discord.Rest
                 Timestamp = entity.Timestamp,
                 Color = entity.Color?.RawValue
             };
+            if (entity.Color.HasValue)
+                model.Color = entity.Color.Value.RawValue;
+            else
+            {
+                if (client != null && client.BaseConfig.Color.IsSpecified)
+                    model.Color = client.BaseConfig.Color.Value.RawValue;
+            }
             if (entity.Author != null)
                 model.Author = entity.Author.Value.ToModel();
             model.Fields = entity.Fields.Select(x => x.ToModel()).ToArray();

@@ -23,6 +23,8 @@ namespace TestBot
         {
            if (!arg3.IsSuccess)
            {
+                if (arg3.ErrorReason == "Test msg")
+                    await arg2.Channel.SendInteractionMessageAsync(arg2.InteractionData, ":x: Test error");
                 Console.WriteLine("COMMAND: " + arg3.ErrorReason);
             }
         }
@@ -43,6 +45,7 @@ namespace TestBot
             int argPos = 0;
             if (!message.HasStringPrefix("tb/", ref argPos))
                 return;
+           
             SocketCommandContext context = new ShardedCommandContext(_client, message);
             _ = await _commands.ExecuteAsync(
                 context: context,

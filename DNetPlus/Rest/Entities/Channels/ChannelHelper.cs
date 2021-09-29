@@ -225,12 +225,12 @@ namespace Discord.Rest
                 }
             }
 
-            CreateMessageParams args = new CreateMessageParams(text) { IsTTS = isTTS, Embed = embed?.ToModel(), AllowedMentions = allowedMentions?.ToModel(), 
+            CreateMessageParams args = new CreateMessageParams(text) { IsTTS = isTTS, Embed = embed?.ToModel(client), AllowedMentions = allowedMentions?.ToModel(), 
                 MessageReference = reference?.ToModel(),
                 Components = components?.Select(x => x.ToModel()).ToArray()
             };
 
-            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(args, Newtonsoft.Json.Formatting.Indented, new JsonSerializerSettings { ContractResolver = new DiscordContractResolver() }));
+            
             API.MessageJson model = await client.ApiClient.CreateMessageAsync(channel.Id, args, options).ConfigureAwait(false);
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
@@ -240,6 +240,9 @@ namespace Discord.Rest
         {
             if (interaction == null)
                 return await SendMessageAsync(channel, client, text, isTTS, embed, allowedMentions, reference, options, components).ConfigureAwait(false);
+
+            if (interaction.IsFollowup)
+                return await interaction.SendFollowupAsync(channel, text, isTTS, embed, allowedMentions, reference, components, options);
 
             Preconditions.AtMost(allowedMentions?.RoleIds?.Count ?? 0, 100, nameof(allowedMentions.RoleIds), "A max of 100 role Ids are allowed.");
             Preconditions.AtMost(allowedMentions?.UserIds?.Count ?? 0, 100, nameof(allowedMentions.UserIds), "A max of 100 user Ids are allowed.");
@@ -278,15 +281,19 @@ namespace Discord.Rest
                 args.Data.Components = components?.Select(x => x.ToModel()).ToArray();
 
             if (embed != null)
-                args.Data.Embeds = new API.EmbedJson[] { embed.ToModel() };
+                args.Data.Embeds = new API.EmbedJson[] { embed.ToModel(client) };
 
-            if (ghostMessage)
+            if (args.Data != null && ghostMessage)
                 args.Data.Flags = 64;
             API.MessageJson model = await client.ApiClient.CreateInteractionMessageAsync(channel.Id, interaction, args, options).ConfigureAwait(false);
+            interaction.IsFollowup = true;
             if (model == null)
                 return null;
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
+
+
+
 
         public static async Task<RestUserMessage> SendInteractionFileAsync(IMessageChannel channel, BaseDiscordClient client,
            InteractionData interaction, string filePath, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage, InteractionRow[] components)
@@ -325,7 +332,7 @@ namespace Discord.Rest
                 Data = new UploadWebhookFileParams(stream) { Filename = filename, Content = text, IsTTS = isTTS, AllowedMentions = allowedMentions?.ToModel() ?? Optional<API.AllowedMentions>.Unspecified, IsSpoiler = isSpoiler, Components = components?.Select(x => x.ToModel()).ToArray() }
             };
             if (embed != null)
-                args.Data.Embeds = new API.EmbedJson[] { embed.ToModel() };
+                args.Data.Embeds = new API.EmbedJson[] { embed.ToModel(client) };
 
             if (ghostMessage)
                 args.Data.Flags = 64;
@@ -390,7 +397,7 @@ namespace Discord.Rest
                 }
             }
 
-            UploadFileParams args = new UploadFileParams(stream) { Filename = filename, Content = text, IsTTS = isTTS, Embed = embed?.ToModel() ?? Optional<API.EmbedJson>.Unspecified, AllowedMentions = allowedMentions?.ToModel() ?? Optional<API.AllowedMentions>.Unspecified, IsSpoiler = isSpoiler, Components = components?.Select(x => x.ToModel()).ToArray() };
+            UploadFileParams args = new UploadFileParams(stream) { Filename = filename, Content = text, IsTTS = isTTS, Embed = embed?.ToModel(client) ?? Optional<API.EmbedJson>.Unspecified, AllowedMentions = allowedMentions?.ToModel() ?? Optional<API.AllowedMentions>.Unspecified, IsSpoiler = isSpoiler, Components = components?.Select(x => x.ToModel()).ToArray() };
             API.MessageJson model = await client.ApiClient.UploadFileAsync(channel.Id, args, options).ConfigureAwait(false);
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }

@@ -26,7 +26,7 @@ namespace Discord
         /// <returns>
         ///     A task that represents the asynchronous modification operation.
         /// </returns>
-        Task ModifyAsync(Action<MessageProperties> func, RequestOptions options = null, AllowedMentions allowedMentions = null);
+        Task ModifyAsync(Action<MessageProperties> func, RequestOptions options = null);
         /// <summary>
         ///     Adds this message to its channel's pinned messages.
         /// </summary>

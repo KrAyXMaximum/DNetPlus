@@ -525,6 +525,7 @@ namespace Discord.API
             options = RequestOptions.CreateOrClone(options);
 
             BucketIds ids = new BucketIds(channelId: channelId);
+            
             return await SendJsonAsync<MessageJson>("POST", () => $"channels/{channelId}/messages", args, ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
         }
 
@@ -542,6 +543,27 @@ namespace Discord.API
             options = RequestOptions.CreateOrClone(options);
             BucketIds ids = new BucketIds();
             return await SendJsonAsync<dynamic>("POST", () => $"interactions/{interaction.Id}/{interaction.Token}/callback?wait=true", args, ids, options: options).ConfigureAwait(false);
+        }
+
+        public async Task<MessageJson> CreateInteractionFollowupAsync(string token, CreateWebhookMessageParams args, RequestOptions options = null)
+        {
+            Preconditions.NotNull(token, nameof(token));
+            var ids = new BucketIds();
+            return await SendJsonAsync<MessageJson>("POST", () => $"webhooks/{CurrentUserId}/{token}", args, ids, clientBucket: ClientBucketType.Unbucketed, options: options).ConfigureAwait(false);
+        }
+
+        public async Task EditInteractionMessageAsync(string token, ModifyWebhookMessageParams args, RequestOptions options = null)
+        {
+            Preconditions.NotNull(token, nameof(token));
+            var ids = new BucketIds();
+            await SendJsonAsync("PATCH", () => $"webhooks/{CurrentUserId}/{token}/messages/@original", args, ids, clientBucket: ClientBucketType.SendEdit, options: options).ConfigureAwait(false);
+        }
+
+        public async Task DeleteInteractionMessageAsync(string token, RequestOptions options = null)
+        {
+            Preconditions.NotNull(token, nameof(token));
+            var ids = new BucketIds();
+            await SendAsync("DELETE", () => $"webhooks/{CurrentUserId}/{token}/messages/@original", ids, clientBucket: ClientBucketType.Unbucketed, options: options).ConfigureAwait(false);
         }
 
         public async Task<MessageJson> UploadInteractionFileAsync(ulong channelId, InteractionData interaction, UploadInteractionFileParams args, RequestOptions options = null)
