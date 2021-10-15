@@ -58,8 +58,10 @@ namespace TestBot
 
         private static async Task Client_UserJoinRequestDeleted(SocketUser arg1, SocketGuild arg2)
         {
+            // Fix why socketuser can be null sometimes.
+
             Console.WriteLine("GOT LEAVE");
-            { }; Console.WriteLine($"User: {arg1.Username} Guild: {arg2.Name}");
+            //Console.WriteLine($"User: {arg1.Username} Guild: {arg2.Name}");
         }
 
         private static async Task Client_InteractionReceived(Interaction arg)

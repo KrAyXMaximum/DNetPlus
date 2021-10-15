@@ -14,6 +14,8 @@ namespace Discord.Commands
         /// <inheritdoc/>
         public string ErrorReason { get; }
 
+        public Exception Exception { get; internal set; }
+
         /// <inheritdoc/>
         public bool IsSuccess => !Error.HasValue;
 
@@ -42,7 +44,7 @@ namespace Discord.Commands
         public static PreconditionResult FromError(string reason)
             => new PreconditionResult(CommandError.UnmetPrecondition, reason);
         public static PreconditionResult FromError(Exception ex)
-            => new PreconditionResult(CommandError.Exception, ex.Message);
+            => new PreconditionResult(CommandError.Exception, ex.Message) { Exception = ex };
         /// <summary>
         ///     Returns a <see cref="PreconditionResult" /> with the specified <paramref name="result"/> type.
         /// </summary>

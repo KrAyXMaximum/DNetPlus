@@ -49,10 +49,19 @@ namespace Discord
             {
                 Data.Resolve = new InteractionResolved
                 {
-                    Members = model.Data.Resolved.Value.Members.IsSpecified ? model.Data.Resolved.Value.Members.Value.ToDictionary(x => x.Key, x => SocketGuildUser.Create(guild, state, x.Value)) : null,
-                    Users = model.Data.Resolved.Value.Users.IsSpecified ? model.Data.Resolved.Value.Users.Value.ToDictionary(x => x.Key, x => (SocketUser)SocketUnknownUser.Create(client, state, x.Value)) : null,
-                    Messages = model.Data.Resolved.Value.Messages.IsSpecified ? model.Data.Resolved.Value.Messages.Value.ToDictionary(x => x.Key, x => SocketMessage.Create(client, state, x.Value.Author.IsSpecified ? state.GetUser(x.Value.Author.Value.Id) : null, (ISocketMessageChannel)state.GetChannel(x.Value.ChannelId), x.Value)) : null,
+                    Users = model.Data.Resolved.Value.Users.IsSpecified ? model.Data.Resolved.Value.Users.Value.ToDictionary(x => x.Key, x => (SocketUser)SocketUnknownUser.Create(client, state, x.Value)) : new Dictionary<string, SocketUser>()
                 };
+                if (model.Data.Resolved.Value.Members.IsSpecified)
+                {
+                    foreach(var m in model.Data.Resolved.Value.Members.Value)
+                    {
+                        if (m.Value.User == null)
+                            m.Value.User = model.Data.Resolved.Value.Users.Value[m.Key];
+                        Data.Resolve.Members.Add(m.Key, SocketGuildUser.Create(guild, state, m.Value));
+                    }
+                }
+                if (model.Data.Resolved.Value.Messages.IsSpecified)
+                    Data.Resolve.Messages = model.Data.Resolved.Value.Messages.IsSpecified ? model.Data.Resolved.Value.Messages.Value.ToDictionary(x => x.Key, x => SocketMessage.Create(client, state, x.Value.Author.IsSpecified ? state.GetUser(x.Value.Author.Value.Id) : null, (ISocketMessageChannel)state.GetChannel(x.Value.ChannelId), x.Value)) : new Dictionary<string, SocketMessage>();
             }
         }
 
@@ -78,9 +87,9 @@ namespace Discord
         internal BaseDiscordClient Client;
         public string CustomId { get; internal set; }
         public ComponentType ComponentType { get; internal set; }
-        public InteractionChoice[] Choices { get; internal set; }
-        public InteractionResolved Resolve { get; internal set; }
-        public string[] DropdownOptions { get; set; }
+        public InteractionChoice[] Choices { get; internal set; } = new InteractionChoice[0];
+        public InteractionResolved Resolve { get; internal set; } = new InteractionResolved();
+        public string[] DropdownOptions { get; set; } = new string[0];
         public string Name { get; internal set; }
         public ulong Id { get; internal set; }
         public string Token { get; internal set; }
@@ -88,9 +97,9 @@ namespace Discord
     }
     public class InteractionResolved
     {
-        public Dictionary<string, SocketGuildUser> Members { get; set; }
-        public Dictionary<string, SocketUser> Users { get; set; }
+        public Dictionary<string, SocketGuildUser> Members { get; set; } = new Dictionary<string, SocketGuildUser>();
+        public Dictionary<string, SocketUser> Users { get; set; } = new Dictionary<string, SocketUser>();
 
-        public Dictionary<string, SocketMessage> Messages { get; set; }
+        public Dictionary<string, SocketMessage> Messages { get; set; } = new Dictionary<string, SocketMessage>();
     }
 }

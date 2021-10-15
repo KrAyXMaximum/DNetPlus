@@ -81,7 +81,6 @@ namespace Discord.Commands
             ImmutableArray<CommandInfo> commands = _commands;
             for (int i = 0; i < commands.Length; i++)
                 yield return new CommandMatch(_commands[i], _name);
-
             if (visitChildren)
             {
                 string name;

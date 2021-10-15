@@ -1994,6 +1994,7 @@ namespace Discord.WebSocket
                                     InteractionCreateJson data = (payload as JToken).ToObject<API.Gateway.InteractionCreateJson>(_serializer);
                                     if (data.Type == InteractionType.Ping)
                                         break;
+
                                     if (data.Member.IsSpecified)
                                         data.User = data.Member.Value.User;
 
@@ -2027,7 +2028,7 @@ namespace Discord.WebSocket
                                     SocketUser author;
                                     if (guild != null)
                                     {
-                                        author = guild.GetUser(data.User.Value.Id);
+                                        author = guild.GetUser(data.Member.Value.User.Id);
                                     }
                                     else
                                         author = (channel as SocketChannel).GetUser(data.User.Value.Id);
@@ -2038,7 +2039,6 @@ namespace Discord.WebSocket
                                         {
                                             if (data.Member.IsSpecified) // member isn't always included, but use it when we can
                                             {
-                                                data.Member.Value.User = data.User.Value;
                                                 author = guild.AddOrUpdateUser(data.Member.Value);
                                             }
                                             else
@@ -2056,6 +2056,7 @@ namespace Discord.WebSocket
                                     Interaction Interaction = new Interaction();
                                     Interaction.Update(this, State, guild, channel, author, data);
                                     await TimedInvokeAsync(_interactionReceivedEvent, nameof(InteractionCreateJson), Interaction);
+
                                 }
                                 break;
                             //Others

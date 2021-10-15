@@ -9,6 +9,10 @@ namespace Discord
     [DebuggerDisplay(@"{DebuggerDisplay,nq}")]
     public class GuildEmote : Emote
     {
+        public GuildEmote(ulong id) : base(id, "", false)
+        {
+            RequireColons = true;
+        }
         /// <summary>
         ///     Gets whether this emoji is managed by an integration.
         /// </summary>

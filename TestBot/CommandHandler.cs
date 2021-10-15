@@ -45,7 +45,6 @@ namespace TestBot
             int argPos = 0;
             if (!message.HasStringPrefix("tb/", ref argPos))
                 return;
-           
             SocketCommandContext context = new ShardedCommandContext(_client, message);
             _ = await _commands.ExecuteAsync(
                 context: context,

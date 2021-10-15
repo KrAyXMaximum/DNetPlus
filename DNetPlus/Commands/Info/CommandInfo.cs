@@ -35,6 +35,8 @@ namespace Discord.Commands
         ///     Gets the name of the command. If none is set, the first alias is used.
         /// </summary>
         public string Name { get; }
+
+        public string AliasUsed { get; internal set; }
         /// <summary>
         ///     Gets the summary of the command.
         /// </summary>

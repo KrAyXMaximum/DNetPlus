@@ -23,6 +23,42 @@ namespace TestBot
             ib = inter;
         }
 
+        [Command("addslash")]
+        public async Task AddSlash()
+        {
+            await Context.Guild.CreateCommandAsync(new CreateInteraction
+            {
+                Name = "slash",
+                Description = "Test",
+                Options = new CreateInteractionOption[]
+                {
+                    new CreateInteractionOption
+                    {
+                        Name = "user",
+                        Type = InteractionOptionType.User,
+                        Description = "Test user"
+                    }
+                }
+            });
+        }
+
+        [Command("getemote")]
+        public async Task GetEmote()
+        {
+            GuildEmote EM = new GuildEmote(805194713287360632);
+            Console.Write($"Emote: " + Newtonsoft.Json.JsonConvert.SerializeObject(EM, Formatting.Indented));
+            await ReplyAsync("Test", components: new InteractionRow[]
+            {
+                new InteractionRow
+                {
+                    Buttons = new InteractionButton[]
+                    {
+                        new InteractionButton(ComponentButtonType.Secondary, "Test", "test", EM)
+                    }
+                }
+            });
+        }
+
         [Command("edit")]
         public async Task Edit(string text = "")
         {
@@ -170,17 +206,6 @@ namespace TestBot
             await ReplyAsync("Accepted");
         }
 
-        [Command("addslash")]
-        public async Task AddSlash()
-        {
-            await Context.Guild.CreateCommandAsync(
-                new CreateInteraction
-                {
-                Name = "Hello",
-                Description = "Test desc"
-                }
-            );
-        }
 
         [Command("addslashmulti")]
         public async Task AddSlashMulti(string name, [Remainder] string desc)
@@ -406,17 +431,6 @@ namespace TestBot
             return 0;
         }
 
-        [Command("test")]
-        public async Task Test()
-        {
-            await Context.Channel.SendInteractionMessageAsync(Context.InteractionData, "Loading", type: Discord.API.Rest.InteractionMessageType.AcknowledgeWithSource);
-           
-            Console.WriteLine("Get members");
-            if (!Context.Guild.HasAllMembers)
-                await Context.Guild.DownloadUsersAsync();
-            Console.WriteLine("Send hello");
-            await Context.InteractionData.SendFollowupAsync(Context.Channel, "Hello");
-        }
 
         [Command("usertags")]
         public async Task UserTags()

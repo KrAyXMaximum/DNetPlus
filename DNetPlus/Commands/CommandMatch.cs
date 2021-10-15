@@ -14,6 +14,7 @@ namespace Discord.Commands
         public CommandMatch(CommandInfo command, string alias)
         {
             Command = command;
+            Command.AliasUsed = alias;
             Alias = alias;
         }
 

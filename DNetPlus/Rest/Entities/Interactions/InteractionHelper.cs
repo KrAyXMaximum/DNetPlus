@@ -1,6 +1,7 @@
 ﻿using Discord.API;
 using Discord.API.Rest;
 using Discord.Net.Converters;
+using Discord.Rest;
 using Discord.Webhook;
 using Discord.WebSocket;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Discord.Rest
+namespace Discord
 {
     public static class InteractionHelper
     {

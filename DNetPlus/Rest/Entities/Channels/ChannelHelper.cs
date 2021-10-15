@@ -286,14 +286,12 @@ namespace Discord.Rest
             if (args.Data != null && ghostMessage)
                 args.Data.Flags = 64;
             API.MessageJson model = await client.ApiClient.CreateInteractionMessageAsync(channel.Id, interaction, args, options).ConfigureAwait(false);
-            interaction.IsFollowup = true;
+            if (type == InteractionMessageType.AcknowledgeWithSource)
+                interaction.IsFollowup = true;
             if (model == null)
                 return null;
             return RestUserMessage.Create(client, channel, client.CurrentUser, model);
         }
-
-
-
 
         public static async Task<RestUserMessage> SendInteractionFileAsync(IMessageChannel channel, BaseDiscordClient client,
            InteractionData interaction, string filePath, string text, bool isTTS, Embed embed, AllowedMentions allowedMentions, RequestOptions options, bool isSpoiler, MessageReferenceParams reference, InteractionMessageType type, bool ghostMessage, InteractionRow[] components)
